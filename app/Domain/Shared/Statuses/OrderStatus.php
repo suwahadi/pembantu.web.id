@@ -7,6 +7,7 @@ class OrderStatus
     public const PENDING_PAYMENT = 'pending_payment';
     public const PAID_ESCROW = 'paid_escrow';
     public const IN_PROGRESS = 'in_progress';
+    public const COMPLETED_BY_AGENCY = 'completed_by_agency';
     public const COMPLETED = 'completed';
     public const DISPUTED = 'disputed';
     public const REFUND_PENDING = 'refund_pending';
@@ -22,6 +23,7 @@ class OrderStatus
             self::PENDING_PAYMENT,
             self::PAID_ESCROW,
             self::IN_PROGRESS,
+            self::COMPLETED_BY_AGENCY,
             self::COMPLETED,
             self::DISPUTED,
             self::REFUND_PENDING,
@@ -39,11 +41,12 @@ class OrderStatus
             self::PENDING_PAYMENT => 'Menunggu Pembayaran',
             self::PAID_ESCROW => 'Pembayaran Terverifikasi',
             self::IN_PROGRESS => 'Sedang Berjalan',
+            self::COMPLETED_BY_AGENCY => 'Selesai oleh Agency',
             self::COMPLETED => 'Selesai',
             self::DISPUTED => 'Dalam Sengketa',
             self::REFUND_PENDING => 'Pengembalian Dana Tertunda',
             self::PAYOUT_PENDING => 'Pencairan Dana Tertunda',
-            self::REFUNDED => 'dana Dikembalikan',
+            self::REFUNDED => 'Dana Dikembalikan',
             self::PARTIALLY_REFUNDED => 'Dana Dikembalikan Sebagian',
             self::RELEASED => 'Dana Dilepas',
             self::CANCELLED => 'Dibatalkan',

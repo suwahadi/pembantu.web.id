@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,5 +30,31 @@ class AppServiceProvider extends ServiceProvider
         if (!is_dir($compiledViewPath)) {
             @mkdir($compiledViewPath, 0755, true);
         }
+
+        // Define Gates for Authorization
+        Gate::define('admin-access', function ($user) {
+            return \DB::table('user_roles')
+                ->join('roles', 'roles.id', '=', 'user_roles.role_id')
+                ->where('user_roles.user_id', $user->id)
+                ->where('roles.code', 'ADMIN')
+                ->exists();
+        });
+
+        Gate::define('agency-access', function ($user) {
+            return \DB::table('user_roles')
+                ->join('roles', 'roles.id', '=', 'user_roles.role_id')
+                ->where('user_roles.user_id', $user->id)
+                ->where('roles.code', 'AGENCY')
+                ->exists();
+        });
+
+        Gate::define('visitor-access', function ($user) {
+            return \DB::table('user_roles')
+                ->join('roles', 'roles.id', '=', 'user_roles.role_id')
+                ->where('user_roles.user_id', $user->id)
+                ->where('roles.code', 'VISITOR')
+                ->exists();
+        });
     }
 }
+

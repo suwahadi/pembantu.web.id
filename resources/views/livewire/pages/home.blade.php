@@ -104,8 +104,8 @@
                                 
                                 <!-- Location -->
                                 <div class="flex items-center space-x-1 text-xs text-gray-600 mb-3">
-                                    <i class="hgi-stroke hgi-map-pin w-3 h-3"></i>
-                                    <span>{{ $worker->location->name }}</span>
+                                    <i class="hgi hgi-stroke hgi-location-03"></i>
+                                    <span>{{ $worker->location->name ?? 'Jakarta' }}</span>
                                 </div>
                                 
                                 <!-- Price -->

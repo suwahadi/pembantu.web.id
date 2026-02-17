@@ -2,10 +2,11 @@
 
 namespace App\Domain\Order\Services;
 
-use App\Models\Order;
+use App\Models\{Order, User};
 use App\Domain\Shared\Statuses\OrderStatus;
 use App\Domain\Event\Services\OrderEventService;
 use App\Domain\Audit\Services\AuditLogService;
+use App\Notifications\OrderStatusChanged;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
@@ -146,12 +147,141 @@ class OrderService
     }
 
     /**
-     * Get orders untuk worker
+     * Mulai pekerjaan oleh agency
      */
-    public function getWorkerOrders(int $workerId)
+    public function startJobByAgency(int $orderId, int $agencyId, int $actorUserId): Order
     {
-        return Order::where('worker_id', $workerId)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        return DB::transaction(function () use ($orderId, $agencyId, $actorUserId) {
+            $order = Order::lockForUpdate()->findOrFail($orderId);
+
+            if ((int)$order->agency_id !== $agencyId) {
+                throw new \RuntimeException('Akses ditolak.');
+            }
+
+            if ($order->status !== OrderStatus::PAID_ESCROW) {
+                throw new \RuntimeException('Order harus dalam status paid_escrow untuk mulai pekerjaan.');
+            }
+
+            $order->update(['status' => OrderStatus::IN_PROGRESS]);
+
+            $this->eventService->record(
+                $orderId,
+                'work_started',
+                'Pekerjaan dimulai oleh agency (actor: ' . $actorUserId . ')',
+            );
+
+            // Send notification after successful commit
+            DB::afterCommit(function () use ($orderId, $order) {
+                $visitor = User::find($order->visitor_user_id);
+                if ($visitor) {
+                    $visitor->notify(new OrderStatusChanged(
+                        orderId: $orderId,
+                        orderCode: $order->code,
+                        newStatus: OrderStatus::IN_PROGRESS,
+                        message: 'Pekerjaan Anda telah dimulai oleh agency.'
+                    ));
+                }
+            });
+
+            return $order;
+        });
+    }
+
+    /**
+     * Selesaikan pekerjaan oleh agency
+     */
+    public function finishJobByAgency(int $orderId, int $agencyId, int $actorUserId): Order
+    {
+        return DB::transaction(function () use ($orderId, $agencyId, $actorUserId) {
+            $order = Order::lockForUpdate()->findOrFail($orderId);
+
+            if ((int)$order->agency_id !== $agencyId) {
+                throw new \RuntimeException('Akses ditolak.');
+            }
+
+            if ($order->status !== OrderStatus::IN_PROGRESS) {
+                throw new \RuntimeException('Order harus dalam status in_progress untuk menyelesaikan pekerjaan.');
+            }
+
+            $order->update(['status' => 'completed_by_agency']);
+
+            $this->eventService->record(
+                $orderId,
+                'work_completed_by_agency',
+                'Pekerjaan ditandai selesai oleh agency (actor: ' . $actorUserId . ')',
+            );
+
+            // Send notification after successful commit
+            DB::afterCommit(function () use ($orderId, $order) {
+                $visitor = User::find($order->visitor_user_id);
+                if ($visitor) {
+                    $visitor->notify(new OrderStatusChanged(
+                        orderId: $orderId,
+                        orderCode: $order->code,
+                        newStatus: 'completed_by_agency',
+                        message: 'Agency telah menyelesaikan pekerjaan. Silakan konfirmasi jika puas.'
+                    ));
+                }
+            });
+
+            return $order;
+        });
+    }
+
+    /**
+     * Konfirmasi penyelesaian oleh visitor (settle escrow, queue payout)
+     */
+    public function confirmCompletionByVisitor(int $orderId, int $visitorUserId): void
+    {
+        DB::transaction(function () use ($orderId, $visitorUserId) {
+            $order = Order::lockForUpdate()->findOrFail($orderId);
+
+            if ((int)$order->visitor_user_id !== $visitorUserId) {
+                throw new \RuntimeException('Akses ditolak.');
+            }
+
+            if ($order->status !== 'completed_by_agency') {
+                throw new \RuntimeException('Order harus ditandai selesai oleh agency terlebih dahulu.');
+            }
+
+            // Update order status ke completed
+            $order->update([
+                'status' => OrderStatus::COMPLETED,
+                'completed_at' => now(),
+            ]);
+
+            // Settle escrow - release payout untuk agency
+            $payout = DB::table('payouts')->where('order_id', $orderId)->lockForUpdate()->first();
+            if ($payout && $payout->status === 'queued') {
+                DB::table('payouts')->where('id', $payout->id)->update([
+                    'status' => 'released',
+                    'released_at' => now(),
+                ]);
+            }
+
+            $this->eventService->record(
+                $orderId,
+                'order_confirmed_completed',
+                'Visitor mengkonfirmasi pekerjaan selesai (actor: ' . $visitorUserId . ')',
+            );
+
+            // Send notification to agency after successful commit
+            DB::afterCommit(function () use ($orderId, $order) {
+                $agency = DB::table('agencies')->where('id', $order->agency_id)->first();
+                if ($agency) {
+                    // Notify agency owner (get from agency_users or owner_user_id)
+                    $agencyOwner = User::find($agency->owner_user_id ?? $agency->primary_owner_user_id);
+                    if ($agencyOwner) {
+                        $agencyOwner->notify(new OrderStatusChanged(
+                            orderId: $orderId,
+                            orderCode: $order->code,
+                            newStatus: OrderStatus::COMPLETED,
+                            message: 'Visitor telah mengkonfirmasi penyelesaian pekerjaan. Payout siap diproses.'
+                        ));
+                    }
+                }
+            });
+        });
     }
 }
+

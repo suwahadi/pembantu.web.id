@@ -2,11 +2,12 @@
 
 namespace App\Domain\Dispute\Services;
 
-use App\Models\{Order, Dispute, DisputeEvidence};
+use App\Models\{Order, Dispute, DisputeEvidence, User};
 use App\Domain\Shared\Statuses\{DisputeStatus, OrderStatus};
 use App\Domain\Escrow\Services\EscrowService;
 use App\Domain\Event\Services\OrderEventService;
 use App\Domain\Audit\Services\AuditLogService;
+use App\Notifications\{OrderStatusChanged, DisputeStatusChanged};
 use Illuminate\Support\Facades\{DB, Auth};
 
 class DisputeService
@@ -111,6 +112,34 @@ class DisputeService
             $this->eventService->recordStatusChange($order->id, OrderStatus::DISPUTED, OrderStatus::REFUND_PENDING, description: 'Dispute resolved - full refund');
             AuditLogService::record('dispute_resolved_full_refund', 'DISPUTE', $dispute->id);
 
+            // Send notifications after successful commit
+            DB::afterCommit(function () use ($order, $dispute) {
+                // Notify visitor
+                $visitor = User::find($order->visitor_user_id);
+                if ($visitor) {
+                    $visitor->notify(new DisputeStatusChanged(
+                        disputeId: $dispute->id,
+                        orderId: $order->id,
+                        newStatus: DisputeStatus::RESOLVED,
+                        message: 'Dispute Anda telah diselesaikan dengan keputusan refund penuh.'
+                    ));
+                }
+
+                // Notify agency
+                $agency = DB::table('agencies')->where('id', $order->agency_id)->first();
+                if ($agency) {
+                    $agencyOwner = User::find($agency->owner_user_id ?? $agency->primary_owner_user_id);
+                    if ($agencyOwner) {
+                        $agencyOwner->notify(new DisputeStatusChanged(
+                            disputeId: $dispute->id,
+                            orderId: $order->id,
+                            newStatus: DisputeStatus::RESOLVED,
+                            message: 'Dispute untuk order Anda telah diselesaikan dengan keputusan refund full kepada customer.'
+                        ));
+                    }
+                }
+            });
+
             return $dispute;
         });
     }
@@ -149,6 +178,34 @@ class DisputeService
 
             $this->eventService->recordStatusChange($order->id, OrderStatus::DISPUTED, OrderStatus::PAYOUT_PENDING, description: 'Dispute resolved - full release');
             AuditLogService::record('dispute_resolved_full_release', 'DISPUTE', $dispute->id);
+
+            // Send notifications after successful commit
+            DB::afterCommit(function () use ($order, $dispute) {
+                // Notify visitor
+                $visitor = User::find($order->visitor_user_id);
+                if ($visitor) {
+                    $visitor->notify(new DisputeStatusChanged(
+                        disputeId: $dispute->id,
+                        orderId: $order->id,
+                        newStatus: DisputeStatus::RESOLVED,
+                        message: 'Dispute Anda telah diselesaikan dengan keputusan release full ke agency.'
+                    ));
+                }
+
+                // Notify agency
+                $agency = DB::table('agencies')->where('id', $order->agency_id)->first();
+                if ($agency) {
+                    $agencyOwner = User::find($agency->owner_user_id ?? $agency->primary_owner_user_id);
+                    if ($agencyOwner) {
+                        $agencyOwner->notify(new DisputeStatusChanged(
+                            disputeId: $dispute->id,
+                            orderId: $order->id,
+                            newStatus: DisputeStatus::RESOLVED,
+                            message: 'Dispute untuk order Anda telah diselesaikan. Payout siap diproses.'
+                        ));
+                    }
+                }
+            });
 
             return $dispute;
         });
@@ -196,6 +253,42 @@ class DisputeService
 
             $this->eventService->recordStatusChange($order->id, OrderStatus::DISPUTED, $order->status, description: 'Dispute resolved - partial');
             AuditLogService::record('dispute_resolved_partial', 'DISPUTE', $dispute->id);
+
+            // Send notifications after successful commit
+            DB::afterCommit(function () use ($order, $dispute, $refundAmountIdr, $releaseAmountIdr) {
+                // Notify visitor
+                $visitor = User::find($order->visitor_user_id);
+                if ($visitor) {
+                    $message = "Dispute Anda telah diselesaikan dengan keputusan: ";
+                    if ($refundAmountIdr > 0) $message .= "Refund Rp" . number_format($refundAmountIdr, 0, ',', '.') . " ";
+                    if ($releaseAmountIdr > 0) $message .= "Release ke Agency Rp" . number_format($releaseAmountIdr, 0, ',', '.');
+                    
+                    $visitor->notify(new DisputeStatusChanged(
+                        disputeId: $dispute->id,
+                        orderId: $order->id,
+                        newStatus: DisputeStatus::RESOLVED,
+                        message: $message
+                    ));
+                }
+
+                // Notify agency
+                $agency = DB::table('agencies')->where('id', $order->agency_id)->first();
+                if ($agency) {
+                    $agencyOwner = User::find($agency->owner_user_id ?? $agency->primary_owner_user_id);
+                    if ($agencyOwner) {
+                        $message = "Dispute untuk order Anda telah diselesaikan dengan keputusan: ";
+                        if ($refundAmountIdr > 0) $message .= "Refund ke Customer Rp" . number_format($refundAmountIdr, 0, ',', '.') . " ";
+                        if ($releaseAmountIdr > 0) $message .= "Payout ke Anda Rp" . number_format($releaseAmountIdr, 0, ',', '.');
+                        
+                        $agencyOwner->notify(new DisputeStatusChanged(
+                            disputeId: $dispute->id,
+                            orderId: $order->id,
+                            newStatus: DisputeStatus::RESOLVED,
+                            message: $message
+                        ));
+                    }
+                }
+            });
 
             return $dispute;
         });

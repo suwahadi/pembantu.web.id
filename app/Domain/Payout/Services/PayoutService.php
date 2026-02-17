@@ -2,11 +2,12 @@
 
 namespace App\Domain\Payout\Services;
 
-use App\Models\{Order, Payout};
+use App\Models\{Order, Payout, User};
 use App\Domain\Shared\Statuses\{PayoutStatus, OrderStatus};
 use App\Domain\Ledger\Services\LedgerService;
 use App\Domain\Event\Services\OrderEventService;
 use App\Domain\Audit\Services\AuditLogService;
+use App\Notifications\TransferCompleted;
 use Illuminate\Support\Facades\DB;
 
 class PayoutService
@@ -95,6 +96,24 @@ class PayoutService
             $this->eventService->recordStatusChange($order->id, OrderStatus::PAYOUT_PENDING, OrderStatus::RELEASED, description: 'Payout dibayarkan');
 
             AuditLogService::record('payout_paid', 'PAYOUT', $payout->id);
+
+            // Send notification to agency after successful commit
+            DB::afterCommit(function () use ($payout, $order) {
+                $agency = DB::table('agencies')->where('id', $payout->agency_id)->first();
+                if ($agency) {
+                    // Notify agency owner
+                    $agencyOwner = User::find($agency->owner_user_id ?? $agency->primary_owner_user_id);
+                    if ($agencyOwner) {
+                        $agencyOwner->notify(new TransferCompleted(
+                            type: 'payout',
+                            transferId: $payout->id,
+                            orderId: $payout->order_id,
+                            message: 'Payout Anda telah berhasil ditransfer ke rekening terdaftar.',
+                            amountIdr: $payout->amount_idr
+                        ));
+                    }
+                }
+            });
 
             return $payout;
         });

@@ -39,5 +39,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verify-midtrans-signature' => \App\Http\Middleware\VerifyMidtransSignature::class,
+        'admin-access' => \App\Http\Middleware\CheckAdminAccess::class,
     ];
 }

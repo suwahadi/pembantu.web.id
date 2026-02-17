@@ -2,11 +2,12 @@
 
 namespace App\Domain\Refund\Services;
 
-use App\Models\{Order, Refund};
+use App\Models\{Order, Refund, User};
 use App\Domain\Shared\Statuses\{RefundStatus, OrderStatus};
 use App\Domain\Ledger\Services\LedgerService;
 use App\Domain\Event\Services\OrderEventService;
 use App\Domain\Audit\Services\AuditLogService;
+use App\Notifications\TransferCompleted;
 use Illuminate\Support\Facades\{DB, Auth};
 
 class RefundService
@@ -99,6 +100,20 @@ class RefundService
             }
 
             AuditLogService::record('refund_paid', 'REFUND', $refund->id);
+
+            // Send notification after successful commit
+            DB::afterCommit(function () use ($refund, $order) {
+                $visitor = User::find($order->visitor_user_id);
+                if ($visitor) {
+                    $visitor->notify(new TransferCompleted(
+                        type: 'refund',
+                        transferId: $refund->id,
+                        orderId: $refund->order_id,
+                        message: 'Refund Anda telah berhasil diproses dan ditransfer.',
+                        amountIdr: $refund->amount_idr
+                    ));
+                }
+            });
 
             return $refund;
         });
