@@ -23,7 +23,7 @@
             <div class="flex items-center space-x-4">
                 @guest
                     <a href="/login" class="text-gray-600 hover:text-gray-900 transition">
-                        @include('svgs.icon-user', ['class' => 'w-5 h-5'])
+                        <i class="hgi-stroke hgi-user w-5 h-5"></i>
                     </a>
                     <a href="/login" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition">
                         Masuk
@@ -34,11 +34,11 @@
                 @else
                     <div class="flex items-center space-x-4">
                         <button wire:click="search" class="text-gray-600 hover:text-gray-900">
-                            @include('svgs.icon-search', ['class' => 'w-5 h-5'])
+                            <i class="hgi-stroke hgi-search w-5 h-5"></i>
                         </button>
                         <div class="relative group">
                             <button class="flex items-center space-x-2 text-gray-700">
-                                @include('svgs.icon-user', ['class' => 'w-5 h-5'])
+                                <i class="hgi-stroke hgi-user w-5 h-5"></i>
                                 <span>{{ auth()->user()->name }}</span>
                             </button>
                             <div class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-white shadow rounded-lg">
@@ -56,7 +56,7 @@
 
             <!-- Mobile Menu Button -->
             <button class="md:hidden">
-                @include('svgs.icon-menu', ['class' => 'w-6 h-6'])
+                <i class="hgi-stroke hgi-menu-02 w-6 h-6"></i>
             </button>
         </div>
     </div>

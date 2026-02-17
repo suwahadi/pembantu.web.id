@@ -6,6 +6,7 @@
     <title>{{ $title ?? 'Pembantu.web.id' }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/livewire@3/dist/livewire.js"></script>
+    <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
     @livewireStyles
 </head>
 <body class="bg-gray-50">

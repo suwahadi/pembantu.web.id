@@ -94,7 +94,7 @@
                                             <div class="text-right">
                                                 <div class="flex items-center justify-end space-x-1 mb-1">
                                                     <span class="text-yellow-500">
-                                                        @include('svgs.icon-star', ['class' => 'w-4 h-4'])
+                                                        <i class="hgi-stroke hgi-star w-4 h-4"></i>
                                                     </span>
                                                     <span class="font-semibold text-gray-900">{{ number_format($worker->rating, 1) }}</span>
                                                     <span class="text-xs text-gray-500">({{ $worker->total_reviews }})</span>
@@ -109,7 +109,7 @@
                                         <!-- Location & Price -->
                                         <div class="flex justify-between items-center">
                                             <div class="flex items-center space-x-1 text-sm text-gray-600">
-                                                @include('svgs.icon-location', ['class' => 'w-4 h-4'])
+                                                <i class="hgi-stroke hgi-map-pin w-4 h-4"></i>
                                                 <span>{{ $worker->location->name }}</span>
                                             </div>
                                             @if($worker->pricings->first())

@@ -20,7 +20,7 @@
                             wire:click="search"
                             class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
-                            @include('svgs.icon-search', ['class' => 'w-5 h-5'])
+                            <i class="hgi-stroke hgi-search w-5 h-5"></i>
                         </button>
                     </div>
                     <button 
@@ -44,23 +44,26 @@
                 @foreach($categories as $category)
                     <a href="/search?category={{ $category->slug }}" class="group">
                         <div class="bg-gradient-to-br {{ $loop->index % 3 == 0 ? 'from-green-400 to-blue-500' : ($loop->index % 3 == 1 ? 'from-purple-400 to-pink-500' : 'from-yellow-400 to-orange-500') }} p-6 rounded-lg text-white text-center hover:shadow-lg transition transform hover:scale-105">
-                            <div class="mb-2 flex justify-center">
-                                @switch($category->id % 5)
-                                    @case(0)
-                                        @include('svgs.icon-home', ['class' => 'w-8 h-8'])
-                                    @break
-                                    @case(1)
-                                        @include('svgs.icon-user', ['class' => 'w-8 h-8'])
-                                    @break
-                                    @case(2)
-                                        @include('svgs.icon-star', ['class' => 'w-8 h-8'])
-                                    @break
-                                    @case(3)
-                                        @include('svgs.icon-location', ['class' => 'w-8 h-8'])
-                                    @break
-                                    @default
-                                        @include('svgs.icon-search', ['class' => 'w-8 h-8'])
-                                @endswitch
+                            <div class="mb-3 flex justify-center text-5xl">
+                                @if($category->slug === 'babysitter')
+                                    <i class="hgi hgi-stroke hgi-baby-02"></i>
+                                @elseif($category->slug === 'sopir')
+                                    <i class="hgi hgi-stroke hgi-car-01"></i>
+                                @elseif($category->slug === 'perawat-lansia')
+                                    <i class="hgi hgi-stroke hgi-wheelchair"></i>
+                                @elseif($category->slug === 'art-prt')
+                                    <i class="hgi hgi-stroke hgi-clean"></i>
+                                @elseif($category->slug === 'tukang-kebun')
+                                    <i class="hgi hgi-stroke hgi-plant-02"></i>
+                                @elseif($loop->index % 4 == 0)
+                                    <i class="hgi hgi-stroke hgi-home"></i>
+                                @elseif($loop->index % 4 == 1)
+                                    <i class="hgi hgi-stroke hgi-user"></i>
+                                @elseif($loop->index % 4 == 2)
+                                    <i class="hgi hgi-stroke hgi-star"></i>
+                                @else
+                                    <i class="hgi hgi-stroke hgi-map-pin"></i>
+                                @endif
                             </div>
                             <h3 class="font-semibold text-sm">{{ $category->name }}</h3>
                         </div>
@@ -93,7 +96,7 @@
                                 <!-- Rating -->
                                 <div class="flex items-center space-x-1 mb-3">
                                     <span class="text-yellow-500">
-                                        @include('svgs.icon-star', ['class' => 'w-4 h-4'])
+                                        <i class="hgi-stroke hgi-star w-4 h-4"></i>
                                     </span>
                                     <span class="text-sm font-semibold text-gray-900">4.8</span>
                                     <span class="text-xs text-gray-500">({{ rand(20, 200) }} ulasan)</span>
@@ -101,7 +104,7 @@
                                 
                                 <!-- Location -->
                                 <div class="flex items-center space-x-1 text-xs text-gray-600 mb-3">
-                                    @include('svgs.icon-location', ['class' => 'w-3 h-3'])
+                                    <i class="hgi-stroke hgi-map-pin w-3 h-3"></i>
                                     <span>{{ $worker->location->name }}</span>
                                 </div>
                                 

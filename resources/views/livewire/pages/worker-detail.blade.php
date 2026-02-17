@@ -25,7 +25,7 @@
                     <!-- Rating -->
                     <div class="flex items-center space-x-3 mb-6">
                         <span class="text-yellow-500 flex items-center">
-                            @include('svgs.icon-star', ['class' => 'w-5 h-5'])
+                            <i class="hgi-stroke hgi-star w-5 h-5"></i>
                         </span>
                         <span class="text-2xl font-bold text-gray-900">{{ number_format($worker->rating, 1) }}</span>
                         <span class="text-gray-600">({{ $worker->total_reviews }} ulasan)</span>
@@ -35,7 +35,7 @@
 
                     <!-- Location -->
                     <div class="flex items-center space-x-2 text-gray-600 mb-4">
-                        @include('svgs.icon-location', ['class' => 'w-5 h-5'])
+                        <i class="hgi-stroke hgi-map-pin w-5 h-5"></i>
                         <span>{{ $worker->location->name }}</span>
                     </div>
 
@@ -91,7 +91,7 @@
                                 <div class="flex items-center space-x-1">
                                     @for($i = 0; $i < 5; $i++)
                                         <span class="text-yellow-500">
-                                            @include('svgs.icon-star', ['class' => 'w-4 h-4'])
+                                            <i class="hgi-stroke hgi-star w-4 h-4"></i>
                                         </span>
                                     @endfor
                                 </div>
@@ -106,7 +106,7 @@
                                 <div class="flex items-center space-x-1">
                                     @for($i = 0; $i < 5; $i++)
                                         <span class="text-yellow-500">
-                                            @include('svgs.icon-star', ['class' => 'w-4 h-4'])
+                                            <i class="hgi-stroke hgi-star w-4 h-4"></i>
                                         </span>
                                     @endfor
                                 </div>
