@@ -55,14 +55,14 @@ class EscrowService
 
             // Create ledger: escrow -> agency_payable
             $entryKey = Idempotency::escrowHoldKey($orderId);
-            $this->ledgerService->createEntry(
+            $this->ledgerService->record(
                 entryKey: $entryKey,
                 debitAccount: 'escrow_hold',
                 creditAccount: 'agency_' . $order->agency_id . '_payable',
                 amountIdr: $escrow->amount_idr,
                 refType: 'order',
                 refId: $orderId,
-                description: "Release escrow untuk order {$order->code}. {$reason}",
+                note: "Release escrow untuk order {$order->code}. {$reason}",
             );
 
             return $escrow;
@@ -89,14 +89,14 @@ class EscrowService
 
             // Create ledger: escrow -> customer_refundable
             $entryKey = Idempotency::escrowHoldKey($orderId) . ':REFUND';
-            $this->ledgerService->createEntry(
+            $this->ledgerService->record(
                 entryKey: $entryKey,
                 debitAccount: 'escrow_hold',
                 creditAccount: 'customer_' . $order->visitor_user_id . '_refundable',
                 amountIdr: $escrow->amount_idr,
                 refType: 'order',
                 refId: $orderId,
-                description: "Refund full escrow untuk order {$order->code}. {$reason}",
+                note: "Refund full escrow untuk order {$order->code}. {$reason}",
             );
 
             return $escrow;

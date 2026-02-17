@@ -14,6 +14,12 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         
+        // Auto-release escrow setelah dispute window lewat
+        $schedule->job(new \App\Jobs\ReleaseEscrowJob)
+            ->everyFifteenMinutes()
+            ->name('release-escrow-auto')
+            ->withoutOverlapping();
+        
         // Process payout queue daily
         $schedule->command('queue:work', ['--queue' => 'payouts', '--max-jobs' => 10])
             ->dailyAt('02:00')

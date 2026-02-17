@@ -82,14 +82,14 @@ class RefundService
             $order = $refund->order;
             $entryKey = \App\Domain\Shared\Support\Idempotency::refundPaidKey($refund->id);
 
-            $this->ledgerService->createEntry(
+            $this->ledgerService->record(
                 entryKey: $entryKey,
                 debitAccount: 'customer_' . $order->visitor_user_id . '_refundable',
                 creditAccount: 'cash_bank',
                 amountIdr: $refund->amount_idr,
                 refType: 'refund',
                 refId: $refund->id,
-                description: "Pembayaran refund untuk order {$order->code}",
+                note: "Pembayaran refund untuk order {$order->code}",
             );
 
             // Update order status jika semua refund paid

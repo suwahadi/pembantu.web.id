@@ -23,6 +23,7 @@ class Order extends Model
         'subtotal_idr',
         'platform_fee_idr',
         'total_idr',
+        'currency',
         'notes',
         'completed_at',
         'cancelled_at',

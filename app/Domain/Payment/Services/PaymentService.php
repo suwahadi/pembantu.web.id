@@ -79,14 +79,14 @@ class PaymentService
 
             // Create ledger entry dengan idempotency
             $entryKey = Idempotency::paymentSettlementKey($order->id, $transactionId);
-            $this->ledgerService->createEntry(
+            $this->ledgerService->record(
                 entryKey: $entryKey,
                 debitAccount: 'customer_' . $order->visitor_user_id,
                 creditAccount: 'escrow_hold',
                 amountIdr: $payment->amount_idr,
                 refType: 'payment',
                 refId: $payment->id,
-                description: "Pembayaran order {$order->code}",
+                note: "Pembayaran order {$order->code}",
             );
 
             // Update order status

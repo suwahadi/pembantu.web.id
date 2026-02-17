@@ -80,14 +80,14 @@ class PayoutService
             $order = $payout->order;
             $entryKey = \App\Domain\Shared\Support\Idempotency::payoutPaidKey($payout->id);
 
-            $this->ledgerService->createEntry(
+            $this->ledgerService->record(
                 entryKey: $entryKey,
                 debitAccount: 'agency_' . $payout->agency_id . '_payable',
                 creditAccount: 'cash_bank',
                 amountIdr: $payout->amount_idr,
                 refType: 'payout',
                 refId: $payout->id,
-                description: "Pembayaran payout untuk order {$order->code} ke agency",
+                note: "Pembayaran payout untuk order {$order->code} ke agency",
             );
 
             // Update order status ke released
