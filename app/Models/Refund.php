@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Refund extends Model
+{
+    protected $fillable = [
+        'order_id',
+        'payee_type',
+        'payee_id',
+        'bank_account_id',
+        'amount_idr',
+        'status',
+        'reason',
+        'proof_file_path',
+        'paid_at',
+        'notes',
+    ];
+
+    protected $casts = [
+        'paid_at' => 'datetime',
+    ];
+
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function bankAccount(): BelongsTo
+    {
+        return $this->belongsTo(BankAccount::class);
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->status === 'paid';
+    }
+
+    public function isQueued(): bool
+    {
+        return $this->status === 'queued';
+    }
+}
