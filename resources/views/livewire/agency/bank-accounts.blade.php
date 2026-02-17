@@ -38,7 +38,10 @@
                   <span wire:loading>Proses...</span>
                 </x-button>
               @elseif($primaryId === $item->id)
-                <span class="text-xs font-medium text-blue-600">✓ Rekening Utama</span>
+                <span class="text-xs font-medium text-blue-600 flex items-center gap-1">
+                  @include('svgs.icon-check', ['class' => 'w-4 h-4 text-blue-600'])
+                  Rekening Utama
+                </span>
               @endif
             </div>
           </div>
@@ -80,8 +83,9 @@
       </x-button>
     </div>
 
-    <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg text-xs">
-      ⚠ Rekening baru akan melalui verifikasi oleh admin sebelum dapat digunakan sebagai rekening utama untuk menerima payout.
+    <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg text-xs flex items-start gap-2">
+      @include('svgs.icon-warning', ['class' => 'w-4 h-4 flex-shrink-0 mt-0.5'])
+      <span>Rekening baru akan melalui verifikasi oleh admin sebelum dapat digunakan sebagai rekening utama untuk menerima payout.</span>
     </div>
   </x-card>
 </div>

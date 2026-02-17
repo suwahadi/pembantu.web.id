@@ -68,7 +68,10 @@
                     <p class="text-gray-600 mb-6">Kami memerlukan verifikasi identitas Anda untuk keamanan</p>
                     
                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                        <p class="text-blue-800 text-sm">✓ Email Anda telah terverifikasi</p>
+                        <p class="text-blue-800 text-sm flex items-center gap-2">
+                          @include('svgs.icon-check', ['class' => 'w-4 h-4 text-blue-800'])
+                          Email Anda telah terverifikasi
+                        </p>
                     </div>
                     
                     <div class="space-y-3">
@@ -90,15 +93,15 @@
                     
                     <div class="space-y-4">
                         <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition cursor-pointer">
-                            <div class="w-12 h-12 mx-auto mb-3 flex items-center justify-center bg-gray-100 rounded-lg">
-                                📄
+                            <div class="w-12 h-12 mx-auto mb-3 flex items-center justify-center bg-gray-100 rounded-lg text-gray-600">
+                                @include('svgs.icon-document', ['class' => 'w-8 h-8'])
                             </div>
                             <p class="text-gray-700 font-medium">Klik untuk unggah KTP</p>
                             <p class="text-xs text-gray-500">Atau seret file ke sini</p>
                         </div>
                         <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition cursor-pointer">
-                            <div class="w-12 h-12 mx-auto mb-3 flex items-center justify-center bg-gray-100 rounded-lg">
-                                📄
+                            <div class="w-12 h-12 mx-auto mb-3 flex items-center justify-center bg-gray-100 rounded-lg text-gray-600">
+                                @include('svgs.icon-document', ['class' => 'w-8 h-8'])
                             </div>
                             <p class="text-gray-700 font-medium">Klik untuk unggah NPWP (opsional)</p>
                             <p class="text-xs text-gray-500">Atau seret file ke sini</p>
@@ -109,7 +112,7 @@
                 <!-- Step 4: Complete -->
                 <div class="text-center mb-6">
                     <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                        <span class="text-3xl">✓</span>
+                        @include('svgs.icon-check', ['class' => 'w-10 h-10 text-green-600'])
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 mb-2">Profil Siap!</h2>
                     <p class="text-gray-600">Profil Anda telah berhasil dibuat. Mari mulai menggunakan Pembantu!</p>
@@ -122,15 +125,19 @@
             <button 
                 wire:click="prevStep"
                 {{ $step == 1 ? 'disabled' : '' }}
-                class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
-                ← Kembali
+                @include('svgs.icon-chevron-left', ['class' => 'w-5 h-5'])
+                Kembali
             </button>
             <button 
                 wire:click="{{ $step == 4 ? 'completeOnboarding' : 'nextStep' }}"
-                class="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
+                class="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition inline-flex items-center justify-center gap-2"
             >
-                {{ $step == 4 ? 'Mulai Menggunakan' : 'Lanjutkan →' }}
+                <span>{{ $step == 4 ? 'Mulai Menggunakan' : 'Lanjutkan' }}</span>
+                @if($step != 4)
+                  @include('svgs.icon-chevron-right', ['class' => 'w-5 h-5'])
+                @endif
             </button>
         </div>
     </div>

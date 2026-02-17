@@ -24,7 +24,15 @@ class Login extends Component
         ]);
 
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
-            return redirect()->route('dashboard');
+            $user = Auth::user();
+            
+            if ($user->hasRole('admin')) {
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->hasRole('agency')) {
+                return redirect()->route('agency.dashboard');
+            }
+            
+            return redirect()->route('orders.list');
         }
 
         $this->addError('email', 'Email atau kata sandi salah');

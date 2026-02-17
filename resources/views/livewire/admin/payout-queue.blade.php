@@ -74,7 +74,10 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Bukti Transfer</label>
                     <input type="file" wire:model="proofFile" class="block w-full text-sm border border-gray-300 rounded-lg p-2" />
                     @if ($proofFile)
-                        <p class="text-xs text-green-600 mt-1">✓ File dipilih: {{ $proofFile->getClientOriginalName() }}</p>
+                        <p class="text-xs text-green-600 mt-1 flex items-center gap-1">
+                          @include('svgs.icon-check', ['class' => 'w-4 h-4 text-green-600'])
+                          File dipilih: {{ $proofFile->getClientOriginalName() }}
+                        </p>
                     @endif
                 </div>
 

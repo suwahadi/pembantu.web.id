@@ -40,5 +40,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verify-midtrans-signature' => \App\Http\Middleware\VerifyMidtransSignature::class,
         'admin-access' => \App\Http\Middleware\CheckAdminAccess::class,
+        'agency-access' => \App\Http\Middleware\CheckAgencyAccess::class,
+        'visitor-access' => \App\Http\Middleware\CheckVisitorAccess::class,
     ];
 }

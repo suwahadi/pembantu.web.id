@@ -22,7 +22,7 @@ class Register extends Component
         $this->validate([
             'name' => 'required|string|min:3',
             'email' => 'required|email|unique:users',
-            'phone' => 'required|regex:/^(\+62|0)[0-9]{9,12}$/',
+            'phone' => 'required|string|min:10|max:13',
             'password' => 'required|min:8|confirmed',
             'role' => 'required|in:visitor,agency',
             'terms' => 'accepted',
@@ -33,7 +33,8 @@ class Register extends Component
             'email.email' => 'Format email tidak valid',
             'email.unique' => 'Email sudah terdaftar',
             'phone.required' => 'Nomor telepon wajib diisi',
-            'phone.regex' => 'Format nomor telepon tidak valid',
+            'phone.min' => 'Nomor telepon minimal 10 digit',
+            'phone.max' => 'Nomor telepon maksimal 13 digit',
             'password.required' => 'Kata sandi wajib diisi',
             'password.min' => 'Kata sandi minimal 8 karakter',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok',
@@ -57,7 +58,11 @@ class Register extends Component
         // Auto-login
         auth()->login($user);
 
-        return redirect()->route('onboarding');
+        if ($user->hasRole('agency')) {
+            return redirect()->route('agency.dashboard');
+        }
+
+        return redirect()->route('orders.list');
     }
 
     public function render()

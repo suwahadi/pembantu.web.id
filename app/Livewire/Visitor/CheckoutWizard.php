@@ -99,7 +99,7 @@ class CheckoutWizard extends Component
     public function render()
     {
         return view('livewire.visitor.checkout-wizard', [
-            'locations' => Location::whereNull('parent_id')->pluck('name', 'id')->toArray(),
+            'locations' => Location::distinct()->select('id', 'city')->orderBy('city')->get()->mapWithKeys(fn($loc) => [$loc->id => $loc->city])->toArray(),
             'schemes' => [
                 'HARIAN' => 'Harian',
                 'MINGGUAN' => 'Mingguan',

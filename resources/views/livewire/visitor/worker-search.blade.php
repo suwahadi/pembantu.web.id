@@ -20,7 +20,7 @@
                     <div class="text-sm text-gray-600">{{ $worker->category_name }}</div>
                     
                     <div class="flex items-center gap-1 text-sm">
-                        <span class="text-yellow-500">★</span>
+                        @include('svgs.icon-star', ['class' => 'w-4 h-4 text-yellow-500'])
                         <span>{{ number_format($worker->rating, 1) }}</span>
                         <span class="text-gray-600">({{ $worker->review_count }})</span>
                     </div>
@@ -33,15 +33,23 @@
                         <div class="text-sm">
                             Mulai dari <span class="font-semibold">Rp {{ number_format($worker->min_price_idr, 0, ',', '.') }}</span>
                         </div>
-                        <a href="{{ route('checkout', ['worker' => $worker->id]) }}" class="text-blue-600 hover:underline text-sm font-medium">
-                            Pesan
-                        </a>
+                        @auth
+                            <a href="{{ route('checkout', $worker->id) }}" class="text-blue-600 hover:underline text-sm font-medium">
+                                Pesan
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="text-blue-600 hover:underline text-sm font-medium">
+                                Login untuk Pesan
+                            </a>
+                        @endauth
                     </div>
                 </div>
             </x-card>
         @empty
             <div class="col-span-full text-center py-8 text-gray-600">
-                <div class="text-4xl mb-2">☹️</div>
+                <div class="text-4xl mb-2 flex justify-center">
+                    @include('svgs.icon-frown', ['class' => 'w-12 h-12 text-gray-400'])
+                </div>
                 <p>Tidak ada hasil yang sesuai. Coba ubah filter pencarian Anda.</p>
             </div>
         @endforelse

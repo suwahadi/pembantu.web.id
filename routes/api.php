@@ -11,5 +11,5 @@ Route::get('/health', function () {
     return response()->json(['status' => 'ok']);
 });
 
-// Midtrans callback
-Route::post('/payment/midtrans/notification', 'App\Http\Controllers\Payment\MidtransNotificationController@handleNotification');
+// Midtrans callback (webhook dari Midtrans)
+Route::post('/payment/midtrans/notification', \App\Http\Controllers\Payment\MidtransWebhookController::class);

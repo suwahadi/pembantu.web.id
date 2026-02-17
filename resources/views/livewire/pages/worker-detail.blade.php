@@ -2,8 +2,9 @@
     <!-- Worker Header -->
     <section class="bg-white shadow">
         <div class="max-w-7xl mx-auto px-4 py-8">
-            <a href="/search" class="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center">
-                ← Kembali ke Pencarian
+            <a href="/search" class="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center gap-1">
+                @include('svgs.icon-chevron-left', ['class' => 'w-5 h-5'])
+                Kembali ke Pencarian
             </a>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -41,8 +42,9 @@
 
                     <!-- Verification Status -->
                     @if($worker->verification_status === 'verified')
-                        <div class="inline-block px-4 py-2 bg-green-100 text-green-800 rounded-lg text-sm font-medium mb-6">
-                            ✓ Terverifikasi
+                        <div class="inline-block px-4 py-2 bg-green-100 text-green-800 rounded-lg text-sm font-medium mb-6 flex items-center gap-1">
+                            @include('svgs.icon-check', ['class' => 'w-4 h-4 text-green-800'])
+                            Terverifikasi
                         </div>
                     @endif
 

@@ -23,17 +23,20 @@ use App\Livewire\Agency\OrderList;
 use App\Livewire\Agency\OrderDetail as AgencyOrderDetail;
 
 use App\Livewire\Pages\Home;
+use App\Livewire\Auth\Login;
+use App\Livewire\Auth\Register;
 
 // Public Routes
 Route::get('/', Home::class)->name('home');
-
-// Worker Search & Checkout
 Route::get('/cari', WorkerSearch::class)->name('workers.search');
-Route::get('/checkout/{worker}', CheckoutWizard::class)->name('checkout');
 
-// Authentication Routes (via Livewire/Fortify if installed)
+// Checkout Route (Protected)
+Route::middleware('auth')->get('/checkout/{worker}', CheckoutWizard::class)->name('checkout');
+
+// Authentication Routes (via Livewire)
 Route::middleware('guest')->group(function () {
-    // Add login & register routes if needed
+    Route::get('/login', Login::class)->name('login');
+    Route::get('/register', Register::class)->name('register');
 });
 
 // Authenticated Visitor Routes
