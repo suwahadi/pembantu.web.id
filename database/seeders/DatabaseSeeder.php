@@ -16,6 +16,10 @@ class DatabaseSeeder extends Seeder
             ServiceCategoriesSeeder::class,
             ServiceSkillsSeeder::class,
             LocationsSeeder::class,
+            UserSeeder::class,
+            AgencySeeder::class,
+            WorkerSeeder::class,
+            OrderSeeder::class,
         ]);
     }
 }

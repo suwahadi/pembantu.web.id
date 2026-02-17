@@ -38,6 +38,19 @@ class User extends Model
         return $this->roles()->where('name', $role)->exists();
     }
 
+    public function assignRole(string $role): void
+    {
+        $roleModel = Role::where('name', $role)->first();
+        if ($roleModel && !$this->hasRole($role)) {
+            $this->roles()->attach($roleModel->id);
+        }
+    }
+
+    public function getRoleNames(): array
+    {
+        return $this->roles()->pluck('name')->toArray();
+    }
+
     public function agency(): HasOne
     {
         return $this->hasOne(Agency::class);
