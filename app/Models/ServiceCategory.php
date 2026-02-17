@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class ServiceCategory extends Model
 {
@@ -11,6 +12,7 @@ class ServiceCategory extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'description',
         'icon',
         'sort_order',
@@ -20,6 +22,17 @@ class ServiceCategory extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+            if (empty($model->slug) || $model->isDirty('name')) {
+                $model->slug = Str::slug($model->name);
+            }
+        });
+    }
 
     public function skills(): HasMany
     {

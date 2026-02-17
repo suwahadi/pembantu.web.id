@@ -16,14 +16,19 @@ class Home extends Component
     {
         $this->categories = ServiceCategory::take(6)->get();
         $this->featured_workers = Worker::with('category', 'location')
-            ->where('is_featured', true)
+            ->where('is_available', true)
+            ->orderBy('rating', 'desc')
+            ->orderBy('total_completed_orders', 'desc')
             ->take(8)
             ->get();
     }
 
     public function search()
     {
-        return redirect()->route('search', ['q' => $this->search_query]);
+        if (!$this->search_query) {
+            return redirect('/search');
+        }
+        return redirect('/search?q=' . urlencode($this->search_query));
     }
 
     public function render()

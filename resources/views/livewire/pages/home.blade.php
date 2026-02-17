@@ -11,7 +11,8 @@
                     <div class="flex-1 relative">
                         <input 
                             type="text" 
-                            wire:model="search_query"
+                            wire:model.live.debounce-300ms="search_query"
+                            wire:keydown.enter="search"
                             placeholder="Cari jasa atau lokasi..." 
                             class="w-full px-6 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
                         >
@@ -41,7 +42,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 @foreach($categories as $category)
-                    <a href="/search?category={{ $category->id }}" class="group">
+                    <a href="/search?category={{ $category->slug }}" class="group">
                         <div class="bg-gradient-to-br {{ $loop->index % 3 == 0 ? 'from-green-400 to-blue-500' : ($loop->index % 3 == 1 ? 'from-purple-400 to-pink-500' : 'from-yellow-400 to-orange-500') }} p-6 rounded-lg text-white text-center hover:shadow-lg transition transform hover:scale-105">
                             <div class="mb-2 flex justify-center">
                                 @switch($category->id % 5)
@@ -81,12 +82,12 @@
                         <div class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden">
                             <!-- Worker Image -->
                             <div class="bg-gradient-to-br from-blue-400 to-blue-600 h-48 flex items-center justify-center text-white text-4xl">
-                                {{ substr($worker->user->name, 0, 1) }}
+                                {{ substr($worker->name, 0, 1) }}
                             </div>
                             
                             <!-- Worker Info -->
                             <div class="p-4">
-                                <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition">{{ $worker->user->name }}</h3>
+                                <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition">{{ $worker->name }}</h3>
                                 <p class="text-sm text-gray-600 mb-2">{{ $worker->category->name }}</p>
                                 
                                 <!-- Rating -->
