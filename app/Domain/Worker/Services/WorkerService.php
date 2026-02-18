@@ -10,23 +10,28 @@ final class WorkerService
     public function create(int $agencyId, array $data): object
     {
         return DB::transaction(function () use ($agencyId, $data) {
-            $id = DB::table('workers')->insertGetId([
-                'agency_id' => $agencyId,
-                'category_id' => (int)$data['category_id'],
-                'location_id' => $data['location_id'] ? (int)$data['location_id'] : null,
-                'name' => trim($data['name']),
-                'bio' => trim($data['bio'] ?? ''),
-                'skills' => trim($data['skills'] ?? ''),
-                'default_scheme' => $data['default_scheme'] ?? 'BULANAN',
-                'min_price_idr' => (int)$data['min_price_idr'],
-                'rank_score' => 0,
-                'is_active' => (int)($data['is_active'] ?? 1),
-                'photo_path' => $data['photo_path'] ?? null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $ids = app(WorkerPublicIdService::class);
 
-            return DB::table('workers')->where('id', $id)->first();
+            return $ids->insertWorkerWithUniquePublicId(function (string $publicId) use ($agencyId, $data) {
+                $id = DB::table('workers')->insertGetId([
+                    'public_id' => $publicId,
+                    'agency_id' => $agencyId,
+                    'category_id' => (int)$data['category_id'],
+                    'location_id' => $data['location_id'] ? (int)$data['location_id'] : null,
+                    'name' => trim($data['name']),
+                    'bio' => trim($data['bio'] ?? ''),
+                    'skills' => trim($data['skills'] ?? ''),
+                    'default_scheme' => $data['default_scheme'] ?? 'BULANAN',
+                    'min_price_idr' => (int)$data['min_price_idr'],
+                    'rank_score' => 0,
+                    'is_active' => (int)($data['is_active'] ?? 1),
+                    'photo_path' => $data['photo_path'] ?? null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                return DB::table('workers')->where('id', $id)->first();
+            }, length: 8, maxRetry: 25);
         });
     }
 

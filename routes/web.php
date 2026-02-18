@@ -26,9 +26,14 @@ use App\Livewire\Pages\Home;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 
+use App\Livewire\Public\WorkerSearchPage;
+use App\Livewire\Public\WorkerShowPage;
+
 // Public Routes
 Route::get('/', Home::class)->name('home');
 Route::get('/cari', WorkerSearch::class)->name('workers.search');
+Route::get('/search', WorkerSearchPage::class)->name('search');
+Route::get('/worker/{publicId}', WorkerShowPage::class)->name('worker.show');
 
 // Checkout Route (Protected)
 Route::middleware('auth')->get('/checkout/{worker}', CheckoutWizard::class)->name('checkout');

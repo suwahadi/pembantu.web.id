@@ -11,10 +11,12 @@ class Worker extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'public_id',
         'agency_id',
         'category_id',
         'name',
         'bio',
+        'skills',
         'location_id',
         'phone',
         'verification_status',
@@ -24,6 +26,8 @@ class Worker extends Model
         'rating',
         'total_reviews',
         'total_completed_orders',
+        'min_price_idr',
+        'default_scheme',
         'is_available',
     ];
 
@@ -31,6 +35,7 @@ class Worker extends Model
         'verified_at' => 'datetime',
         'is_available' => 'boolean',
         'rating' => 'float',
+        'min_price_idr' => 'integer',
     ];
 
     public function agency(): BelongsTo

@@ -45,6 +45,8 @@ class WorkerCatalogService
             'reviews' => $query->orderBy('total_reviews', 'desc'),
             'experience' => $query->orderBy('experience_years', 'desc'),
             'newest' => $query->orderBy('created_at', 'desc'),
+            'price_asc' => $query->orderBy('min_price_idr', 'asc'),
+            'price_desc' => $query->orderBy('min_price_idr', 'desc'),
             default => $query->orderBy('rating', 'desc'),
         };
 
@@ -114,5 +116,24 @@ class WorkerCatalogService
             ->orderBy('updated_at', 'desc')
             ->limit($limit)
             ->get();
+    }
+
+    public function findPublicByPublicId(string $publicId): ?object
+    {
+        return \Illuminate\Support\Facades\DB::table('workers')
+            ->join('agencies','agencies.id','=','workers.agency_id')
+            ->join('service_categories','service_categories.id','=','workers.category_id')
+            ->leftJoin('locations','locations.id','=','workers.location_id')
+            ->select([
+                'workers.*',
+                'agencies.company_name as agency_name',
+                'service_categories.name as category_name',
+                \Illuminate\Support\Facades\DB::raw('COALESCE(locations.city, "-") as location_name'),
+            ])
+            ->where('workers.public_id', $publicId)
+            ->where('workers.is_available', 1)
+            ->where('workers.verification_status', 'verified')
+            ->where('agencies.verification_status', 'verified')
+            ->first();
     }
 }

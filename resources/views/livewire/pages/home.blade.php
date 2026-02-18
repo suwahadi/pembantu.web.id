@@ -20,7 +20,7 @@
                             wire:click="search"
                             class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
-                            <i class="hgi-stroke hgi-search w-5 h-5"></i>
+                            <x-icon.search class="w-5 h-5" />
                         </button>
                     </div>
                     <button 
@@ -43,29 +43,23 @@
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 @foreach($categories as $category)
                     <a href="/search?category={{ $category->slug }}" class="group">
-                        <div class="bg-gradient-to-br {{ $loop->index % 3 == 0 ? 'from-green-400 to-blue-500' : ($loop->index % 3 == 1 ? 'from-purple-400 to-pink-500' : 'from-yellow-400 to-orange-500') }} p-6 rounded-lg text-white text-center hover:shadow-lg transition transform hover:scale-105">
-                            <div class="mb-3 flex justify-center text-5xl">
+                        <div class="bg-gradient-to-br {{ $loop->index % 3 == 0 ? 'from-blue-600 to-indigo-700' : ($loop->index % 3 == 1 ? 'from-purple-600 to-pink-700' : 'from-emerald-600 to-teal-700') }} p-6 rounded-2xl text-white text-center hover:shadow-xl transition transform hover:-translate-y-1">
+                            <div class="mb-3 flex justify-center text-4xl">
                                 @if($category->slug === 'babysitter')
-                                    <i class="hgi hgi-stroke hgi-baby-02"></i>
+                                    <x-icon.baby class="h-10 w-10" />
                                 @elseif($category->slug === 'sopir')
-                                    <i class="hgi hgi-stroke hgi-car-01"></i>
+                                    <x-icon.car class="h-10 w-10" />
                                 @elseif($category->slug === 'perawat-lansia')
-                                    <i class="hgi hgi-stroke hgi-wheelchair"></i>
+                                    <x-icon.heart class="h-10 w-10" />
                                 @elseif($category->slug === 'art-prt')
-                                    <i class="hgi hgi-stroke hgi-clean"></i>
+                                    <x-icon.home class="h-10 w-10" />
                                 @elseif($category->slug === 'tukang-kebun')
-                                    <i class="hgi hgi-stroke hgi-plant-02"></i>
-                                @elseif($loop->index % 4 == 0)
-                                    <i class="hgi hgi-stroke hgi-home"></i>
-                                @elseif($loop->index % 4 == 1)
-                                    <i class="hgi hgi-stroke hgi-user"></i>
-                                @elseif($loop->index % 4 == 2)
-                                    <i class="hgi hgi-stroke hgi-star"></i>
+                                    <x-icon.plant class="h-10 w-10" />
                                 @else
-                                    <i class="hgi hgi-stroke hgi-map-pin"></i>
+                                    <x-icon.logo class="h-10 w-10" />
                                 @endif
                             </div>
-                            <h3 class="font-semibold text-sm">{{ $category->name }}</h3>
+                            <h3 class="font-bold text-sm tracking-wide">{{ $category->name }}</h3>
                         </div>
                     </a>
                 @endforeach
@@ -81,40 +75,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach($featured_workers as $worker)
-                    <a href="/worker/{{ $worker->id }}" class="group">
-                        <div class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden">
-                            <!-- Worker Image -->
-                            <div class="bg-gradient-to-br from-blue-400 to-blue-600 h-48 flex items-center justify-center text-white text-4xl">
-                                {{ substr($worker->name, 0, 1) }}
-                            </div>
-                            
-                            <!-- Worker Info -->
-                            <div class="p-4">
-                                <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition">{{ $worker->name }}</h3>
-                                <p class="text-sm text-gray-600 mb-2">{{ $worker->category->name }}</p>
-                                
-                                <!-- Rating -->
-                                <div class="flex items-center space-x-1 mb-3">
-                                    <span class="text-yellow-500">
-                                        <i class="hgi-stroke hgi-star w-4 h-4"></i>
-                                    </span>
-                                    <span class="text-sm font-semibold text-gray-900">4.8</span>
-                                    <span class="text-xs text-gray-500">({{ rand(20, 200) }} ulasan)</span>
-                                </div>
-                                
-                                <!-- Location -->
-                                <div class="flex items-center space-x-1 text-xs text-gray-600 mb-3">
-                                    <i class="hgi hgi-stroke hgi-location-03"></i>
-                                    <span>{{ $worker->location->name ?? 'Jakarta' }}</span>
-                                </div>
-                                
-                                <!-- Price -->
-                                <p class="text-lg font-bold text-blue-600">
-                                    Rp {{ number_format($worker->pricings->first()?->price_idr ?? 150000, 0, ',', '.') }}
-                                </p>
-                            </div>
-                        </div>
-                    </a>
+                    <x-worker-card :worker="$worker" />
                 @endforeach
             </div>
         </div>
