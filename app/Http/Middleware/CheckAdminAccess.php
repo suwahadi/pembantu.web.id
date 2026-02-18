@@ -13,10 +13,10 @@ class CheckAdminAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() && $request->user()->can('admin-access')) {
+        if ($request->user() && $request->user()->hasRole('admin')) {
             return $next($request);
         }
 
-        abort(403, 'Unauthorized');
+        abort(403, 'Unauthorized - Admin access required');
     }
 }

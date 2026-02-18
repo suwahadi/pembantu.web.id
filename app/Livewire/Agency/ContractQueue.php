@@ -36,16 +36,20 @@ final class ContractQueue extends Component
         $agencyId = auth()->user()->agency_id;
 
         $items = DB::table('contracts')
-            ->where('agency_id', $agencyId)
-            ->where('status', 'draft')
-            ->orderByDesc('created_at')
+            ->join('orders', 'orders.id', '=', 'contracts.order_id')
+            ->where('orders.agency_id', $agencyId)
+            ->where('contracts.agency_signed', false)
+            ->select('contracts.*')
+            ->orderByDesc('contracts.created_at')
             ->paginate(20);
 
         $selected = null;
         if ($this->selectedId) {
             $selected = DB::table('contracts')
-                ->where('id', $this->selectedId)
-                ->where('agency_id', $agencyId)
+                ->join('orders', 'orders.id', '=', 'contracts.order_id')
+                ->where('contracts.id', $this->selectedId)
+                ->where('orders.agency_id', $agencyId)
+                ->select('contracts.*')
                 ->first();
         }
 

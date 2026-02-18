@@ -122,8 +122,8 @@ final class WorkerForm extends Component
 
     public function render()
     {
-        $categories = DB::table('worker_categories')->orderBy('name')->pluck('name', 'id')->all();
-        $locations = DB::table('locations')->orderBy('name')->pluck('name', 'id')->all();
+        $categories = DB::table('service_categories')->orderBy('name')->pluck('name', 'id')->all();
+        $locations = DB::table('locations')->distinct()->select('id', 'city')->orderBy('city')->get()->mapWithKeys(fn($loc) => [$loc->id => $loc->city])->toArray();
 
         return view('livewire.agency.worker-form', compact('categories', 'locations'))
             ->layout('layouts.agency', ['title' => $this->workerId ? 'Edit Worker' : 'Tambah Worker']);

@@ -5,6 +5,22 @@
     </div>
   @endif
 
+  @if(session('error'))
+    <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 text-sm">
+      {{ session('error') }}
+    </div>
+  @endif
+
+  @if ($errors->any())
+    <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 text-sm">
+      <ul class="list-disc list-inside space-y-1">
+        @foreach ($errors->all() as $error)
+          <li>{{ $error }}</li>
+        @endforeach
+      </ul>
+    </div>
+  @endif
+
   <x-card title="Rekening Bank Agency" subtitle="Kelola rekening untuk menerima payout">
     @if(empty($items->toArray()))
       <div class="text-sm text-gray-600">Agency belum menambahkan rekening bank.</div>
@@ -52,35 +68,67 @@
 
   <x-card title="Tambah Rekening Baru">
     <div class="space-y-3">
-      <x-form.input
-        label="Nama Bank"
-        wire:model="bankName"
-        placeholder="BCA, Mandiri, BNI, dll"
-        @error('bankName') :error="$errors->first('bankName')" @enderror
-      />
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Kode Bank</label>
+        <input 
+          type="text"
+          wire:model.blur="bankCode"
+          placeholder="BCA, MANDIRI, BNI, CIMB, dll"
+          class="w-full px-3 py-2 border @error('bankCode') border-red-500 @else border-gray-300 @enderror rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        @error('bankCode')
+          <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+        @enderror
+      </div>
 
-      <x-form.input
-        label="Nomor Rekening"
-        wire:model="accountNo"
-        placeholder="Contoh: 123456789012"
-        @error('accountNo') :error="$errors->first('accountNo')" @enderror
-      />
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Bank</label>
+        <input 
+          type="text"
+          wire:model.blur="bankName"
+          placeholder="PT Bank BCA Indonesia"
+          class="w-full px-3 py-2 border @error('bankName') border-red-500 @else border-gray-300 @enderror rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        @error('bankName')
+          <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+        @enderror
+      </div>
 
-      <x-form.input
-        label="Nama Pemilik Rekening"
-        wire:model="accountName"
-        placeholder="Nama sesuai buku tabungan"
-        @error('accountName') :error="$errors->first('accountName')" @enderror
-      />
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Rekening</label>
+        <input 
+          type="text"
+          wire:model.blur="accountNo"
+          placeholder="Contoh: 123456789012"
+          class="w-full px-3 py-2 border @error('accountNo') border-red-500 @else border-gray-300 @enderror rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        @error('accountNo')
+          <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+        @enderror
+      </div>
 
-      <x-button
-        variant="primary"
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pemilik Rekening</label>
+        <input 
+          type="text"
+          wire:model.blur="accountName"
+          placeholder="Nama sesuai buku tabungan"
+          class="w-full px-3 py-2 border @error('accountName') border-red-500 @else border-gray-300 @enderror rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        @error('accountName')
+          <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+        @enderror
+      </div>
+
+      <button 
+        type="button"
         wire:click="add"
         wire:loading.attr="disabled"
+        class="px-4 py-2 rounded-lg font-medium text-sm bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
       >
         <span wire:loading.remove>Tambah Rekening</span>
         <span wire:loading>Memproses...</span>
-      </x-button>
+      </button>
     </div>
 
     <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg text-xs flex items-start gap-2">

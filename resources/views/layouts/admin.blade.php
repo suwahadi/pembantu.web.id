@@ -6,6 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Admin - Pembantu.web.id' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Tailwind CSS CDN as fallback -->
+    <script src="https://cdn.tailwindcss.com"></script>
     @livewireStyles
 </head>
 <body class="min-h-screen bg-gray-50 text-gray-900">

@@ -13,7 +13,7 @@ class CheckAgencyAccess
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() && $request->user()->can('agency-access')) {
+        if ($request->user() && $request->user()->hasRole('agency')) {
             return $next($request);
         }
 

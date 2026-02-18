@@ -45,13 +45,13 @@ final class WorkerList extends Component
         $agencyId = (int)auth()->user()->agency_id;
 
         $query = DB::table('workers')
-            ->join('worker_categories', 'worker_categories.id', '=', 'workers.category_id')
+            ->join('service_categories', 'service_categories.id', '=', 'workers.category_id')
             ->leftJoin('locations', 'locations.id', '=', 'workers.location_id')
             ->select([
                 'workers.id', 'workers.name', 'workers.is_active', 'workers.min_price_idr',
                 'workers.default_scheme', 'workers.photo_path',
-                'worker_categories.name as category_name',
-                DB::raw('COALESCE(locations.name, "-") as location_name'),
+                'service_categories.name as category_name',
+                DB::raw('COALESCE(locations.city, "-") as location_name'),
             ])
             ->where('workers.agency_id', $agencyId)
             ->orderByDesc('workers.id');
@@ -72,8 +72,8 @@ final class WorkerList extends Component
 
         $items = $query->paginate(15);
 
-        $categories = DB::table('worker_categories')->orderBy('name')->pluck('name', 'id')->all();
-        $locations = DB::table('locations')->orderBy('name')->pluck('name', 'id')->all();
+        $categories = DB::table('service_categories')->orderBy('name')->pluck('name', 'id')->all();
+        $locations = DB::table('locations')->distinct()->select('id', 'city')->orderBy('city')->get()->mapWithKeys(fn($loc) => [$loc->id => $loc->city])->toArray();
 
         return view('livewire.agency.worker-list', compact('items', 'categories', 'locations'))
             ->layout('layouts.agency', ['title' => 'Workers']);

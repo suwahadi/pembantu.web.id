@@ -13,7 +13,7 @@ class CheckVisitorAccess
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() && $request->user()->can('visitor-access')) {
+        if ($request->user() && $request->user()->hasRole('visitor')) {
             return $next($request);
         }
 

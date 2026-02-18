@@ -8,6 +8,7 @@ use App\Domain\Bank\Services\BankAccountService;
 
 final class BankAccounts extends Component
 {
+    public string $bankCode = '';
     public string $bankName = '';
     public string $accountNo = '';
     public string $accountName = '';
@@ -16,9 +17,10 @@ final class BankAccounts extends Component
     protected function rules(): array
     {
         return [
-            'bankName' => ['required', 'string', 'min:2', 'max:50'],
-            'accountNo' => ['required', 'string', 'min:6', 'max:30'],
-            'accountName' => ['required', 'string', 'min:2', 'max:100'],
+            'bankCode' => ['required', 'string', 'max:10'],
+            'bankName' => ['required', 'string', 'min:2', 'max:100'],
+            'accountNo' => ['required', 'string', 'min:8', 'max:30', 'regex:/^[0-9]+$/'],
+            'accountName' => ['required', 'string', 'min:3', 'max:120'],
         ];
     }
 
@@ -32,17 +34,27 @@ final class BankAccounts extends Component
 
     public function add(BankAccountService $banks): void
     {
-        $this->validate();
+        try {
+            $validated = $this->validate();
+            
+            $agencyId = auth()->user()->agency_id;
+            $banks->createForAgency(
+                $agencyId, 
+                $validated['bankCode'], 
+                $validated['bankName'], 
+                $validated['accountNo'], 
+                $validated['accountName']
+            );
 
-        $agencyId = auth()->user()->agency_id;
-        $banks->createForAgency($agencyId, [
-            'bank_name' => $this->bankName,
-            'account_no' => $this->accountNo,
-            'account_name' => $this->accountName,
-        ]);
-
-        session()->flash('success', 'Rekening berhasil ditambahkan (menunggu verifikasi).');
-        $this->reset(['bankName', 'accountNo', 'accountName']);
+            session()->flash('success', 'Rekening berhasil ditambahkan (menunggu verifikasi).');
+            $this->reset(['bankCode', 'bankName', 'accountNo', 'accountName']);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation exception handled by Livewire automatically
+            throw $e;
+        } catch (\Exception $e) {
+            $this->dispatch('error', message: 'Error: ' . $e->getMessage());
+            session()->flash('error', 'Error: ' . $e->getMessage());
+        }
     }
 
     public function setPrimary(int $bankAccountId, BankAccountService $banks): void

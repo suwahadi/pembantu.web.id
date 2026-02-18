@@ -51,13 +51,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('refunds', function (Blueprint $table) {
+            $table->dropForeign(['verified_by_admin_user_id']);
             $table->dropColumn(['bank_name_snapshot', 'account_no_snapshot', 'account_name_snapshot', 'transfer_ref', 'verified_by_admin_user_id', 'verified_at', 'admin_note']);
-            $table->dropForeignIdFor('verified_by_admin_user_id');
         });
 
         Schema::table('payouts', function (Blueprint $table) {
+            $table->dropForeign(['verified_by_admin_user_id']);
             $table->dropColumn(['bank_name_snapshot', 'account_no_snapshot', 'account_name_snapshot', 'transfer_ref', 'verified_by_admin_user_id', 'verified_at', 'admin_note']);
-            $table->dropForeignIdFor('verified_by_admin_user_id');
         });
     }
 };
