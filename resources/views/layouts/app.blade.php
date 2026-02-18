@@ -60,15 +60,69 @@
 
       <nav class="flex items-center gap-2">
         <a href="{{ route('search') }}"
-           class="hidden sm:inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm
-                  border-gray-200 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900">
+           class="hidden sm:inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium
+                  border-gray-200 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900 transition-colors">
           <x-icon.search class="h-4 w-4" />
           <span>Cari</span>
         </a>
 
+        @guest
+          <a href="{{ route('login') }}"
+             class="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium
+                    border-gray-200 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900 transition-colors">
+            <span>Masuk</span>
+          </a>
+          <a href="{{ route('register') }}"
+             class="hidden sm:inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium
+                    text-white hover:bg-blue-700 transition-colors">
+            <span>Daftar</span>
+          </a>
+        @else
+          <div class="relative group">
+            <button type="button" 
+                    class="inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium
+                           border-gray-200 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900 transition-colors">
+              <div class="h-5 w-5 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 text-[10px] uppercase font-bold">
+                {{ substr(auth()->user()->name, 0, 2) }}
+              </div>
+              <span class="hidden md:inline">{{ auth()->user()->name }}</span>
+              <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            <div class="absolute right-0 mt-2 w-48 scale-95 opacity-0 invisible group-hover:scale-100 group-hover:opacity-100 group-hover:visible transition-all duration-200 origin-top-right">
+              <div class="rounded-2xl border border-gray-100 bg-white p-2 shadow-xl dark:border-gray-800 dark:bg-gray-900">
+                @if(auth()->user()->hasRole('admin'))
+                  <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800">
+                    Dashboard Admin
+                  </a>
+                @elseif(auth()->user()->hasRole('agency'))
+                  <a href="{{ route('agency.dashboard') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors">
+                    Dashboard Agensi
+                  </a>
+                @endif
+                <a href="{{ route('profile') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors">
+                  Profil Saya
+                </a>
+                <a href="{{ route('orders.list') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors">
+                  Pesanan Saya
+                </a>
+                <div class="my-1 border-t border-gray-100 dark:border-gray-800"></div>
+                <form method="POST" action="{{ route('logout') }}">
+                  @csrf
+                  <button type="submit" class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
+                    Keluar
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        @endguest
+
         <button type="button" onclick="window.__toggleTheme()"
-          class="inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm
-                 border-gray-200 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900"
+          class="inline-flex items-center justify-center h-10 w-10 rounded-xl border
+                 border-gray-200 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900 transition-colors"
           aria-label="Toggle dark mode">
           <span class="hidden dark:inline">
             <x-icon.sun class="h-4 w-4" />
@@ -76,7 +130,6 @@
           <span class="inline dark:hidden">
             <x-icon.moon class="h-4 w-4" />
           </span>
-          <span class="hidden sm:inline">Mode</span>
         </button>
       </nav>
     </div>

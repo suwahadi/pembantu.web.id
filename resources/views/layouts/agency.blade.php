@@ -20,8 +20,9 @@
                 $nav = [
                     ['label' => 'Dashboard', 'route' => 'agency.dashboard'],
                     ['label' => 'Kontrak', 'route' => 'agency.contracts'],
-                    ['label' => 'Worker', 'route' => 'agency.workers'],
-                    ['label' => 'Order', 'route' => 'agency.orders'],
+                    ['label' => 'Worker', 'route' => 'agency.workers.index'],
+                    ['label' => 'Order', 'route' => 'agency.orders.index'],
+                    ['label' => 'Profil', 'route' => 'profile'],
                     ['label' => 'Rekening Bank', 'route' => 'agency.bank-accounts'],
                 ];
             @endphp

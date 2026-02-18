@@ -46,7 +46,8 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated Visitor Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/pesanan', fn() => view('orders.list'))->name('orders.list');
+    Route::get('/profil', \App\Livewire\Profile\UpdateProfile::class)->name('profile');
+    Route::get('/pesanan', \App\Livewire\Visitor\OrderList::class)->name('orders.list');
     Route::get('/pesanan/{order}', OrderDetail::class)->name('orders.show');
     Route::get('/pesanan/{order}/dispute', DisputeForm::class)->name('orders.dispute');
     Route::get('/rekening-bank', VisitorBankAccounts::class)->name('visitor.bank-accounts');
@@ -70,7 +71,7 @@ Route::middleware(['auth', 'admin-access'])->prefix('admin')->name('admin.')->gr
 
 // Agency Routes (Protected by middleware + gate)
 Route::middleware(['auth', 'agency-access'])->prefix('agency')->name('agency.')->group(function () {
-    Route::get('/', fn() => view('agency.dashboard'))->name('dashboard');
+    Route::get('/', \App\Livewire\Agency\Dashboard::class)->name('dashboard');
     Route::get('/contracts', ContractQueue::class)->name('contracts');
     Route::get('/workers', WorkerList::class)->name('workers.index');
     Route::get('/workers/create', WorkerForm::class)->name('workers.create');

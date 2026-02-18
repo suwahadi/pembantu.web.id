@@ -22,6 +22,7 @@
                     ['label' => 'Dispute', 'route' => 'admin.disputes'],
                     ['label' => 'Refund', 'route' => 'admin.refunds'],
                     ['label' => 'Payout', 'route' => 'admin.payouts'],
+                    ['label' => 'Profil', 'route' => 'profile'],
                     ['label' => 'Rekening Bank', 'route' => 'admin.bank-accounts'],
                 ];
             @endphp

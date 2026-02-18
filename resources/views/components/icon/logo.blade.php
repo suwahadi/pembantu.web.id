@@ -1,6 +1,7 @@
 @props(['class' => 'h-5 w-5'])
-<svg class="{{ $class }}" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-  <path d="M6 8c0-2 1.5-4 4-4h4c2.5 0 4 2 4 4v8c0 2-1.5 4-4 4h-4c-2.5 0-4-2-4-4V8Z"
-        stroke="currentColor" stroke-width="2"/>
-  <path d="M9 10h6M9 14h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<svg class="{{ $class }}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12 22V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M21 7L12 12L3 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12 12V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

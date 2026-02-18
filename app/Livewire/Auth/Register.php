@@ -20,43 +20,57 @@ class Register extends Component
     public function submit()
     {
         $this->validate([
-            'name' => 'required|string|min:3',
-            'email' => 'required|email|unique:users',
-            'phone' => 'required|string|min:10|max:13',
+            'name' => 'required|string|min:3|max:50',
+            'email' => 'required|email|max:255|unique:users,email',
+            'phone' => 'required|string|min:10|max:15|unique:users,phone',
             'password' => 'required|min:8|confirmed',
             'role' => 'required|in:visitor,agency',
             'terms' => 'accepted',
         ], [
-            'name.required' => 'Nama wajib diisi',
+            'name.required' => 'Nama lengkap wajib diisi',
             'name.min' => 'Nama minimal 3 karakter',
-            'email.required' => 'Email wajib diisi',
+            'name.max' => 'Nama maksimal 50 karakter',
+            'email.required' => 'Alamat email wajib diisi',
             'email.email' => 'Format email tidak valid',
-            'email.unique' => 'Email sudah terdaftar',
+            'email.unique' => 'Email ini sudah terdaftar',
             'phone.required' => 'Nomor telepon wajib diisi',
             'phone.min' => 'Nomor telepon minimal 10 digit',
-            'phone.max' => 'Nomor telepon maksimal 13 digit',
+            'phone.max' => 'Nomor telepon maksimal 15 digit',
+            'phone.unique' => 'Nomor telepon sudah terdaftar',
             'password.required' => 'Kata sandi wajib diisi',
             'password.min' => 'Kata sandi minimal 8 karakter',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok',
-            'terms' => 'Anda harus menerima syarat & ketentuan',
+            'terms.accepted' => 'Anda harus menyetujui syarat & ketentuan',
+            'role.required' => 'Pilih jenis akun Anda',
         ]);
 
-        // Create user
-        $user = User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'password' => Hash::make($this->password),
-        ]);
+        \Illuminate\Support\Facades\DB::transaction(function () {
+            // Create user
+            $user = User::create([
+                'name' => $this->name,
+                'email' => $this->email,
+                'phone' => $this->phone,
+                'password' => Hash::make($this->password),
+            ]);
 
-        // Assign role
-        $role = Role::where('name', $this->role)->first();
-        if ($role) {
-            $user->roles()->attach($role);
-        }
+            // Assign role
+            $role = Role::where('name', $this->role)->first();
+            if ($role) {
+                $user->roles()->attach($role->id);
+            } else {
+                // Fallback to visitor if role not found
+                $visitorRole = Role::where('name', 'visitor')->first();
+                if ($visitorRole) {
+                    $user->roles()->attach($visitorRole->id);
+                }
+            }
 
-        // Auto-login
-        auth()->login($user);
+            // Auto-login
+            auth()->login($user);
+        });
+
+        $user = auth()->user();
+        session()->flash('success', 'Akun berhasil dibuat. Selamat datang di Pembantu.web.id!');
 
         if ($user->hasRole('agency')) {
             return redirect()->route('agency.dashboard');

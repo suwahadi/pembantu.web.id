@@ -14,28 +14,31 @@ class Login extends Component
     public function submit()
     {
         $this->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:8',
         ], [
-            'email.required' => 'Email wajib diisi',
+            'email.required' => 'Alamat email wajib diisi',
             'email.email' => 'Format email tidak valid',
+            'email.exists' => 'Akun dengan email ini tidak ditemukan',
             'password.required' => 'Kata sandi wajib diisi',
-            'password.min' => 'Kata sandi minimal 6 karakter',
+            'password.min' => 'Kata sandi minimal 8 karakter',
         ]);
 
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             $user = Auth::user();
             
+            session()->flash('success', 'Selamat datang kembali, ' . $user->name . '!');
+
             if ($user->hasRole('admin')) {
-                return redirect()->route('admin.dashboard');
+                return redirect()->intended(route('admin.dashboard'));
             } elseif ($user->hasRole('agency')) {
-                return redirect()->route('agency.dashboard');
+                return redirect()->intended(route('agency.dashboard'));
             }
             
-            return redirect()->route('orders.list');
+            return redirect()->intended(route('orders.list'));
         }
 
-        $this->addError('email', 'Email atau kata sandi salah');
+        $this->addError('password', 'Kata sandi yang Anda masukkan salah');
     }
 
     public function render()
