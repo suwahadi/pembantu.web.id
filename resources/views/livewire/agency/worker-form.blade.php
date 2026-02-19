@@ -17,7 +17,69 @@
 
     <div class="mt-3 grid grid-cols-1 gap-3">
       <x-form.textarea label="Bio/Deskripsi" wire:model.live="bio" :rows="3" />
-      <x-form.textarea label="Skills (pisahkan dengan koma)" wire:model.live="skills" :rows="2" />
+    </div>
+
+    <!-- Skills Section -->
+    <div class="mt-4 border-t pt-4">
+      <div class="text-sm font-medium mb-2">Keahlian (Skills)</div>
+      @if($categoryId)
+        <div class="flex flex-wrap gap-2">
+          @foreach($allSkills as $skill)
+            <label class="cursor-pointer">
+              <input type="checkbox" wire:model.live="skillIds" value="{{ $skill->id }}" class="hidden peer" />
+              <div class="px-3 py-1 rounded-full border text-xs transition peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 hover:bg-gray-50">
+                {{ $skill->name }}
+              </div>
+            </label>
+          @endforeach
+        </div>
+      @else
+        <div class="text-xs text-gray-500 italic">Pilih kategori terlebih dahulu untuk melihat daftar keahlian.</div>
+      @endif
+      @error('skillIds') <div class="text-xs text-red-600 mt-1">{{ $message }}</div> @enderror
+    </div>
+
+    <!-- Service Areas Section -->
+    <div class="mt-6 border-t pt-4">
+      <div class="text-sm font-medium mb-2">Wilayah Layanan (Area)</div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 h-40 overflow-y-auto p-2 border rounded-xl">
+        @foreach($locations as $locId => $locCity)
+          <label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-gray-50 rounded">
+            <input type="checkbox" wire:model.live="serviceAreaIds" value="{{ $locId }}" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+            <span class="text-xs">{{ $locCity }}</span>
+          </label>
+        @endforeach
+      </div>
+      <div class="text-[10px] text-gray-500 mt-1">* Worker akan muncul di pencarian untuk wilayah yang dipilih.</div>
+      @error('serviceAreaIds') <div class="text-xs text-red-600 mt-1">{{ $message }}</div> @enderror
+    </div>
+
+    <!-- Pricing Section -->
+    <div class="mt-6 border-t pt-4">
+      <div class="text-sm font-medium mb-2">Daftar Harga Layanan</div>
+      <div class="space-y-3">
+        @foreach($pricings as $index => $p)
+          <div class="flex flex-wrap md:flex-nowrap gap-3 items-end bg-gray-50 p-3 rounded-xl border">
+            <div class="w-full md:w-1/3">
+              <x-form.select label="Tipe" wire:model.live="pricings.{{ $index }}.pricing_type"
+                :options="['hourly' => 'Per Jam', 'daily' => 'Harian', 'weekly' => 'Mingguan', 'monthly' => 'Bulanan', 'project' => 'Borongan']" />
+            </div>
+            <div class="w-full md:w-1/3">
+              <x-form.input label="Harga (IDR)" type="number" wire:model.live="pricings.{{ $index }}.price_idr" />
+            </div>
+            <div class="w-full md:w-1/3 flex gap-2">
+              <x-form.input label="Keterangan" wire:model.live="pricings.{{ $index }}.description" placeholder="Optional" />
+              @if(count($pricings) > 1)
+                <button type="button" wire:click="removePricing({{ $index }})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                </button>
+              @endif
+            </div>
+          </div>
+        @endforeach
+        <button type="button" wire:click="addPricing" class="text-sm text-blue-600 font-medium hover:underline">+ Tambah Tipe Harga</button>
+      </div>
+      <div class="text-[10px] text-gray-500 mt-2">* Gunakan biaya minimal sebagai harga default yang tampil di katalog.</div>
     </div>
 
     <div class="mt-4 border-t pt-4 space-y-2">

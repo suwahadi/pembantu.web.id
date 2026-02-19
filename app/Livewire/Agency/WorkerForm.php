@@ -19,7 +19,9 @@ final class WorkerForm extends Component
     public string $defaultScheme = 'BULANAN';
     public int $minPriceIdr = 0;
     public string $bio = '';
-    public string $skills = '';
+    public array $skillIds = [];
+    public array $serviceAreaIds = [];
+    public array $pricings = [];
 
     public $photo;
     public ?string $existingPhotoPath = null;
@@ -33,7 +35,10 @@ final class WorkerForm extends Component
             'defaultScheme' => ['required', 'in:HARIAN,MINGGUAN,BULANAN,PER_JAM'],
             'minPriceIdr' => ['required', 'integer', 'min:0'],
             'bio' => ['nullable', 'string', 'max:4000'],
-            'skills' => ['nullable', 'string', 'max:2000'],
+            'skillIds' => ['nullable', 'array'],
+            'skillIds.*' => ['integer', 'exists:service_skills,id'],
+            'serviceAreaIds' => ['nullable', 'array'],
+            'serviceAreaIds.*' => ['integer', 'exists:locations,id'],
             'photo' => ['nullable', 'image', 'max:4096'],
         ];
     }
@@ -56,9 +61,17 @@ final class WorkerForm extends Component
                 $this->defaultScheme = (string)($row->default_scheme ?? 'BULANAN');
                 $this->minPriceIdr = (int)($row->min_price_idr ?? 0);
                 $this->bio = (string)($row->bio ?? '');
-                $this->skills = (string)($row->skills ?? '');
                 $this->existingPhotoPath = $row->photo_path ? (string)$row->photo_path : null;
+
+                $this->skillIds = DB::table('worker_skills')->where('worker_id', $this->workerId)->pluck('skill_id')->toArray();
+                $this->serviceAreaIds = DB::table('worker_service_areas')->where('worker_id', $this->workerId)->pluck('location_id')->toArray();
+                $this->pricings = DB::table('worker_service_pricings')->where('worker_id', $this->workerId)->get()->map(fn($p) => (array)$p)->toArray();
             }
+        } else {
+            // Default pricing for new worker
+            $this->pricings = [
+                ['pricing_type' => 'daily', 'price_idr' => 0]
+            ];
         }
     }
 
@@ -87,7 +100,9 @@ final class WorkerForm extends Component
                     'default_scheme' => $this->defaultScheme,
                     'min_price_idr' => $this->minPriceIdr,
                     'bio' => $this->bio,
-                    'skills' => $this->skills,
+                    'skills' => $this->skillIds,
+                    'areas' => $this->serviceAreaIds,
+                    'pricings' => $this->pricings,
                     'photo_path' => $photoPath,
                 ]);
                 session()->flash('success', 'Worker berhasil diperbarui.');
@@ -99,7 +114,9 @@ final class WorkerForm extends Component
                     'default_scheme' => $this->defaultScheme,
                     'min_price_idr' => $this->minPriceIdr,
                     'bio' => $this->bio,
-                    'skills' => $this->skills,
+                    'skills' => $this->skillIds,
+                    'areas' => $this->serviceAreaIds,
+                    'pricings' => $this->pricings,
                     'photo_path' => $photoPath,
                     'is_active' => 1,
                 ]);
@@ -111,6 +128,17 @@ final class WorkerForm extends Component
         } catch (\Throwable $e) {
             session()->flash('error', 'Error: ' . $e->getMessage());
         }
+    }
+
+    public function addPricing(): void
+    {
+        $this->pricings[] = ['pricing_type' => 'daily', 'price_idr' => 0, 'description' => ''];
+    }
+
+    public function removePricing(int $index): void
+    {
+        unset($this->pricings[$index]);
+        $this->pricings = array_values($this->pricings);
     }
 
     public function removePhoto(WorkerService $workers): void
@@ -138,8 +166,12 @@ final class WorkerForm extends Component
     {
         $categories = DB::table('service_categories')->orderBy('name')->pluck('name', 'id')->all();
         $locations = DB::table('locations')->distinct()->select('id', 'city')->orderBy('city')->get()->mapWithKeys(fn($loc) => [$loc->id => $loc->city])->toArray();
+        $allSkills = DB::table('service_skills')
+            ->when($this->categoryId, fn($q) => $q->where('category_id', $this->categoryId))
+            ->orderBy('name')
+            ->get();
 
-        return view('livewire.agency.worker-form', compact('categories', 'locations'))
+        return view('livewire.agency.worker-form', compact('categories', 'locations', 'allSkills'))
             ->layout('layouts.agency', ['title' => $this->workerId ? 'Edit Worker' : 'Tambah Worker']);
     }
 }
