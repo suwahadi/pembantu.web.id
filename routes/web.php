@@ -35,8 +35,8 @@ Route::get('/cari', WorkerSearch::class)->name('workers.search');
 Route::get('/search', WorkerSearchPage::class)->name('search');
 Route::get('/worker/{publicId}', WorkerShowPage::class)->name('worker.show');
 
-// Checkout Route (Protected)
-Route::middleware('auth')->get('/checkout/{worker}', CheckoutWizard::class)->name('checkout');
+// Checkout Route (Guest-friendly, auth handled in component)
+Route::get('/checkout/{worker}', CheckoutWizard::class)->name('checkout');
 
 // Authentication Routes (via Livewire)
 Route::middleware('guest')->group(function () {

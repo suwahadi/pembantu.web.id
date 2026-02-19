@@ -8,6 +8,7 @@ use App\Domain\Contract\Services\ContractService;
 use App\Domain\Order\Services\OrderService;
 use App\Domain\Payment\Services\MidtransCoreService;
 use App\Models\Location;
+use App\Models\Worker;
 
 class CheckoutWizard extends Component
 {
@@ -27,6 +28,24 @@ class CheckoutWizard extends Component
 
     public function mount(int $worker): void
     {
+        if (!Auth::check()) {
+            session()->put('url.intended', url()->current());
+            $this->redirectRoute('login', navigate: true);
+            return;
+        }
+
+        $workerModel = Worker::find($worker);
+        if (!$workerModel) {
+            abort(404, 'Worker tidak ditemukan.');
+        }
+
+        // Agency owner tidak boleh checkout worker milik sendiri
+        if ($workerModel->agency && $workerModel->agency->user_id === Auth::id()) {
+            session()->flash('error', 'Anda tidak dapat memesan tenaga kerja dari agency sendiri.');
+            $this->redirectRoute('home', navigate: true);
+            return;
+        }
+
         $this->workerId = $worker;
         $this->startDate = now()->addDay()->toDateString();
         $this->endDate = now()->addMonth()->toDateString();

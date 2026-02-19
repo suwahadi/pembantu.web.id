@@ -50,20 +50,15 @@
               <td class="p-3">{{ $w->default_scheme }}</td>
               <td class="p-3">Rp {{ number_format($w->min_price_idr, 0, ',', '.') }}</td>
               <td class="p-3">
-                @if($w->is_active)
-                  <x-badge variant="green">Aktif</x-badge>
-                @else
-                  <x-badge variant="red">Nonaktif</x-badge>
-                @endif
+                <button type="button"
+                  wire:click="toggleActive({{ $w->id }})"
+                  wire:loading.attr="disabled"
+                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 {{ $w->is_active ? 'bg-green-600' : 'bg-gray-200' }}">
+                  <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform {{ $w->is_active ? 'translate-x-6' : 'translate-x-1' }}"></span>
+                </button>
               </td>
               <td class="p-3 text-right whitespace-nowrap">
                 <a class="underline text-sm" href="{{ route('agency.workers.edit', $w->id) }}">Edit</a>
-                <span class="mx-2 text-gray-300">|</span>
-                <x-button size="sm" variant="secondary"
-                  wire:click="toggleActive({{ $w->id }})"
-                  wire:loading.attr="disabled">
-                  Toggle
-                </x-button>
               </td>
             </tr>
           @endforeach
