@@ -29,8 +29,8 @@
               <td class="p-3">{{ $o->worker_name }}</td>
               <td class="p-3">{{ $o->visitor_name ?? '-' }}</td>
               <td class="p-3 text-xs">
-                {{ \Carbon\Carbon::parse($o->start_date)->format('d/m') }} -
-                {{ \Carbon\Carbon::parse($o->end_date)->format('d/m/Y') }}
+                {{ \Carbon\Carbon::parse($o->contract_start_date)->format('d/m') }} -
+                {{ \Carbon\Carbon::parse($o->contract_end_date)->format('d/m/Y') }}
               </td>
               <td class="p-3">Rp {{ number_format($o->total_idr, 0, ',', '.') }}</td>
               <td class="p-3">

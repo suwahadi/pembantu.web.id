@@ -25,9 +25,9 @@ class DisputeForm extends Component
         ];
     }
 
-    public function mount(int $order): void
+    public function mount(int $orderId): void
     {
-        $this->orderId = $order;
+        $this->orderId = $orderId;
     }
 
     public function submit(DisputeService $disputes): void

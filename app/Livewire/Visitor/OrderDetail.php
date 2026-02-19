@@ -12,28 +12,40 @@ final class OrderDetail extends Component
     public ?object $order = null;
     public array $events = [];
 
-    public function mount(int $order): void
+    public function mount(int $orderId): void
     {
-        $this->orderId = $order;
+        $this->orderId = $orderId;
         $this->loadData();
     }
 
     public function loadData(): void
     {
-        $this->order = DB::table('orders')
+        $this->order = (object) DB::table('orders')
             ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
             ->leftJoin('agencies', 'agencies.id', '=', 'orders.agency_id')
             ->leftJoin('workers', 'workers.id', '=', 'orders.worker_id')
             ->select([
                 'orders.*',
-                'contracts.scheme as contract_scheme',
-                'contracts.start_date',
-                'contracts.end_date',
-                'agencies.name as agency_name',
+                'contracts.start_date as contract_start_date',
+                'contracts.end_date as contract_end_date',
+                'contracts.metadata as contract_metadata',
+                'agencies.company_name as agency_name',
                 'workers.name as worker_name',
             ])
             ->where('orders.id', $this->orderId)
             ->first();
+
+        if (!$this->order || !isset($this->order->id)) {
+            $this->order = null;
+            return;
+        }
+
+        // Extract scheme from metadata if available
+        $this->order->contract_scheme = '-';
+        if (isset($this->order->contract_metadata)) {
+            $meta = json_decode($this->order->contract_metadata, true);
+            $this->order->contract_scheme = $meta['scheme'] ?? '-';
+        }
 
         $this->events = DB::table('order_events')
             ->where('order_id', $this->orderId)

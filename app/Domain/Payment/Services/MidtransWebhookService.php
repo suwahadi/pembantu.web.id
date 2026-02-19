@@ -84,7 +84,7 @@ final class MidtransWebhookService
             throw new \RuntimeException('Signature key tidak ditemukan');
         }
 
-        $serverKey = config('payment.midtrans.server_key');
+        $serverKey = config('midtrans.server_key');
         $orderId = $payload['order_id'] ?? '';
         $statusCode = $payload['status_code'] ?? '';
         $grossAmount = $payload['gross_amount'] ?? '';

@@ -53,9 +53,16 @@
   <x-card title="Tambah Rekening Baru">
     <div class="space-y-3">
       <x-form.input
+        label="Kode Bank"
+        wire:model="bankCode"
+        placeholder="BCA, MANDIRI, BNI, dll"
+        @error('bankCode') :error="$errors->first('bankCode')" @enderror
+      />
+
+      <x-form.input
         label="Nama Bank"
         wire:model="bankName"
-        placeholder="BCA, Mandiri, BNI, dll"
+        placeholder="PT Bank Central Asia"
         @error('bankName') :error="$errors->first('bankName')" @enderror
       />
 

@@ -17,8 +17,8 @@
         <div><span class="text-gray-600">Worker:</span> <span class="font-medium">{{ $order->worker_name }}</span></div>
         <div><span class="text-gray-600">Skema:</span> <span class="font-medium">{{ $order->scheme }}</span></div>
         <div><span class="text-gray-600">Total:</span> <span class="font-medium">Rp {{ number_format($order->total_idr, 0, ',', '.') }}</span></div>
-        <div><span class="text-gray-600">Mulai:</span> <span class="font-medium">{{ \Carbon\Carbon::parse($order->start_date)->translatedFormat('d F Y') }}</span></div>
-        <div><span class="text-gray-600">Selesai:</span> <span class="font-medium">{{ \Carbon\Carbon::parse($order->end_date)->translatedFormat('d F Y') }}</span></div>
+        <div><span class="text-gray-600">Mulai:</span> <span class="font-medium">{{ \Carbon\Carbon::parse($order->contract_start_date)->translatedFormat('d F Y') }}</span></div>
+        <div><span class="text-gray-600">Selesai:</span> <span class="font-medium">{{ \Carbon\Carbon::parse($order->contract_end_date)->translatedFormat('d F Y') }}</span></div>
       </div>
 
       <div class="mt-4 flex flex-wrap gap-2">
@@ -42,21 +42,7 @@
       @if(empty($events))
         <div class="text-sm text-gray-600">Belum ada event.</div>
       @else
-        <div class="space-y-2">
-          @foreach($events as $e)
-            <div class="bg-white border rounded-xl p-3">
-              <div class="flex items-center justify-between">
-                <div class="text-sm font-medium">{{ $e->message }}</div>
-                <div class="text-xs text-gray-600">
-                  {{ \Carbon\Carbon::parse($e->created_at)->translatedFormat('l, d F Y H:i') }}
-                </div>
-              </div>
-              @if($e->payload)
-                <pre class="mt-2 text-xs bg-gray-50 border rounded-lg p-2 overflow-auto">{{ $e->payload }}</pre>
-              @endif
-            </div>
-          @endforeach
-        </div>
+        <x-order.timeline :events="$events" />
       @endif
     </x-card>
   @endif

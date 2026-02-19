@@ -14,34 +14,24 @@ class ContractService
     /**
      * Create contract dari specification
      */
-    public function create(
-        int $workerId,
-        string $jobScope,
-        string $locationAddress,
-        string $startDate,
-        ?string $endDate = null,
-        ?string $termsConditions = null,
-        array $metadata = []
-    ): Contract {
-        return DB::transaction(function () use (
-            $workerId,
-            $jobScope,
-            $locationAddress,
-            $startDate,
-            $endDate,
-            $termsConditions,
-            $metadata
-        ) {
+    public function create(int $workerId, array $data): Contract
+    {
+        return DB::transaction(function () use ($workerId, $data) {
             $contractNo = 'CTR-' . now()->format('YmdHis') . '-' . strtoupper(bin2hex(random_bytes(3)));
 
             $contract = Contract::create([
                 'contract_no' => $contractNo,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-                'job_scope' => $jobScope,
-                'location_address' => $locationAddress,
-                'terms_conditions' => $termsConditions,
-                'metadata' => $metadata,
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'] ?? null,
+                'job_scope' => $data['scope_of_work'] ?? '',
+                'location_id' => $data['location_id'] ?? null,
+                'location_address' => $data['work_address'] ?? '',
+                'scope_of_work' => $data['scope_of_work'] ?? '',
+                'status' => 'draft',
+                'metadata' => array_merge($data, [
+                    'worker_id' => $workerId,
+                    'scheme' => $data['scheme'] ?? 'BULANAN',
+                ]),
             ]);
 
             AuditLogService::record('contract_created', 'CONTRACT', $contract->id);

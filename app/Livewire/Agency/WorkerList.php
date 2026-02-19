@@ -24,7 +24,11 @@ final class WorkerList extends Component
 
     public function toggleActive(int $workerId, WorkerService $workers): void
     {
-        $agencyId = (int)auth()->user()->agency_id;
+        $agency = auth()->user()->agency;
+        if (!$agency) {
+            return;
+        }
+        $agencyId = $agency->id;
 
         $row = DB::table('workers')->where('id', $workerId)->first();
         if (!$row) {
@@ -42,7 +46,8 @@ final class WorkerList extends Component
 
     public function render()
     {
-        $agencyId = (int)auth()->user()->agency_id;
+        $agency = auth()->user()->agency;
+        $agencyId = $agency ? $agency->id : 0;
 
         $query = DB::table('workers')
             ->join('service_categories', 'service_categories.id', '=', 'workers.category_id')

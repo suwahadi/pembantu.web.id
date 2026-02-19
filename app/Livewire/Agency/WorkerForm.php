@@ -43,7 +43,11 @@ final class WorkerForm extends Component
         $this->workerId = $worker;
 
         if ($this->workerId) {
-            $agencyId = (int)auth()->user()->agency_id;
+            $agency = auth()->user()->agency;
+            if (!$agency) {
+                return;
+            }
+            $agencyId = $agency->id;
             $row = DB::table('workers')->where('id', $this->workerId)->first();
             if ($row && (int)$row->agency_id === $agencyId) {
                 $this->name = (string)$row->name;
@@ -62,7 +66,12 @@ final class WorkerForm extends Component
     {
         $this->validate();
 
-        $agencyId = (int)auth()->user()->agency_id;
+        $agency = auth()->user()->agency;
+        if (!$agency) {
+            session()->flash('error', 'Data agensi tidak ditemukan.');
+            return;
+        }
+        $agencyId = $agency->id;
 
         $photoPath = $this->existingPhotoPath;
         if ($this->photo) {
@@ -100,7 +109,7 @@ final class WorkerForm extends Component
 
             $this->redirect(route('agency.workers.index'));
         } catch (\Throwable $e) {
-            session()->flash('error', $e->getMessage());
+            session()->flash('error', 'Error: ' . $e->getMessage());
         }
     }
 
@@ -110,8 +119,13 @@ final class WorkerForm extends Component
             return;
         }
 
+        $agency = auth()->user()->agency;
+        if (!$agency) {
+            return;
+        }
+
         try {
-            $workers->deletePhoto((int)auth()->user()->agency_id, $this->workerId);
+            $workers->deletePhoto($agency->id, $this->workerId);
             $this->existingPhotoPath = null;
             $this->photo = null;
             session()->flash('success', 'Foto dihapus.');

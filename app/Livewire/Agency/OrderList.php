@@ -22,7 +22,8 @@ final class OrderList extends Component
 
     public function render()
     {
-        $agencyId = (int)auth()->user()->agency_id;
+        $agency = auth()->user()->agency;
+        $agencyId = $agency ? $agency->id : 0;
 
         $query = DB::table('orders')
             ->join('contracts', 'contracts.id', '=', 'orders.contract_id')
@@ -34,9 +35,8 @@ final class OrderList extends Component
                 'orders.status',
                 'orders.total_idr',
                 'orders.created_at',
-                'contracts.scheme',
-                'contracts.start_date',
-                'contracts.end_date',
+                'contracts.start_date as contract_start_date',
+                'contracts.end_date as contract_end_date',
                 'workers.name as worker_name',
                 'users.name as visitor_name',
             ])

@@ -1,6 +1,6 @@
 <div class="space-y-4">
   <x-card title="Kontrak Menunggu Tanda Tangan" subtitle="Review dan tandatangani kontrak dari visitor.">
-    @if(empty($items->items()))
+    @if($items->isEmpty())
       <div class="text-sm text-gray-600">Tidak ada kontrak menunggu.</div>
     @else
       <div class="overflow-auto border rounded-xl">
@@ -42,9 +42,11 @@
         </table>
       </div>
 
-      <div class="mt-3">
-        {{ $items->links() }}
-      </div>
+      @if(method_exists($items, 'links'))
+        <div class="mt-3">
+          {{ $items->links() }}
+        </div>
+      @endif
     @endif
   </x-card>
 

@@ -48,8 +48,8 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profil', \App\Livewire\Profile\UpdateProfile::class)->name('profile');
     Route::get('/pesanan', \App\Livewire\Visitor\OrderList::class)->name('orders.list');
-    Route::get('/pesanan/{order}', OrderDetail::class)->name('orders.show');
-    Route::get('/pesanan/{order}/dispute', DisputeForm::class)->name('orders.dispute');
+    Route::get('/pesanan/{orderId}', OrderDetail::class)->name('orders.show');
+    Route::get('/pesanan/{orderId}/dispute', DisputeForm::class)->name('orders.dispute');
     Route::get('/rekening-bank', VisitorBankAccounts::class)->name('visitor.bank-accounts');
     
     Route::post('/logout', function () {
@@ -77,7 +77,7 @@ Route::middleware(['auth', 'agency-access'])->prefix('agency')->name('agency.')-
     Route::get('/workers/create', WorkerForm::class)->name('workers.create');
     Route::get('/workers/{worker}/edit', WorkerForm::class)->name('workers.edit');
     Route::get('/orders', OrderList::class)->name('orders.index');
-    Route::get('/orders/{order}', AgencyOrderDetail::class)->name('orders.show');
+    Route::get('/orders/{orderId}', AgencyOrderDetail::class)->name('orders.show');
     Route::get('/bank-accounts', AgencyBankAccounts::class)->name('bank-accounts');
 });
 

@@ -32,39 +32,42 @@ class CheckoutWizard extends Component
         $this->endDate = now()->addMonth()->toDateString();
     }
 
-    protected function rules(): array
+    protected function getRulesForStep(int $step): array
     {
-        return [
-            'scheme' => ['required', 'in:HARIAN,MINGGUAN,BULANAN,PER_JAM'],
-            'startDate' => ['required', 'date', 'after_or_equal:today'],
-            'endDate' => ['required', 'date', 'after_or_equal:startDate'],
-            'locationId' => ['required', 'integer', 'exists:locations,id'],
-            'workAddress' => ['required', 'string', 'min:10', 'max:1000'],
-            'scopeOfWork' => ['required', 'string', 'min:10', 'max:2000'],
-        ];
+        if ($step === 1) {
+            return [
+                'scheme' => ['required', 'in:HARIAN,MINGGUAN,BULANAN,PER_JAM'],
+                'startDate' => ['required', 'date', 'after_or_equal:today'],
+                'endDate' => ['required', 'date', 'after_or_equal:startDate'],
+            ];
+        }
+
+        if ($step === 2) {
+            return [
+                'locationId' => ['required', 'integer', 'exists:locations,id'],
+                'workAddress' => ['required', 'string', 'min:10', 'max:1000'],
+                'scopeOfWork' => ['required', 'string', 'min:10', 'max:2000'],
+            ];
+        }
+
+        return [];
     }
 
     public function next(ContractService $contracts): void
     {
         if ($this->step <= 2) {
-            $this->validate();
+            $this->validate($this->getRulesForStep($this->step));
         }
 
         if ($this->step === 2 && !$this->contractId) {
-            $visitorId = Auth::id();
-
-            $draft = $contracts->create(
-                visitorId: $visitorId,
-                workerId: $this->workerId,
-                data: [
-                    'scheme' => $this->scheme,
-                    'start_date' => $this->startDate,
-                    'end_date' => $this->endDate,
-                    'location_id' => $this->locationId,
-                    'work_address' => $this->workAddress,
-                    'scope_of_work' => $this->scopeOfWork,
-                ]
-            );
+            $draft = $contracts->create($this->workerId, [
+                'scheme' => $this->scheme,
+                'start_date' => $this->startDate,
+                'end_date' => $this->endDate,
+                'location_id' => $this->locationId,
+                'work_address' => $this->workAddress,
+                'scope_of_work' => $this->scopeOfWork,
+            ]);
 
             $this->contractId = $draft->id;
         }
@@ -79,20 +82,32 @@ class CheckoutWizard extends Component
 
     public function signAndPay(ContractService $contracts, OrderService $orders, MidtransCoreService $midtrans): void
     {
-        $visitorId = Auth::id();
+        $visitorId = (int)Auth::id();
         
         if (!$this->contractId) {
             $this->addError('contractId', 'Kontrak belum dibuat.');
             return;
         }
 
-        $contracts->signByVisitor($this->contractId, $visitorId);
+        $contracts->visitorSign($this->contractId);
 
-        $order = $orders->createFromContract($this->contractId, $visitorId);
+        $worker = \App\Models\Worker::find($this->workerId);
+        if (!$worker) {
+            $this->addError('workerId', 'Worker tidak ditemukan.');
+            return;
+        }
+
+        $order = $orders->createFromContract(
+            contractId: $this->contractId,
+            visitorUserId: $visitorId,
+            agencyId: (int)$worker->agency_id,
+            workerId: (int)$worker->id,
+            categoryId: (int)$worker->category_id,
+            totalIdr: (int)$worker->min_price_idr
+        );
+
         $this->orderId = $order->id;
-
         $this->paymentInstruction = $midtrans->charge($order->id);
-
         $this->step = 4;
     }
 

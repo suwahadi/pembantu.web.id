@@ -3,6 +3,7 @@
 namespace App\Domain\Worker\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
 final class WorkerService
@@ -23,7 +24,6 @@ final class WorkerService
                     'skills' => trim($data['skills'] ?? ''),
                     'default_scheme' => $data['default_scheme'] ?? 'BULANAN',
                     'min_price_idr' => (int)$data['min_price_idr'],
-                    'rank_score' => 0,
                     'is_active' => (int)($data['is_active'] ?? 1),
                     'photo_path' => $data['photo_path'] ?? null,
                     'created_at' => now(),
@@ -44,6 +44,12 @@ final class WorkerService
             }
             if ((int)$row->agency_id !== $agencyId) {
                 throw new RuntimeException('Akses ditolak.');
+            }
+
+            if (isset($data['photo_path']) && $data['photo_path'] !== $row->photo_path) {
+                if ($row->photo_path) {
+                    Storage::disk('public')->delete($row->photo_path);
+                }
             }
 
             DB::table('workers')->where('id', $workerId)->update([
@@ -89,6 +95,10 @@ final class WorkerService
             }
             if ((int)$row->agency_id !== $agencyId) {
                 throw new RuntimeException('Akses ditolak.');
+            }
+
+            if ($row->photo_path) {
+                Storage::disk('public')->delete($row->photo_path);
             }
 
             DB::table('workers')->where('id', $workerId)->update([

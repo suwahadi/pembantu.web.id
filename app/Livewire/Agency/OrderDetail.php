@@ -15,15 +15,16 @@ final class OrderDetail extends Component
     public string $progressNote = '';
     public $progressProof;
 
-    public function mount(int $order): void
+    public function mount(int $orderId): void
     {
-        $this->orderId = $order;
+        $this->orderId = $orderId;
         $this->loadData();
     }
 
     public function loadData(): void
     {
-        $agencyId = (int)auth()->user()->agency_id;
+        $agency = auth()->user()->agency;
+        $agencyId = $agency ? $agency->id : 0;
 
         $this->order = DB::table('orders')
             ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
@@ -31,9 +32,9 @@ final class OrderDetail extends Component
             ->leftJoin('users', 'users.id', '=', 'orders.visitor_user_id')
             ->select([
                 'orders.*',
-                'contracts.scheme',
-                'contracts.start_date',
-                'contracts.end_date',
+                'contracts.start_date as contract_start_date',
+                'contracts.end_date as contract_end_date',
+                'contracts.metadata as contract_metadata',
                 'workers.name as worker_name',
                 'users.name as visitor_name',
             ])
@@ -44,6 +45,13 @@ final class OrderDetail extends Component
         if (!$this->order) {
             session()->flash('error', 'Order tidak ditemukan atau anda tidak punya akses.');
             return;
+        }
+
+        // Extract scheme from metadata if available
+        $this->order->scheme = '-';
+        if (isset($this->order->contract_metadata)) {
+            $meta = json_decode($this->order->contract_metadata, true);
+            $this->order->scheme = $meta['scheme'] ?? '-';
         }
 
         $this->events = DB::table('order_events')
@@ -57,7 +65,11 @@ final class OrderDetail extends Component
     public function startJob(OrderService $orders): void
     {
         try {
-            $agencyId = (int)auth()->user()->agency_id;
+            $agency = auth()->user()->agency;
+            if (!$agency) {
+                return;
+            }
+            $agencyId = $agency->id;
             $actorUserId = (int)auth()->id();
             $orders->startJobByAgency($this->orderId, $agencyId, $actorUserId);
             session()->flash('success', 'Pekerjaan dimulai.');
@@ -70,7 +82,11 @@ final class OrderDetail extends Component
     public function finishJob(OrderService $orders): void
     {
         try {
-            $agencyId = (int)auth()->user()->agency_id;
+            $agency = auth()->user()->agency;
+            if (!$agency) {
+                return;
+            }
+            $agencyId = $agency->id;
             $actorUserId = (int)auth()->id();
             $orders->finishJobByAgency($this->orderId, $agencyId, $actorUserId);
             session()->flash('success', 'Pekerjaan ditandai selesai.');

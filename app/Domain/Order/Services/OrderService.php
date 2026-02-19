@@ -26,10 +26,16 @@ class OrderService
                 'category_id' => $categoryId,
                 'contract_id' => $contractId,
                 'status' => OrderStatus::PENDING_PAYMENT,
-                'start_date' => now()->date(),
+                'start_date' => now()->toDateString(),
                 'subtotal_idr' => (int) ($totalIdr * 0.95), // 95% untuk service
                 'platform_fee_idr' => (int) ($totalIdr * 0.05), // 5% platform fee
                 'total_idr' => $totalIdr,
+            ]);
+
+            // Link back contract to order
+            DB::table('contracts')->where('id', $contractId)->update([
+                'order_id' => $order->id,
+                'status' => 'signed_by_visitor',
             ]);
 
             $this->eventService->record(

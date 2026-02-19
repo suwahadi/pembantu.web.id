@@ -13,6 +13,7 @@ final class BankAccounts extends Component
     public string $accountNo = '';
     public string $accountName = '';
     public ?int $primaryId = null;
+    public ?int $agencyId = null;
 
     protected function rules(): array
     {
@@ -26,20 +27,25 @@ final class BankAccounts extends Component
 
     public function mount(): void
     {
-        $agencyId = auth()->user()->agency_id;
-        $this->primaryId = (int) (DB::table('agencies')
-            ->where('id', $agencyId)
-            ->value('primary_bank_account_id') ?? 0) ?: null;
+        $agency = auth()->user()->agency;
+        if ($agency) {
+            $this->agencyId = $agency->id;
+            $this->primaryId = $agency->primary_bank_account_id;
+        }
     }
 
     public function add(BankAccountService $banks): void
     {
+        if (!$this->agencyId) {
+            session()->flash('error', 'Data agensi tidak ditemukan.');
+            return;
+        }
+
         try {
             $validated = $this->validate();
             
-            $agencyId = auth()->user()->agency_id;
             $banks->createForAgency(
-                $agencyId, 
+                $this->agencyId, 
                 $validated['bankCode'], 
                 $validated['bankName'], 
                 $validated['accountNo'], 
@@ -49,7 +55,6 @@ final class BankAccounts extends Component
             session()->flash('success', 'Rekening berhasil ditambahkan (menunggu verifikasi).');
             $this->reset(['bankCode', 'bankName', 'accountNo', 'accountName']);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Validation exception handled by Livewire automatically
             throw $e;
         } catch (\Exception $e) {
             $this->dispatch('error', message: 'Error: ' . $e->getMessage());
@@ -59,8 +64,7 @@ final class BankAccounts extends Component
 
     public function setPrimary(int $bankAccountId, BankAccountService $banks): void
     {
-        $agencyId = auth()->user()->agency_id;
-        $banks->setPrimaryForAgency($agencyId, $bankAccountId);
+        $banks->setPrimary($bankAccountId);
         $this->primaryId = $bankAccountId;
 
         session()->flash('success', 'Rekening utama berhasil diperbarui.');
@@ -68,12 +72,13 @@ final class BankAccounts extends Component
 
     public function render()
     {
-        $agencyId = auth()->user()->agency_id;
-        $items = DB::table('bank_accounts')
-            ->where('owner_type', 'AGENCY')
-            ->where('owner_id', $agencyId)
-            ->orderByDesc('id')
-            ->get();
+        $items = $this->agencyId 
+            ? DB::table('bank_accounts')
+                ->where('owner_type', 'App\Models\Agency')
+                ->where('owner_id', $this->agencyId)
+                ->orderByDesc('id')
+                ->get()
+            : collect([]);
 
         return view('livewire.agency.bank-accounts', compact('items'))
             ->layout('layouts.agency', ['title' => 'Rekening Bank']);

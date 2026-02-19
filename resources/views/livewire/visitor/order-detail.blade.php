@@ -17,7 +17,7 @@
         <div><span class="text-gray-600">Total:</span> <span class="font-medium">Rp {{ number_format($order->total_idr, 0, ',', '.') }}</span></div>
         <div><span class="text-gray-600">Skema:</span> <span class="font-medium">{{ $order->contract_scheme ?? '-' }}</span></div>
         <div><span class="text-gray-600">Periode:</span>
-          <span class="font-medium">{{ $order->start_date ?? '-' }}</span> s/d <span class="font-medium">{{ $order->end_date ?? '-' }}</span>
+          <span class="font-medium">{{ $order->contract_start_date ?? '-' }}</span> s/d <span class="font-medium">{{ $order->contract_end_date ?? '-' }}</span>
         </div>
       </div>
 

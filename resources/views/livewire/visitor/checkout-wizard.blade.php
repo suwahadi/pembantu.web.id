@@ -25,11 +25,11 @@
                     <div class="font-semibold mb-3">1. Pilih Tanggal & Skema</div>
                 </div>
 
-                <x-form.select label="Skema" wire:model.live="scheme" :options="$schemes" />
+                <x-form.select label="Skema" wire:model.live="scheme" :options="$schemes" :error="$errors->first('scheme')" />
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <x-form.input type="date" label="Tanggal Mulai" wire:model.live="startDate" />
-                    <x-form.input type="date" label="Tanggal Selesai" wire:model.live="endDate" />
+                    <x-form.input type="date" label="Tanggal Mulai" wire:model.live="startDate" :error="$errors->first('startDate')" />
+                    <x-form.input type="date" label="Tanggal Selesai" wire:model.live="endDate" :error="$errors->first('endDate')" />
                 </div>
 
                 <div class="flex justify-end gap-2 pt-4">
@@ -48,9 +48,9 @@
                     <div class="font-semibold mb-3">2. Lokasi & Detail Pekerjaan</div>
                 </div>
 
-                <x-form.select label="Lokasi" wire:model.live="locationId" :options="$locations" />
-                <x-form.textarea label="Alamat Kerja" wire:model.live="workAddress" :rows="3" />
-                <x-form.textarea label="Ruang Lingkup Pekerjaan" wire:model.live="scopeOfWork" :rows="4" />
+                <x-form.select label="Lokasi" wire:model.live="locationId" :options="$locations" :error="$errors->first('locationId')" />
+                <x-form.textarea label="Alamat Kerja" wire:model.live="workAddress" :rows="3" :error="$errors->first('workAddress')" />
+                <x-form.textarea label="Ruang Lingkup Pekerjaan" wire:model.live="scopeOfWork" :rows="4" :error="$errors->first('scopeOfWork')" />
 
                 <div class="flex justify-between gap-2 pt-4">
                     <x-button variant="secondary" wire:click="back">Kembali</x-button>
