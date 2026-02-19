@@ -15,9 +15,10 @@ class Worker extends Model
         'agency_id',
         'category_id',
         'name',
+        'gender',
+        'birth_date',
+        'photo_path',
         'bio',
-        'skills',
-        'location_id',
         'phone',
         'verification_status',
         'verified_at',
@@ -26,16 +27,17 @@ class Worker extends Model
         'rating',
         'total_reviews',
         'total_completed_orders',
-        'min_price_idr',
-        'default_scheme',
+        'availability_status',
         'is_available',
+        'is_active',
     ];
 
     protected $casts = [
         'verified_at' => 'datetime',
+        'birth_date' => 'date',
         'is_available' => 'boolean',
+        'is_active' => 'boolean',
         'rating' => 'float',
-        'min_price_idr' => 'integer',
     ];
 
     public function agency(): BelongsTo
@@ -58,9 +60,25 @@ class Worker extends Model
         return $this->hasMany(WorkerDocument::class);
     }
 
-    public function skills(): HasMany
+    public function workerSkills(): HasMany
     {
         return $this->hasMany(WorkerSkill::class);
+    }
+
+    public function skills()
+    {
+        return $this->belongsToMany(ServiceSkill::class, 'worker_skills', 'worker_id', 'skill_id')
+            ->withPivot(['proficiency_level', 'experience_years', 'is_primary', 'sort_order', 'notes'])
+            ->withTimestamps();
+    }
+
+    public function primarySkills()
+    {
+        return $this->belongsToMany(ServiceSkill::class, 'worker_skills', 'worker_id', 'skill_id')
+            ->withPivot(['proficiency_level', 'experience_years', 'is_primary', 'sort_order', 'notes'])
+            ->wherePivot('is_primary', true)
+            ->orderBy('pivot_sort_order')
+            ->withTimestamps();
     }
 
     public function pricings(): HasMany
@@ -68,9 +86,29 @@ class Worker extends Model
         return $this->hasMany(WorkerServicePricing::class);
     }
 
+    public function defaultPricing()
+    {
+        return $this->hasOne(WorkerServicePricing::class)->where('is_default', true);
+    }
+
+    public function activePricings()
+    {
+        return $this->hasMany(WorkerServicePricing::class)->where('is_active', true);
+    }
+
     public function serviceAreas(): HasMany
     {
         return $this->hasMany(WorkerServiceArea::class);
+    }
+
+    public function primaryServiceArea()
+    {
+        return $this->hasOne(WorkerServiceArea::class)->where('is_primary', true);
+    }
+
+    public function activeServiceAreas()
+    {
+        return $this->hasMany(WorkerServiceArea::class)->where('is_active', true);
     }
 
     public function orders(): HasMany
@@ -81,5 +119,61 @@ class Worker extends Model
     public function isVerified(): bool
     {
         return $this->verification_status === 'verified';
+    }
+
+    public function getMinPriceAttribute()
+    {
+        $defaultPricing = $this->defaultPricing;
+        if ($defaultPricing) {
+            return $defaultPricing->price_idr;
+        }
+        
+        $activePricing = $this->activePricings()->first();
+        return $activePricing ? $activePricing->price_idr : 0;
+    }
+
+    public function getPrimaryLocationAttribute()
+    {
+        $primaryArea = $this->primaryServiceArea;
+        return $primaryArea ? $primaryArea->location : null;
+    }
+
+    public function getSkillsListAttribute()
+    {
+        return $this->skills->pluck('name')->implode(', ');
+    }
+
+    public function getPrimarySkillsListAttribute()
+    {
+        return $this->primarySkills->pluck('name')->implode(', ');
+    }
+
+    public function addSkill(ServiceSkill $skill, array $attributes = [])
+    {
+        $attributes = array_merge([
+            'proficiency_level' => 'basic',
+            'experience_years' => 0,
+            'is_primary' => false,
+            'sort_order' => $this->workerSkills()->count(),
+            'notes' => null,
+        ], $attributes);
+
+        return $this->skills()->attach($skill, $attributes);
+    }
+
+    public function removeSkill(ServiceSkill $skill)
+    {
+        return $this->skills()->detach($skill);
+    }
+
+    public function setPrimarySkill(ServiceSkill $skill)
+    {
+        // Reset all skills to non-primary
+        $this->workerSkills()->update(['is_primary' => false]);
+        
+        // Set the specified skill as primary
+        return $this->workerSkills()
+            ->where('skill_id', $skill->id)
+            ->update(['is_primary' => true]);
     }
 }

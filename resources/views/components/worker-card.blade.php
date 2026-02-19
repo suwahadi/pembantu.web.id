@@ -43,14 +43,14 @@
 
         <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 mb-4">
             <x-icon.map-pin class="h-3 w-3" />
-            <span>{{ $worker->location_name ?? $worker->location->city ?? '-' }}</span>
+            <span>{{ $worker->primaryServiceArea?->location?->city ?? '-' }}</span>
         </div>
 
         <div class="mt-auto flex items-end justify-between">
             <div>
                 <p class="text-[10px] text-gray-500 dark:text-gray-400">Mulai dari</p>
                 <p class="text-lg font-bold text-gray-900 dark:text-white">
-                    Rp {{ number_format($worker->min_price_idr, 0, ',', '.') }}
+                    Rp {{ number_format($worker->min_price ?? 0, 0, ',', '.') }}
                 </p>
             </div>
             <div class="h-8 w-8 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-400 group-hover:text-blue-500 group-hover:border-blue-500 transition-colors">

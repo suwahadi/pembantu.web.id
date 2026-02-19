@@ -18,12 +18,8 @@ final class WorkerService
                     'public_id' => $publicId,
                     'agency_id' => $agencyId,
                     'category_id' => (int)$data['category_id'],
-                    'location_id' => $data['location_id'] ? (int)$data['location_id'] : null,
                     'name' => trim($data['name']),
                     'bio' => trim($data['bio'] ?? ''),
-                    'skills' => $this->formatSkillsCache($data['skills'] ?? []),
-                    'default_scheme' => $data['default_scheme'] ?? 'BULANAN',
-                    'min_price_idr' => (int)$data['min_price_idr'],
                     'is_active' => (int)($data['is_active'] ?? 1),
                     'photo_path' => $data['photo_path'] ?? null,
                     'created_at' => now(),
@@ -60,12 +56,8 @@ final class WorkerService
 
             DB::table('workers')->where('id', $workerId)->update([
                 'category_id' => (int)$data['category_id'],
-                'location_id' => $data['location_id'] ? (int)$data['location_id'] : null,
                 'name' => trim($data['name']),
                 'bio' => trim($data['bio'] ?? ''),
-                'skills' => $this->formatSkillsCache($data['skills'] ?? []),
-                'default_scheme' => $data['default_scheme'] ?? 'BULANAN',
-                'min_price_idr' => (int)$data['min_price_idr'],
                 'photo_path' => $data['photo_path'] ?? $row->photo_path,
                 'updated_at' => now(),
             ]);
@@ -138,13 +130,19 @@ final class WorkerService
             return;
         }
 
-        $inserts = array_map(fn($skillId) => [
-            'worker_id' => $workerId,
-            'skill_id' => $skillId,
-            'proficiency_level' => 'basic',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ], $skillIds);
+        $inserts = array_map(function ($skillId, $index) use ($workerId) {
+            return [
+                'worker_id' => $workerId,
+                'skill_id' => $skillId,
+                'proficiency_level' => 'basic',
+                'experience_years' => 1,
+                'is_primary' => $index === 0, // First skill is primary
+                'sort_order' => $index,
+                'notes' => $index === 0 ? 'Skill utama' : null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $skillIds, array_keys($skillIds));
 
         DB::table('worker_skills')->insert($inserts);
     }
@@ -158,15 +156,21 @@ final class WorkerService
 
         DB::table('worker_service_pricings')->where('worker_id', $workerId)->delete();
 
-        $inserts = array_map(fn($p) => [
-            'worker_id' => $workerId,
-            'pricing_type' => $p['pricing_type'] ?? 'daily',
-            'price_idr' => $p['price_idr'] ?? 0,
-            'description' => $p['description'] ?? null,
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ], $pricings);
+        $inserts = array_map(function ($p, $index) use ($workerId) {
+            return [
+                'worker_id' => $workerId,
+                'pricing_type' => $p['pricing_type'] ?? 'daily',
+                'price_idr' => $p['price_idr'] ?? 0,
+                'description' => $p['description'] ?? null,
+                'is_active' => true,
+                'is_default' => $index === 0, // First pricing is default
+                'sort_order' => $index,
+                'effective_date' => now(),
+                'expiry_date' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $pricings, array_keys($pricings));
 
         DB::table('worker_service_pricings')->insert($inserts);
     }
@@ -179,13 +183,19 @@ final class WorkerService
             return;
         }
 
-        $inserts = array_map(fn($locId) => [
-            'worker_id' => $workerId,
-            'location_id' => $locId,
-            'radius_km' => 10,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ], $locationIds);
+        $inserts = array_map(function ($locId, $index) use ($workerId) {
+            return [
+                'worker_id' => $workerId,
+                'location_id' => $locId,
+                'radius_km' => 10,
+                'is_primary' => $index === 0, // First location is primary
+                'additional_fee_idr' => 0,
+                'notes' => $index === 0 ? 'Area layanan utama' : null,
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $locationIds, array_keys($locationIds));
 
         DB::table('worker_service_areas')->insert($inserts);
     }

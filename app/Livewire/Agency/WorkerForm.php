@@ -33,7 +33,7 @@ final class WorkerForm extends Component
             'categoryId' => ['required', 'integer'],
             'locationId' => ['nullable', 'integer'],
             'defaultScheme' => ['required', 'in:HARIAN,MINGGUAN,BULANAN,PER_JAM'],
-            'minPriceIdr' => ['required', 'integer', 'min:0'],
+            'minPriceIdr' => ['required', 'integer', 'min:0', 'max:999999999999'], // Max 999 juta
             'bio' => ['nullable', 'string', 'max:4000'],
             'skillIds' => ['nullable', 'array'],
             'skillIds.*' => ['integer', 'exists:service_skills,id'],
@@ -57,11 +57,23 @@ final class WorkerForm extends Component
             if ($row && (int)$row->agency_id === $agencyId) {
                 $this->name = (string)$row->name;
                 $this->categoryId = (int)$row->category_id;
-                $this->locationId = $row->location_id ? (int)$row->location_id : null;
-                $this->defaultScheme = (string)($row->default_scheme ?? 'BULANAN');
-                $this->minPriceIdr = (int)($row->min_price_idr ?? 0);
                 $this->bio = (string)($row->bio ?? '');
                 $this->existingPhotoPath = $row->photo_path ? (string)$row->photo_path : null;
+
+                // Get primary location from worker_service_areas
+                $primaryArea = DB::table('worker_service_areas')
+                    ->where('worker_id', $this->workerId)
+                    ->where('is_primary', true)
+                    ->first();
+                $this->locationId = $primaryArea ? (int)$primaryArea->location_id : null;
+
+                // Get default pricing from worker_service_pricings
+                $defaultPricing = DB::table('worker_service_pricings')
+                    ->where('worker_id', $this->workerId)
+                    ->where('is_default', true)
+                    ->first();
+                $this->defaultScheme = $defaultPricing ? (string)$defaultPricing->pricing_type : 'BULANAN';
+                $this->minPriceIdr = $defaultPricing ? (int)$defaultPricing->price_idr : 0;
 
                 $this->skillIds = DB::table('worker_skills')->where('worker_id', $this->workerId)->pluck('skill_id')->toArray();
                 $this->serviceAreaIds = DB::table('worker_service_areas')->where('worker_id', $this->workerId)->pluck('location_id')->toArray();
@@ -96,9 +108,6 @@ final class WorkerForm extends Component
                 $workers->update($agencyId, $this->workerId, [
                     'name' => $this->name,
                     'category_id' => $this->categoryId,
-                    'location_id' => $this->locationId,
-                    'default_scheme' => $this->defaultScheme,
-                    'min_price_idr' => $this->minPriceIdr,
                     'bio' => $this->bio,
                     'skills' => $this->skillIds,
                     'areas' => $this->serviceAreaIds,
@@ -110,9 +119,6 @@ final class WorkerForm extends Component
                 $created = $workers->create($agencyId, [
                     'name' => $this->name,
                     'category_id' => $this->categoryId,
-                    'location_id' => $this->locationId,
-                    'default_scheme' => $this->defaultScheme,
-                    'min_price_idr' => $this->minPriceIdr,
                     'bio' => $this->bio,
                     'skills' => $this->skillIds,
                     'areas' => $this->serviceAreaIds,

@@ -40,13 +40,13 @@
                         <div class="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-800">
                             <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
                                 <x-icon.map-pin class="h-5 w-5 text-gray-400" />
-                                <span>{{ $worker->location_name }}</span>
+                                <span>{{ $worker->primaryServiceArea?->location?->city ?? '-' }}</span>
                             </div>
                             <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
                                 <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
-                                <span>Agency: {{ $worker->agency_name }}</span>
+                                <span>Agency: {{ $worker->agency?->company_name ?? '-' }}</span>
                             </div>
                         </div>
 
@@ -54,7 +54,7 @@
                             <a href="{{ route('checkout', $worker->id) }}" class="block w-full text-center rounded-2xl bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all active:scale-95">
                                 Pesat Sekarang
                             </a>
-                            <p class="mt-4 text-center text-xs text-gray-500 dark:text-gray-400">Gaji mulai: <span class="font-bold text-gray-900 dark:text-white">Rp {{ number_format($worker->min_price_idr, 0, ',', '.') }}/{{ strtolower($worker->default_scheme) }}</span></p>
+                            <p class="mt-4 text-center text-xs text-gray-500 dark:text-gray-400">Gaji mulai: <span class="font-bold text-gray-900 dark:text-white">Rp {{ number_format($worker->min_price ?? 0, 0, ',', '.') }}/hari</span></p>
                         </div>
                     </div>
                 </div>
@@ -75,14 +75,18 @@
             <section class="rounded-3xl border border-gray-200 bg-white p-8 dark:border-gray-800 dark:bg-gray-900 shadow-sm">
                 <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Keahlian & Pengalaman</h2>
                 <div class="flex flex-wrap gap-2">
-                    @php $skills = explode(',', $worker->skills); @endphp
-                    @foreach($skills as $skill)
-                        @if(trim($skill))
+                    @if(isset($worker->skills) && $worker->skills->isNotEmpty())
+                        @foreach($worker->skills as $skill)
                             <span class="inline-flex items-center rounded-xl bg-gray-50 dark:bg-gray-800 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700">
-                                {{ trim($skill) }}
+                                {{ $skill->name }}
+                                @if($skill->pivot->is_primary)
+                                    <span class="ml-1 text-xs text-blue-500 font-semibold">★</span>
+                                @endif
                             </span>
-                        @endif
-                    @endforeach
+                        @endforeach
+                    @else
+                        <span class="text-gray-500 dark:text-gray-400">Belum ada keahlian terdaftar</span>
+                    @endif
                 </div>
             </section>
 
@@ -99,7 +103,13 @@
                     </div>
                     <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
                         <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-bold mb-1">Skema Gaji Utama</p>
-                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $worker->default_scheme }}</p>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                            @if(isset($worker->defaultPricing) && $worker->defaultPricing)
+                                {{ ucfirst($worker->defaultPricing->pricing_type) }}
+                            @else
+                                Harian
+                            @endif
+                        </p>
                     </div>
                 </div>
             </section>

@@ -51,12 +51,18 @@ final class WorkerList extends Component
 
         $query = DB::table('workers')
             ->join('service_categories', 'service_categories.id', '=', 'workers.category_id')
-            ->leftJoin('locations', 'locations.id', '=', 'workers.location_id')
+            ->leftJoin('worker_service_areas', function($join) {
+                $join->on('worker_service_areas.worker_id', '=', 'workers.id')
+                     ->where('worker_service_areas.is_primary', true)
+                     ->where('worker_service_areas.is_active', true);
+            })
+            ->leftJoin('locations', 'locations.id', '=', 'worker_service_areas.location_id')
             ->select([
-                'workers.id', 'workers.name', 'workers.is_active', 'workers.min_price_idr',
-                'workers.default_scheme', 'workers.photo_path',
+                'workers.id', 'workers.name', 'workers.is_active', 'workers.photo_path',
                 'service_categories.name as category_name',
                 DB::raw('COALESCE(locations.city, "-") as location_name'),
+                DB::raw('(SELECT MIN(price_idr) FROM worker_service_pricings WHERE worker_id = workers.id AND is_active = 1) as min_price_idr'),
+                DB::raw('(SELECT pricing_type FROM worker_service_pricings WHERE worker_id = workers.id AND is_default = 1 LIMIT 1) as default_scheme'),
             ])
             ->where('workers.agency_id', $agencyId)
             ->orderByDesc('workers.id');
@@ -65,14 +71,26 @@ final class WorkerList extends Component
             $like = '%' . trim($this->q) . '%';
             $query->where(function ($w) use ($like) {
                 $w->where('workers.name', 'like', $like)
-                    ->orWhere('workers.skills', 'like', $like);
+                    ->orWhereExists(function ($subquery) use ($like) {
+                        $subquery->select(DB::raw(1))
+                            ->from('worker_skills')
+                            ->join('service_skills', 'service_skills.id', '=', 'worker_skills.skill_id')
+                            ->where('worker_skills.worker_id', '=', DB::raw('workers.id'))
+                            ->where('service_skills.name', 'like', $like);
+                    });
             });
         }
         if ($this->categoryId) {
             $query->where('workers.category_id', (int)$this->categoryId);
         }
         if ($this->locationId) {
-            $query->where('workers.location_id', (int)$this->locationId);
+            $query->whereExists(function ($subquery) {
+                $subquery->select(DB::raw(1))
+                    ->from('worker_service_areas')
+                    ->where('worker_service_areas.worker_id', '=', DB::raw('workers.id'))
+                    ->where('worker_service_areas.location_id', (int)$this->locationId)
+                    ->where('worker_service_areas.is_active', true);
+            });
         }
 
         $items = $query->paginate(15);

@@ -12,6 +12,15 @@ class WorkerSkill extends Model
         'skill_id',
         'proficiency_level',
         'experience_years',
+        'is_primary',
+        'sort_order',
+        'notes',
+    ];
+
+    protected $casts = [
+        'is_primary' => 'boolean',
+        'experience_years' => 'integer',
+        'sort_order' => 'integer',
     ];
 
     public function worker(): BelongsTo

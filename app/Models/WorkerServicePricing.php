@@ -17,10 +17,23 @@ class WorkerServicePricing extends Model
         'max_duration',
         'description',
         'is_active',
+        'is_default',
+        'sort_order',
+        'min_order_amount',
+        'effective_date',
+        'expiry_date',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_default' => 'boolean',
+        'price_idr' => 'integer',
+        'min_duration' => 'integer',
+        'max_duration' => 'integer',
+        'sort_order' => 'integer',
+        'min_order_amount' => 'integer',
+        'effective_date' => 'date',
+        'expiry_date' => 'date',
     ];
 
     public function worker(): BelongsTo

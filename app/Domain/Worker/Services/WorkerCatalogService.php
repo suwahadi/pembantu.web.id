@@ -21,7 +21,11 @@ class WorkerCatalogService
         }
 
         if ($dto->locationId) {
-            $query->where('location_id', $dto->locationId);
+            // Filter by worker service areas instead of direct location
+            $query->whereHas('serviceAreas', function ($q) use ($dto) {
+                $q->where('location_id', $dto->locationId)
+                  ->where('is_active', true);
+            });
         }
 
         if ($dto->minRating !== null) {
@@ -45,8 +49,8 @@ class WorkerCatalogService
             'reviews' => $query->orderBy('total_reviews', 'desc'),
             'experience' => $query->orderBy('experience_years', 'desc'),
             'newest' => $query->orderBy('created_at', 'desc'),
-            'price_asc' => $query->orderBy('min_price_idr', 'asc'),
-            'price_desc' => $query->orderBy('min_price_idr', 'desc'),
+            'price_asc' => $query->orderByRaw('(SELECT MIN(price_idr) FROM worker_service_pricings WHERE worker_id = workers.id AND is_active = 1) ASC'),
+            'price_desc' => $query->orderByRaw('(SELECT MIN(price_idr) FROM worker_service_pricings WHERE worker_id = workers.id AND is_active = 1) DESC'),
             default => $query->orderBy('rating', 'desc'),
         };
 
@@ -61,11 +65,13 @@ class WorkerCatalogService
         return Worker::with([
             'agency',
             'category',
-            'location',
             'documents',
-            'skills.skill',
+            'skills',
+            'primarySkills',
             'pricings',
+            'defaultPricing',
             'serviceAreas.location',
+            'primaryServiceArea.location',
         ])->find($workerId);
     }
 
@@ -123,7 +129,12 @@ class WorkerCatalogService
         return \Illuminate\Support\Facades\DB::table('workers')
             ->join('agencies','agencies.id','=','workers.agency_id')
             ->join('service_categories','service_categories.id','=','workers.category_id')
-            ->leftJoin('locations','locations.id','=','workers.location_id')
+            ->leftJoin('worker_service_areas', function($join) {
+                $join->on('worker_service_areas.worker_id', '=', 'workers.id')
+                     ->where('worker_service_areas.is_primary', true)
+                     ->where('worker_service_areas.is_active', true);
+            })
+            ->leftJoin('locations','locations.id','=','worker_service_areas.location_id')
             ->select([
                 'workers.*',
                 'agencies.company_name as agency_name',

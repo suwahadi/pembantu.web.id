@@ -3,13 +3,13 @@
     <x-card>
         <div class="flex items-center justify-between">
             <div>
-                <div class="font-semibold text-lg">Checkout</div>
-                <div class="text-sm text-gray-600">Langkah {{ $step }} dari 4</div>
+                <div class="font-semibold text-lg text-gray-900 dark:text-white">Checkout</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Langkah {{ $step }} dari 4</div>
             </div>
             <div class="flex gap-1">
                 @for ($i = 1; $i <= 4; $i++)
                     <div class="w-10 h-10 rounded-full flex items-center justify-center font-medium text-sm
-                        {{ $i <= $step ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700' }}">
+                        {{ $i <= $step ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
                         {{ $i }}
                     </div>
                 @endfor
@@ -22,7 +22,7 @@
         <x-card>
             <div class="space-y-4">
                 <div>
-                    <div class="font-semibold mb-3">1. Pilih Tanggal & Skema</div>
+                    <div class="font-semibold mb-3 text-gray-900 dark:text-white">1. Pilih Tanggal & Skema</div>
                 </div>
 
                 <x-form.select label="Skema" wire:model.live="scheme" :options="$schemes" :error="$errors->first('scheme')" />
@@ -45,7 +45,7 @@
         <x-card>
             <div class="space-y-4">
                 <div>
-                    <div class="font-semibold mb-3">2. Lokasi & Detail Pekerjaan</div>
+                    <div class="font-semibold mb-3 text-gray-900 dark:text-white">2. Lokasi & Detail Pekerjaan</div>
                 </div>
 
                 <x-form.select label="Lokasi" wire:model.live="locationId" :options="$locations" :error="$errors->first('locationId')" />
@@ -65,22 +65,22 @@
         <x-card>
             <div class="space-y-4">
                 <div>
-                    <div class="font-semibold mb-3">3. Review Kontrak</div>
-                    <p class="text-sm text-gray-600">Pastikan semua informasi sudah benar sebelum melanjutkan.</p>
+                    <div class="font-semibold mb-3 text-gray-900 dark:text-white">3. Review Kontrak</div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Pastikan semua informasi sudah benar sebelum melanjutkan.</p>
                 </div>
 
-                <div class="bg-gray-50 rounded-lg p-4 space-y-3 text-sm">
+                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3 text-sm">
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Skema:</span>
-                        <span class="font-medium">{{ $schemes[$scheme] ?? $scheme }}</span>
+                        <span class="text-gray-600 dark:text-gray-400">Skema:</span>
+                        <span class="font-medium text-gray-900 dark:text-white">{{ $schemes[$scheme] ?? $scheme }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Periode:</span>
-                        <span class="font-medium">{{ $startDate }} s/d {{ $endDate }}</span>
+                        <span class="text-gray-600 dark:text-gray-400">Periode:</span>
+                        <span class="font-medium text-gray-900 dark:text-white">{{ $startDate }} s/d {{ $endDate }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Alamat:</span>
-                        <span class="font-medium text-right max-w-xs">{{ $workAddress }}</span>
+                        <span class="text-gray-600 dark:text-gray-400">Alamat:</span>
+                        <span class="font-medium text-right max-w-xs text-gray-900 dark:text-white">{{ $workAddress }}</span>
                     </div>
                 </div>
 
@@ -97,13 +97,13 @@
         <x-card>
             <div class="space-y-4">
                 <div>
-                    <div class="font-semibold mb-2">4. Instruksi Pembayaran</div>
-                    <p class="text-sm text-gray-600">Arahkan ke Midtrans untuk menyelesaikan pembayaran.</p>
+                    <div class="font-semibold mb-2 text-gray-900 dark:text-white">4. Instruksi Pembayaran</div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Arahkan ke Midtrans untuk menyelesaikan pembayaran.</p>
                 </div>
 
                 @if($orderId)
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <p class="text-sm text-blue-900">
+                    <div class="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                        <p class="text-sm text-blue-900 dark:text-blue-100">
                             Pesanan Anda telah dibuat (ID: <span class="font-mono">#{{ $orderId }}</span>). 
                             Silakan selesaikan pembayaran untuk memulai proses.
                         </p>
@@ -116,11 +116,11 @@
                         </button>
                     @endif
 
-                    <a href="{{ route('orders.show', $orderId) }}" class="block text-center text-sm text-blue-600 hover:underline">
+                    <a href="{{ route('orders.show', $orderId) }}" class="block text-center text-sm text-blue-600 dark:text-blue-400 hover:underline">
                         Lihat Detail Pesanan
                     </a>
                 @else
-                    <p class="text-sm text-gray-600">Membuat pesanan...</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Membuat pesanan...</p>
                 @endif
             </div>
         </x-card>

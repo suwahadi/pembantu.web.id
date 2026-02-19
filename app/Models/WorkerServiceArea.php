@@ -13,6 +13,17 @@ class WorkerServiceArea extends Model
         'worker_id',
         'location_id',
         'radius_km',
+        'is_primary',
+        'additional_fee_idr',
+        'notes',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_primary' => 'boolean',
+        'is_active' => 'boolean',
+        'radius_km' => 'integer',
+        'additional_fee_idr' => 'integer',
     ];
 
     public function worker(): BelongsTo

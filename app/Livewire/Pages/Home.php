@@ -15,8 +15,13 @@ class Home extends Component
     public function mount()
     {
         $this->categories = ServiceCategory::take(6)->get();
-        $this->featured_workers = Worker::with('category', 'location')
+        $this->featured_workers = Worker::with([
+            'category', 
+            'primaryServiceArea.location',
+            'defaultPricing'
+        ])
             ->where('is_available', true)
+            ->where('verification_status', 'verified')
             ->orderBy('rating', 'desc')
             ->orderBy('total_completed_orders', 'desc')
             ->take(8)

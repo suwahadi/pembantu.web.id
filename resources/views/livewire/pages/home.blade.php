@@ -63,21 +63,56 @@
                 @foreach($categories as $category)
                     <a href="/search?category={{ $category->slug }}" class="group relative">
                         <div class="h-full bg-gradient-to-br {{ $loop->index % 3 == 0 ? 'from-blue-600 to-indigo-700' : ($loop->index % 3 == 1 ? 'from-purple-600 to-pink-700' : 'from-emerald-600 to-teal-700') }} p-6 rounded-[2rem] text-white text-center shadow-lg group-hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2 border-4 border-transparent dark:group-hover:border-white/20">
-                            <div class="mb-4 flex justify-center text-4xl transform group-hover:scale-110 transition-transform">
+                            <div class="mb-4 flex justify-center">
                                 @if($category->slug === 'babysitter')
-                                    <x-icon.baby class="h-12 w-12" />
+                                    <div class="relative">
+                                        <div class="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition-all"></div>
+                                        <svg class="relative h-12 w-12 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                                        </svg>
+                                    </div>
                                 @elseif($category->slug === 'sopir')
-                                    <x-icon.car class="h-12 w-12" />
+                                    <div class="relative">
+                                        <div class="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition-all"></div>
+                                        <svg class="relative h-12 w-12 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                                        </svg>
+                                    </div>
                                 @elseif($category->slug === 'perawat-lansia')
-                                    <x-icon.heart class="h-12 w-12" />
+                                    <div class="relative">
+                                        <div class="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition-all"></div>
+                                        <svg class="relative h-12 w-12 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                    </div>
                                 @elseif($category->slug === 'art-prt')
-                                    <x-icon.home class="h-12 w-12" />
+                                    <div class="relative">
+                                        <div class="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition-all"></div>
+                                        <svg class="relative h-12 w-12 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                                        </svg>
+                                    </div>
                                 @elseif($category->slug === 'tukang-kebun')
-                                    <x-icon.plant class="h-12 w-12" />
+                                    <div class="relative">
+                                        <div class="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition-all"></div>
+                                        <svg class="relative h-12 w-12 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                                        </svg>
+                                    </div>
                                 @elseif(str_contains($category->slug, 'keamanan') || str_contains($category->slug, 'satpam'))
-                                    <x-icon.shield class="h-12 w-12" />
+                                    <div class="relative">
+                                        <div class="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition-all"></div>
+                                        <svg class="relative h-12 w-12 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                                        </svg>
+                                    </div>
                                 @else
-                                    <x-icon.logo class="h-12 w-12" />
+                                    <div class="relative">
+                                        <div class="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition-all"></div>
+                                        <svg class="relative h-12 w-12 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
                                 @endif
                             </div>
                             <h3 class="font-extrabold text-sm tracking-wide mb-1">{{ $category->name }}</h3>
