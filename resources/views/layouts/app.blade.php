@@ -4,36 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ $title ?? 'Pembantu.web.id' }}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            gray: {
-              950: '#030712',
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <script>
-    (function () {
+    // Dark mode toggle
+    (function() {
       const key = 'theme';
       const root = document.documentElement;
-      function apply(theme) {
-        if (theme === 'dark') root.classList.add('dark');
-        else root.classList.remove('dark');
-      }
-      const saved = localStorage.getItem(key);
-      if (saved === 'dark' || saved === 'light') {
-        apply(saved);
-      } else {
-        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        apply(prefersDark ? 'dark' : 'light');
-      }
+      const dark = localStorage.getItem(key) === 'dark' || (!localStorage.getItem(key) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      
+      const apply = (theme) => {
+        root.classList.remove('dark', 'light');
+        root.classList.add(theme);
+      };
+      
+      apply(dark ? 'dark' : 'light');
+      
       window.__toggleTheme = function () {
         const isDark = root.classList.contains('dark');
         const next = isDark ? 'light' : 'dark';
@@ -43,6 +27,7 @@
       };
     })();
   </script>
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
   @livewireStyles
 </head>
 <body class="min-h-full bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors duration-200">

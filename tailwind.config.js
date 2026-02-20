@@ -5,8 +5,15 @@ export default {
     "./resources/**/*.js",
     "./resources/**/*.vue",
   ],
+  darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        gray: {
+          950: '#030712',
+        }
+      }
+    },
   },
   plugins: [
     require('@tailwindcss/forms'),

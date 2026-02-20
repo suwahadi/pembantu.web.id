@@ -23,8 +23,17 @@ class Dashboard extends Component
             })->where('status', 'completed')->sum('total_idr'),
         ];
 
+        // Get latest orders for this agency
+        $latest_orders = Order::whereHas('worker', function($q) use ($agency) {
+            $q->where('agency_id', $agency?->id);
+        })->with(['visitor', 'worker'])
+        ->orderBy('created_at', 'desc')
+        ->limit(10)
+        ->get();
+
         return view('livewire.agency.dashboard', [
-            'stats' => $stats
+            'stats' => $stats,
+            'latest_orders' => $latest_orders
         ])->layout('layouts.agency', ['title' => 'Dashboard Agency']);
     }
 }
