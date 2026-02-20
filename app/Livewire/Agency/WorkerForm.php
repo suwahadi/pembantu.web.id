@@ -31,7 +31,7 @@ final class WorkerForm extends Component
         return [
             'name' => ['required', 'string', 'min:2', 'max:120'],
             'categoryId' => ['required', 'integer'],
-            'locationId' => ['nullable', 'integer'],
+            'locationId' => ['required', 'integer', 'exists:locations,id'],
             'defaultScheme' => ['required', 'in:HARIAN,MINGGUAN,BULANAN,PER_JAM'],
             'minPriceIdr' => ['required', 'integer', 'min:0', 'max:999999999999'], // Max 999 juta
             'bio' => ['nullable', 'string', 'max:4000'],
@@ -57,15 +57,9 @@ final class WorkerForm extends Component
             if ($row && (int)$row->agency_id === $agencyId) {
                 $this->name = (string)$row->name;
                 $this->categoryId = (int)$row->category_id;
+                $this->locationId = $row->location_id ? (int)$row->location_id : null;
                 $this->bio = (string)($row->bio ?? '');
                 $this->existingPhotoPath = $row->photo_path ? (string)$row->photo_path : null;
-
-                // Get primary location from worker_service_areas
-                $primaryArea = DB::table('worker_service_areas')
-                    ->where('worker_id', $this->workerId)
-                    ->where('is_primary', true)
-                    ->first();
-                $this->locationId = $primaryArea ? (int)$primaryArea->location_id : null;
 
                 // Get default pricing from worker_service_pricings
                 $defaultPricing = DB::table('worker_service_pricings')
@@ -108,6 +102,7 @@ final class WorkerForm extends Component
                 $workers->update($agencyId, $this->workerId, [
                     'name' => $this->name,
                     'category_id' => $this->categoryId,
+                    'location_id' => $this->locationId,
                     'bio' => $this->bio,
                     'skills' => $this->skillIds,
                     'areas' => $this->serviceAreaIds,
@@ -119,6 +114,7 @@ final class WorkerForm extends Component
                 $created = $workers->create($agencyId, [
                     'name' => $this->name,
                     'category_id' => $this->categoryId,
+                    'location_id' => $this->locationId,
                     'bio' => $this->bio,
                     'skills' => $this->skillIds,
                     'areas' => $this->serviceAreaIds,
@@ -173,7 +169,6 @@ final class WorkerForm extends Component
         $categories = DB::table('service_categories')->orderBy('name')->pluck('name', 'id')->all();
         $locations = DB::table('locations')->distinct()->select('id', 'city')->orderBy('city')->get()->mapWithKeys(fn($loc) => [$loc->id => $loc->city])->toArray();
         $allSkills = DB::table('service_skills')
-            ->when($this->categoryId, fn($q) => $q->where('category_id', $this->categoryId))
             ->orderBy('name')
             ->get();
 

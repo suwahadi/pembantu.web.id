@@ -18,6 +18,7 @@ final class WorkerService
                     'public_id' => $publicId,
                     'agency_id' => $agencyId,
                     'category_id' => (int)$data['category_id'],
+                    'location_id' => (int)($data['location_id'] ?? null),
                     'name' => trim($data['name']),
                     'bio' => trim($data['bio'] ?? ''),
                     'is_active' => (int)($data['is_active'] ?? 1),
@@ -56,6 +57,7 @@ final class WorkerService
 
             DB::table('workers')->where('id', $workerId)->update([
                 'category_id' => (int)$data['category_id'],
+                'location_id' => (int)($data['location_id'] ?? $row->location_id),
                 'name' => trim($data['name']),
                 'bio' => trim($data['bio'] ?? ''),
                 'photo_path' => $data['photo_path'] ?? $row->photo_path,

@@ -8,7 +8,7 @@
       <x-form.input label="Nama" wire:model.live="name" />
       <x-form.select label="Kategori" wire:model.live="categoryId" :options="$categories" />
 
-      <x-form.select label="Lokasi (opsional)" wire:model.live="locationId" :options="['' => '- Pilih -'] + $locations" />
+      <x-form.select label="Lokasi" wire:model.live="locationId" :options="['' => '- Pilih -'] + $locations" />
       <x-form.select label="Skema Default" wire:model.live="defaultScheme"
         :options="['HARIAN' => 'Harian', 'MINGGUAN' => 'Mingguan', 'BULANAN' => 'Bulanan', 'PER_JAM' => 'Per Jam']" />
 
@@ -22,20 +22,16 @@
     <!-- Skills Section -->
     <div class="mt-4 border-t dark:border-gray-700 pt-4">
       <div class="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Keahlian (Skills)</div>
-      @if($categoryId)
-        <div class="flex flex-wrap gap-2">
-          @foreach($allSkills as $skill)
-            <label class="cursor-pointer">
-              <input type="checkbox" wire:model.live="skillIds" value="{{ $skill->id }}" class="hidden peer" />
-              <div class="px-3 py-1 rounded-full border border-gray-300 dark:border-gray-600 text-xs text-gray-700 dark:text-gray-300 transition peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                {{ $skill->name }}
-              </div>
-            </label>
-          @endforeach
-        </div>
-      @else
-        <div class="text-xs text-gray-500 dark:text-gray-400 italic">Pilih kategori terlebih dahulu untuk melihat daftar keahlian.</div>
-      @endif
+      <div class="flex flex-wrap gap-2">
+        @foreach($allSkills as $skill)
+          <label class="cursor-pointer">
+            <input type="checkbox" wire:model.live="skillIds" value="{{ $skill->id }}" class="hidden peer" />
+            <div class="px-3 py-1 rounded-full border border-gray-300 dark:border-gray-600 text-xs text-gray-700 dark:text-gray-300 transition peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+              {{ $skill->name }}
+            </div>
+          </label>
+        @endforeach
+      </div>
       @error('skillIds') <div class="text-xs text-red-600 mt-1">{{ $message }}</div> @enderror
     </div>
 

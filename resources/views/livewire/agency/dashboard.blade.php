@@ -1,22 +1,4 @@
 <div>
-<!-- Page Header -->
-<div class="mb-8">
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Agency</h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-1">Selamat datang di agency panel Pembantu.web.id</p>
-        </div>
-        <div class="flex items-center space-x-3">
-            <a href="{{ route('agency.workers.create') }}" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Tambah Pekerja
-            </a>
-        </div>
-    </div>
-</div>
-
 <!-- Stats Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     <!-- Total Workers -->

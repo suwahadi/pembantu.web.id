@@ -51,12 +51,7 @@ final class WorkerList extends Component
 
         $query = DB::table('workers')
             ->join('service_categories', 'service_categories.id', '=', 'workers.category_id')
-            ->leftJoin('worker_service_areas', function($join) {
-                $join->on('worker_service_areas.worker_id', '=', 'workers.id')
-                     ->where('worker_service_areas.is_primary', true)
-                     ->where('worker_service_areas.is_active', true);
-            })
-            ->leftJoin('locations', 'locations.id', '=', 'worker_service_areas.location_id')
+            ->leftJoin('locations', 'locations.id', '=', 'workers.location_id')
             ->select([
                 'workers.id', 'workers.name', 'workers.is_active', 'workers.photo_path',
                 'service_categories.name as category_name',

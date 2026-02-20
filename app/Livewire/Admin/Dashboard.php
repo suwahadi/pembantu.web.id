@@ -23,7 +23,6 @@ final class Dashboard extends Component
             ->limit(10)
             ->get(['id', 'code', 'status', 'total_idr', 'created_at']);
 
-        return view('livewire.admin.dashboard', compact('kpi', 'latest'))
-            ->layout('layouts.admin', ['title' => 'Dashboard Admin']);
+        return view('livewire.admin.dashboard', compact('kpi', 'latest'));
     }
 }

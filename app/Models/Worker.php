@@ -14,6 +14,7 @@ class Worker extends Model
         'public_id',
         'agency_id',
         'category_id',
+        'location_id',
         'name',
         'gender',
         'birth_date',

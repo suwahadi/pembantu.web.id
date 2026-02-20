@@ -34,6 +34,6 @@ class Dashboard extends Component
         return view('livewire.agency.dashboard', [
             'stats' => $stats,
             'latest_orders' => $latest_orders
-        ])->layout('layouts.agency', ['title' => 'Dashboard Agency']);
+        ]);
     }
 }

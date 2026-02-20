@@ -64,23 +64,47 @@ Route::middleware('auth')->group(function () {
 
 // Admin Routes (Protected by middleware + gate)
 Route::middleware(['auth', 'admin-access'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', AdminDashboard::class)->name('dashboard');
-    Route::get('/disputes', DisputeQueue::class)->name('disputes');
-    Route::get('/refunds', RefundQueue::class)->name('refunds');
-    Route::get('/payouts', PayoutQueue::class)->name('payouts');
-    Route::get('/bank-accounts', AdminBankAccounts::class)->name('bank-accounts');
+    Route::get('/', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+    Route::get('/disputes', function () {
+        return view('admin.disputes');
+    })->name('disputes');
+    Route::get('/refunds', function () {
+        return view('admin.refunds');
+    })->name('refunds');
+    Route::get('/payouts', function () {
+        return view('admin.payouts');
+    })->name('payouts');
+    Route::get('/bank-accounts', function () {
+        return view('admin.bank-accounts');
+    })->name('bank-accounts');
 });
 
 // Agency Routes (Protected by middleware + gate)
 Route::middleware(['auth', 'agency-access'])->prefix('agency')->name('agency.')->group(function () {
-    Route::get('/', \App\Livewire\Agency\Dashboard::class)->name('dashboard');
-    Route::get('/contracts', ContractQueue::class)->name('contracts');
-    Route::get('/workers', WorkerList::class)->name('workers.index');
-    Route::get('/workers/create', WorkerForm::class)->name('workers.create');
-    Route::get('/workers/{worker}/edit', WorkerForm::class)->name('workers.edit');
-    Route::get('/orders', OrderList::class)->name('orders.index');
+    Route::get('/', function () {
+        return view('agency.dashboard');
+    })->name('dashboard');
+    Route::get('/contracts', function () {
+        return view('agency.contracts');
+    })->name('contracts');
+    Route::get('/workers', function () {
+        return view('agency.workers');
+    })->name('workers.index');
+    Route::get('/workers/create', function () {
+        return view('agency.workers-create');
+    })->name('workers.create');
+    Route::get('/workers/{worker}/edit', function ($worker) {
+        return view('agency.workers-create');
+    })->name('workers.edit');
+    Route::get('/orders', function () {
+        return view('agency.orders');
+    })->name('orders.index');
     Route::get('/orders/{orderId}', AgencyOrderDetail::class)->name('orders.show');
-    Route::get('/bank-accounts', AgencyBankAccounts::class)->name('bank-accounts');
+    Route::get('/bank-accounts', function () {
+        return view('agency.bank-accounts');
+    })->name('bank-accounts');
 });
 
 

@@ -224,6 +224,7 @@ class ProperWorkerSeeder extends Seeder
                 'public_id' => 'WRK' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
                 'agency_id' => $agencies->random()->id,
                 'category_id' => $categories->random()->id,
+                'location_id' => $locations->random()->id,
                 'name' => $workerData['name'],
                 'gender' => $workerData['gender'],
                 'birth_date' => $workerData['birth_date'],
