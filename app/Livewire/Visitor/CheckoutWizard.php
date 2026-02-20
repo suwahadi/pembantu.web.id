@@ -116,18 +116,22 @@ class CheckoutWizard extends Component
             return;
         }
 
+        if ($worker->min_price <= 0) {
+            $this->addError('workerId', 'Worker tidak memiliki harga yang valid. Silakan hubungi agency.');
+            return;
+        }
+
         $order = $orders->createFromContract(
             contractId: $this->contractId,
             visitorUserId: $visitorId,
             agencyId: (int)$worker->agency_id,
             workerId: (int)$worker->id,
             categoryId: (int)$worker->category_id,
-            totalIdr: (int)$worker->min_price_idr
+            totalIdr: (int)$worker->min_price
         );
 
         $this->orderId = $order->id;
-        $this->paymentInstruction = $midtrans->charge($order->id);
-        $this->step = 4;
+        $this->redirect('/pembayaran/' . $this->orderId);
     }
 
     public function render()

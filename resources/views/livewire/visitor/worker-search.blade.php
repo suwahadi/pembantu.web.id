@@ -31,7 +31,7 @@
 
                     <div class="border-t pt-2 flex justify-between items-center">
                         <div class="text-sm">
-                            Mulai dari <span class="font-semibold">Rp {{ number_format($worker->min_price_idr, 0, ',', '.') }}</span>
+                            Mulai dari <span class="font-semibold">Rp {{ number_format($worker->min_price, 0, ',', '.') }}</span>
                         </div>
                         @auth
                             <a href="{{ route('checkout', $worker->id) }}" class="text-blue-600 hover:underline text-sm font-medium">

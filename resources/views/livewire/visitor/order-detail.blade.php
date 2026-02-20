@@ -24,6 +24,12 @@
       <div class="mt-4 flex flex-wrap gap-2">
         <a class="text-sm text-blue-600 dark:text-blue-400 hover:underline" href="{{ route('orders.list') }}">Kembali ke Order</a>
 
+        @if($order->status === 'pending_payment')
+          <a href="/pembayaran/{{ $order->id }}" class="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+            Bayar Sekarang
+          </a>
+        @endif
+
         @if($order->status === 'in_progress')
           <x-button size="sm" wire:click="markCompleted" wire:loading.attr="disabled">
             <span wire:loading.remove>Konfirmasi Selesai</span>

@@ -48,7 +48,7 @@
               <td class="p-3 text-gray-900 dark:text-white">{{ $w->category_name }}</td>
               <td class="p-3 text-gray-900 dark:text-white">{{ $w->location_name }}</td>
               <td class="p-3 text-gray-900 dark:text-white">{{ $w->default_scheme }}</td>
-              <td class="p-3 text-gray-900 dark:text-white">Rp {{ number_format($w->min_price_idr, 0, ',', '.') }}</td>
+              <td class="p-3 text-gray-900 dark:text-white">Rp {{ number_format($w->min_price, 0, ',', '.') }}</td>
               <td class="p-3">
                 <button type="button"
                   wire:click="toggleActive({{ $w->id }})"

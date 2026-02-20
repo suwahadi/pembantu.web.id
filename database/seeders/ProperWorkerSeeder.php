@@ -45,7 +45,7 @@ class ProperWorkerSeeder extends Seeder
         // Indonesian worker profiles
         $workers = [
             [
-                'name' => 'Siti Nurhaliza',
+                'name' => 'Mifta Raisa',
                 'gender' => 'female',
                 'birth_date' => '2001-03-15',
                 'phone' => '081234567891',

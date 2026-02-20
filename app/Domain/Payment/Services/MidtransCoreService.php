@@ -4,7 +4,7 @@ namespace App\Domain\Payment\Services;
 
 use App\Models\Order;
 use Midtrans\Config;
-use Midtrans\Snap;
+use Midtrans\CoreApi;
 use Illuminate\Support\Facades\Log;
 
 class MidtransCoreService
@@ -18,10 +18,10 @@ class MidtransCoreService
     }
 
     /**
-     * Charge an order via Snap
-     * Returns the Snap response containing redirect_url
+     * Charge an order via Midtrans Core API
+     * Returns the charge response containing payment details
      */
-    public function charge(int $orderId): array
+    public function charge(int $orderId, string $paymentType, ?string $bank = null): array
     {
         $order = Order::with(['visitor', 'worker'])->findOrFail($orderId);
 
@@ -42,18 +42,23 @@ class MidtransCoreService
                     'name' => 'Layanan Tenaga Kerja - ' . ($order->worker->name ?? 'Service'),
                 ]
             ],
+            'payment_type' => $paymentType,
         ];
 
-        try {
-            // Get Snap URL directly
-            $redirectUrl = Snap::createTransaction($params)->redirect_url;
+        if ($paymentType === 'bank_transfer' && $bank) {
+            $params['bank_transfer'] = ['bank' => $bank];
+        } elseif ($paymentType === 'gopay') {
+            $params['payment_type'] = 'gopay';
+        }
 
-            return [
-                'redirect_url' => $redirectUrl,
-            ];
+        try {
+            $response = CoreApi::charge($params);
+
+            return json_decode(json_encode($response), true);
         } catch (\Throwable $e) {
             Log::error('Midtrans Charge Exception', [
                 'order_id' => $orderId,
+                'payment_type' => $paymentType,
                 'message' => $e->getMessage(),
             ]);
             throw new \RuntimeException('Gagal memproses pembayaran ke Midtrans: ' . $e->getMessage());

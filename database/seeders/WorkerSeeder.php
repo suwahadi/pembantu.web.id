@@ -46,7 +46,7 @@ class WorkerSeeder extends Seeder
                 'photo' => 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?q=80&w=200&h=200&fit=crop',
             ],
             [
-                'name' => 'Siti Aminah',
+                'name' => 'Dita Aminah',
                 'gender' => 'Perempuan',
                 'birth_date' => '1995-10-20',
                 'category' => 'art-prt',
@@ -55,7 +55,7 @@ class WorkerSeeder extends Seeder
                 'photo' => 'https://images.unsplash.com/photo-1567532939104-b65432793189?q=80&w=200&h=200&fit=crop',
             ],
             [
-                'name' => 'Budi Santoso',
+                'name' => 'Totok Irawan',
                 'gender' => 'Laki-laki',
                 'birth_date' => '1988-03-15',
                 'category' => 'tukang-kebun',

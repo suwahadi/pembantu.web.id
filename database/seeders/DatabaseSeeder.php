@@ -18,8 +18,9 @@ class DatabaseSeeder extends Seeder
             LocationsSeeder::class,
             UserSeeder::class,
             AgencySeeder::class,
-            WorkerSeeder::class,
-            OrderSeeder::class,
+            //WorkerSeeder::class,
+            ProperWorkerSeeder::class,
+            //OrderSeeder::class,
         ]);
     }
 }

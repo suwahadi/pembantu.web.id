@@ -10,16 +10,14 @@ class LocationsSeeder extends Seeder
     public function run(): void
     {
         $locations = [
-            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Pusat', 'district' => 'Menteng'],
-            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Pusat', 'district' => 'Tanah Abang'],
-            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Selatan', 'district' => 'Kebayoran Baru'],
-            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Selatan', 'district' => 'Tebet'],
-            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Barat', 'district' => 'Palmerah'],
-            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Timur', 'district' => 'Kramat Jati'],
-            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Utara', 'district' => 'Penjaringan'],
-            ['province' => 'Jawa Barat', 'city' => 'Bogor', 'district' => 'Bogor Tengah'],
-            ['province' => 'Jawa Barat', 'city' => 'Depok', 'district' => 'Depok Pertanian'],
-            ['province' => 'Banten', 'city' => 'Tangerang', 'district' => 'Tangerang Pusat'],
+            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Pusat', 'district' => ''],
+            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Selatan', 'district' => ''],
+            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Barat', 'district' => ''],
+            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Timur', 'district' => ''],
+            ['province' => 'DKI Jakarta', 'city' => 'Jakarta Utara', 'district' => ''],
+            ['province' => 'Jawa Barat', 'city' => 'Bogor', 'district' => ''],
+            ['province' => 'Jawa Barat', 'city' => 'Depok', 'district' => ''],
+            ['province' => 'Banten', 'city' => 'Tangerang', 'district' => ''],
         ];
 
         foreach ($locations as $location) {

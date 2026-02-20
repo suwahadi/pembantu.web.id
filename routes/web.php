@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Livewire\Visitor\WorkerSearch;
 use App\Livewire\Visitor\CheckoutWizard;
+use App\Livewire\Visitor\PaymentMethodSelector;
 use App\Livewire\Visitor\OrderDetail;
 use App\Livewire\Visitor\DisputeForm;
 use App\Livewire\Visitor\BankAccounts as VisitorBankAccounts;
@@ -47,6 +48,7 @@ Route::middleware('guest')->group(function () {
 // Authenticated Visitor Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profil', \App\Livewire\Profile\UpdateProfile::class)->name('profile');
+    Route::get('/pembayaran/{orderId}', PaymentMethodSelector::class)->name('payment.method');
     Route::get('/pesanan', \App\Livewire\Visitor\OrderList::class)->name('orders.list');
     Route::get('/pesanan/{orderId}', OrderDetail::class)->name('orders.show');
     Route::get('/pesanan/{orderId}/dispute', DisputeForm::class)->name('orders.dispute');

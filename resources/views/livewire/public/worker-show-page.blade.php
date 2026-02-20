@@ -52,7 +52,7 @@
 
                         <div class="mt-8">
                             <a href="{{ route('checkout', $worker->id) }}" class="block w-full text-center rounded-2xl bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all active:scale-95">
-                                Pesat Sekarang
+                                Pesan Sekarang
                             </a>
                             <p class="mt-4 text-center text-xs text-gray-500 dark:text-gray-400">Gaji mulai: <span class="font-bold text-gray-900 dark:text-white">Rp {{ number_format($worker->min_price ?? 0, 0, ',', '.') }}/hari</span></p>
                         </div>
