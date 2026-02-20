@@ -96,7 +96,7 @@ Route::middleware(['auth', 'agency-access'])->prefix('agency')->name('agency.')-
         return view('agency.workers-create');
     })->name('workers.create');
     Route::get('/workers/{worker}/edit', function ($worker) {
-        return view('agency.workers-create');
+        return view('agency.workers-edit', ['worker' => $worker]);
     })->name('workers.edit');
     Route::get('/orders', function () {
         return view('agency.orders');
@@ -105,6 +105,10 @@ Route::middleware(['auth', 'agency-access'])->prefix('agency')->name('agency.')-
     Route::get('/bank-accounts', function () {
         return view('agency.bank-accounts');
     })->name('bank-accounts');
+    
+    // Photo upload routes
+    Route::post('/workers/upload-photo', [\App\Http\Controllers\Agency\WorkerPhotoController::class, 'upload'])->name('workers.upload-photo');
+    Route::delete('/workers/remove-photo', [\App\Http\Controllers\Agency\WorkerPhotoController::class, 'remove'])->name('workers.remove-photo');
 });
 
 

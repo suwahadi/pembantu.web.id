@@ -3,14 +3,13 @@
 namespace App\Livewire\Agency;
 
 use Livewire\Component;
-use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
 use App\Domain\Worker\Services\WorkerService;
+use Illuminate\Http\Request;
 
 final class WorkerForm extends Component
 {
-    use WithFileUploads;
-
+    public ?int $worker = null;
     public ?int $workerId = null;
 
     public string $name = '';
@@ -23,7 +22,7 @@ final class WorkerForm extends Component
     public array $serviceAreaIds = [];
     public array $pricings = [];
 
-    public $photo;
+    public ?string $photoPath = null;
     public ?string $existingPhotoPath = null;
 
     protected function rules(): array
@@ -39,13 +38,14 @@ final class WorkerForm extends Component
             'skillIds.*' => ['integer', 'exists:service_skills,id'],
             'serviceAreaIds' => ['nullable', 'array'],
             'serviceAreaIds.*' => ['integer', 'exists:locations,id'],
-            'photo' => ['nullable', 'image', 'max:4096'],
         ];
     }
 
-    public function mount(?int $worker = null): void
+    public function mount(): void
     {
-        $this->workerId = $worker;
+        if ($this->worker) {
+            $this->workerId = $this->worker;
+        }
 
         if ($this->workerId) {
             $agency = auth()->user()->agency;
@@ -92,11 +92,9 @@ final class WorkerForm extends Component
         }
         $agencyId = $agency->id;
 
-        $photoPath = $this->existingPhotoPath;
-        if ($this->photo) {
-            $photoPath = $this->photo->store('workers', 'public');
-        }
-
+        // Handle photo upload (using custom upload controller)
+        $photoPath = $this->photoPath ?? $this->existingPhotoPath;
+        
         try {
             if ($this->workerId) {
                 $workers->update($agencyId, $this->workerId, [
@@ -128,6 +126,7 @@ final class WorkerForm extends Component
 
             $this->redirect(route('agency.workers.index'));
         } catch (\Throwable $e) {
+            \Log::error('Worker save failed: ' . $e->getMessage());
             session()->flash('error', 'Error: ' . $e->getMessage());
         }
     }
@@ -172,7 +171,6 @@ final class WorkerForm extends Component
             ->orderBy('name')
             ->get();
 
-        return view('livewire.agency.worker-form', compact('categories', 'locations', 'allSkills'))
-            ->layout('layouts.agency', ['title' => $this->workerId ? 'Edit Worker' : 'Tambah Worker']);
+        return view('livewire.agency.worker-form', compact('categories', 'locations', 'allSkills'));
     }
 }

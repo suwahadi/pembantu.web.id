@@ -1,4 +1,4 @@
-@extends('layouts.agency', ['title' => 'Tambah Tenaga Kerja'])
+@extends('layouts.agency', ['title' => 'Tambah Pekerja'])
 
 @section('content')
 <livewire:agency.worker-form />
