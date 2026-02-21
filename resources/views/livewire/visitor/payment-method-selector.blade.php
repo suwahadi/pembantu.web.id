@@ -1,120 +1,245 @@
-<div class="max-w-4xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Pilih Metode Pembayaran</h1>
+<div
+    x-data="{
+        copy(text) {
+            if (!text) return;
 
-    <!-- Order Summary -->
-    <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg mb-6 border border-gray-200 dark:border-gray-700">
-        <h2 class="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Ringkasan Pesanan</h2>
-        <p class="text-gray-700 dark:text-gray-300"><strong>Pekerja:</strong> {{ $this->order->worker->name ?? 'N/A' }}</p>
-        <p class="text-gray-700 dark:text-gray-300"><strong>Total:</strong> Rp {{ number_format($this->order->total_idr) }}</p>
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).catch(() => {
+                    const el = document.createElement('textarea');
+                    el.value = text;
+                    document.body.appendChild(el);
+                    el.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(el);
+                });
+            } else {
+                const el = document.createElement('textarea');
+                el.value = text;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            }
+        }
+    }"
+    class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+>
+    <div class="mb-8">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+            {{ $this->paymentDetails ? 'Instruksi Pembayaran' : 'Pilih Metode Pembayaran' }}
+        </h1>
+        <div class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            Selesaikan pembayaran untuk melanjutkan proses pesanan.
+        </div>
+
+        <div class="mt-4 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+            <div class="flex items-center gap-2">
+                <button
+                    type="button"
+                    wire:click="refreshPayment"
+                    wire:loading.attr="disabled"
+                    class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
+                >
+                    <span wire:loading.remove wire:target="refreshPayment">Refresh Pembayaran</span>
+                    <span wire:loading wire:target="refreshPayment">Memuat...</span>
+                </button>
+
+                <a
+                    href="{{ route('orders.show', $this->orderId) }}"
+                    class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+                >
+                    Detail Pesanan
+                </a>
+            </div>
+        </div>
     </div>
 
-    @if(!$this->paymentDetails)
-        <!-- Payment Methods -->
-        <div class="mb-6">
-            <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Metode Pembayaran</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Left: Instruksi Pembayaran -->
+        <div>
+            @if($this->paymentDetails)
+                <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm dark:border-emerald-900/40 dark:bg-emerald-900/20">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div class="text-sm font-semibold text-gray-900 dark:text-white">Instruksi Pembayaran</div>
+                        <div class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
+                            STATUS: <span class="font-semibold">{{ Str::upper($this->paymentDetails['transaction_status'] ?? 'pending') }}</span>
+                        </div>
+                    </div>
 
-            <!-- Bank Transfer -->
-            <div class="mb-4">
-                <h3 class="font-medium mb-2 text-gray-900 dark:text-white">Transfer Bank</h3>
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                    @foreach($banks as $bankKey => $bankName)
+                    <div class="mt-6 rounded-2xl border border-emerald-200 bg-white p-5 dark:border-emerald-900/40 dark:bg-gray-900">
+                        @if($this->selectedPaymentType === 'bank_transfer')
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">Bank</div>
+                                    <div class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">{{ strtoupper($this->selectedBank) }}</div>
+                                </div>
+
+                                <div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">Jumlah</div>
+                                    <div class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">Rp {{ number_format($this->order->total_idr) }}</div>
+                                </div>
+                            </div>
+
+                            @if(isset($this->paymentDetails['va_numbers']))
+                                @foreach($this->paymentDetails['va_numbers'] as $va)
+                                    <div class="mt-4">
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">Nomor VA</div>
+                                        <div class="mt-1 flex flex-wrap items-center gap-2">
+                                            <div class="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 font-mono text-sm font-semibold text-gray-900 dark:border-gray-800 dark:bg-gray-950 dark:text-white">{{ $va['va_number'] }}</div>
+                                            <button type="button" @click="copy('{{ $va['va_number'] }}'); $el.textContent = 'Tersalin!'; setTimeout(() => $el.textContent = 'Copy', 2000)" x-ref="copyBtn" class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700">Copy</button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+
+                            <div class="mt-4 text-xs text-gray-600 dark:text-gray-400">
+                                Batas pembayaran: <span class="font-semibold">{{ optional($this->order->created_at)->addHours(24)->format('d M Y, H:i') }}</span>
+                            </div>
+                        @elseif($this->selectedPaymentType === 'gopay')
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">Metode</div>
+                                    <div class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">QRIS</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">Jumlah</div>
+                                    <div class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">Rp {{ number_format($this->order->total_idr) }}</div>
+                                </div>
+                            </div>
+
+                            @if(isset($this->paymentDetails['actions']))
+                                @foreach($this->paymentDetails['actions'] as $action)
+                                    @if(($action['name'] ?? null) === 'generate-qr-code')
+                                        <div class="mt-5">
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">QR Code</div>
+                                            <div class="mt-2 overflow-hidden rounded-2xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-950">
+                                                <img src="{{ $action['url'] }}" alt="QR Code" class="mx-auto w-full max-w-xs rounded-xl" />
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @endif
+
+                            <div class="mt-4 text-xs text-gray-600 dark:text-gray-400">
+                                Batas pembayaran: <span class="font-semibold">{{ optional($this->order->created_at)->addHours(24)->format('d M Y, H:i') }}</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @else
+                <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                    <div class="text-sm font-semibold text-gray-900 dark:text-white">Metode Pembayaran</div>
+
+                    <div class="mt-4">
+                        <div class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4">Transfer Bank</div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                            @foreach($banks as $bankKey => $bankName)
+                                <button
+                                    type="button"
+                                    wire:click="selectBankTransfer('{{ $bankKey }}')"
+                                    class="group rounded-2xl border p-3 text-left transition-colors {{
+                                        $this->selectedPaymentType === 'bank_transfer' && $this->selectedBank === $bankKey
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                            : 'border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800'
+                                    }}"
+                                >
+                                    <div class="text-sm font-bold text-gray-900 dark:text-white">{{ strtoupper($bankKey) }}</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">{{ $bankName }}</div>
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <div class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4">QRIS</div>
                         <button
-                            wire:click="selectBankTransfer('{{ $bankKey }}')"
-                            class="border-2 p-4 rounded-lg text-center hover:border-blue-500 transition-colors {{ 
-                                $this->selectedPaymentType === 'bank_transfer' && $this->selectedBank === $bankKey 
-                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
-                                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700' 
+                            type="button"
+                            wire:click="selectGopay"
+                            class="w-full rounded-2xl border p-4 text-left transition-colors {{
+                                $this->selectedPaymentType === 'gopay'
+                                    ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
+                                    : 'border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800'
                             }}"
                         >
-                            <div class="text-2xl mb-2">
-                                @switch($bankKey)
-                                    @case('bca')
-                                        🏦 BCA
-                                        @break
-                                    @case('bni')
-                                        🏦 BNI
-                                        @break
-                                    @case('mandiri')
-                                        🏦 Mandiri
-                                        @break
-                                    @case('bri')
-                                        🏦 BRI
-                                        @break
-                                    @case('permata')
-                                        🏦 Permata
-                                        @break
-                                    @default
-                                        🏦 {{ $bankName }}
-                                @endswitch
-                            </div>
-                            <div class="text-sm text-gray-700 dark:text-gray-300">{{ $bankName }}</div>
+                            <div class="text-sm font-bold text-gray-900 dark:text-white">GoPay / QRIS</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Scan QR menggunakan e-wallet / mobile banking</div>
                         </button>
-                    @endforeach
+                    </div>
+
+                    <div class="mt-6 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Pilih metode pembayaran, lalu proses untuk mendapatkan kode bayar.</div>
+                        <button
+                            type="button"
+                            wire:click="processPayment"
+                            wire:loading.attr="disabled"
+                            class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            <span wire:loading.remove wire:target="processPayment">Proses Pembayaran</span>
+                            <span wire:loading wire:target="processPayment">Memproses...</span>
+                        </button>
+                    </div>
+
+                    @error('payment')
+                        <div class="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300">{{ $message }}</div>
+                    @enderror
+                </div>
+            @endif
+        </div>
+
+        <!-- Right: Ringkasan Pesanan + Panduan -->
+        <div class="space-y-4">
+            <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div class="text-sm font-semibold text-gray-900 dark:text-white">Ringkasan Pesanan</div>
+                <div class="mt-4 space-y-3">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Pekerja</div>
+                        <div class="text-sm font-semibold text-gray-900 dark:text-white text-right">{{ $this->order->worker->name ?? 'N/A' }}</div>
+                    </div>
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Total</div>
+                        <div class="text-sm font-semibold text-gray-900 dark:text-white text-right">Rp {{ number_format($this->order->total_idr) }}</div>
+                    </div>
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Tanggal order</div>
+                        <div class="text-sm font-semibold text-gray-900 dark:text-white text-right">{{ optional($this->order->created_at)->format('d M Y, H:i') }}</div>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 dark:border-gray-800">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Invoice</div>
+                            <div class="flex items-center gap-2">
+                                <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ $this->order->code }}</div>
+                                <button type="button" @click="copy('{{ $this->order->code }}'); $el.textContent = 'Tersalin!'; setTimeout(() => $el.textContent = 'Copy', 2000)" x-ref="copyBtnInvoice" class="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800">Copy</button>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                            Bayar sebelum <span class="font-semibold">{{ optional($this->order->created_at)->addHours(24)->format('d M Y, H:i') }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- QRIS / GoPay -->
-            <div class="mb-4">
-                <h3 class="font-medium mb-2 text-gray-900 dark:text-white">QRIS</h3>
-                <button
-                    wire:click="selectGopay"
-                    class="border-2 p-4 rounded-lg text-center hover:border-green-500 transition-colors {{ 
-                        $this->selectedPaymentType === 'gopay' 
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30' 
-                            : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700' 
-                    }}"
-                >
-                    <div class="text-2xl mb-2">📱</div>
-                    <div class="text-sm text-gray-700 dark:text-gray-300">GoPay / QRIS</div>
-                </button>
+            <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div class="text-sm font-semibold text-gray-900 dark:text-white">Panduan Singkat</div>
+                <div class="mt-4 space-y-3">
+                    <details class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-950">
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 dark:text-gray-200">Cara bayar Transfer VA</summary>
+                        <div class="mt-2 text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                            <div>1. Salin nomor VA.</div>
+                            <div>2. Buka m-banking / ATM, pilih menu transfer / virtual account.</div>
+                            <div>3. Masukkan nomor VA lalu konfirmasi pembayaran.</div>
+                        </div>
+                    </details>
+                    <details class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-950">
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-800 dark:text-gray-200">Cara bayar QRIS</summary>
+                        <div class="mt-2 text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                            <div>1. Buka aplikasi e-wallet / mobile banking.</div>
+                            <div>2. Scan QR lalu masukkan nominal jika diminta.</div>
+                            <div>3. Selesaikan pembayaran dan kembali ke halaman ini untuk refresh status.</div>
+                        </div>
+                    </details>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- Process Button -->
-        @if($this->selectedPaymentType)
-            <button
-                wire:click="processPayment"
-                wire:loading.attr="disabled"
-                class="bg-blue-600 dark:bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 disabled:opacity-50 transition-colors"
-            >
-                <span wire:loading.remove>Proses Pembayaran</span>
-                <span wire:loading>Memproses...</span>
-            </button>
-        @endif
-
-        @error('payment')
-            <p class="text-red-500 dark:text-red-400 mt-4">{{ $message }}</p>
-        @enderror
-    @else
-        <!-- Payment Details -->
-        <div class="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg border border-green-200 dark:border-green-800">
-            <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Instruksi Pembayaran</h2>
-
-            @if($this->selectedPaymentType === 'bank_transfer')
-                <p class="text-gray-700 dark:text-gray-300"><strong>Bank:</strong> {{ strtoupper($this->selectedBank) }}</p>
-                @if(isset($this->paymentDetails['va_numbers']))
-                    @foreach($this->paymentDetails['va_numbers'] as $va)
-                        <p class="text-gray-700 dark:text-gray-300"><strong>Nomor VA:</strong> {{ $va['va_number'] }}</p>
-                    @endforeach
-                @endif
-                <p class="text-gray-700 dark:text-gray-300"><strong>Jumlah:</strong> Rp {{ number_format($this->order['total_idr']) }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Silakan transfer ke rekening di atas dalam waktu 24 jam.</p>
-            @elseif($this->selectedPaymentType === 'gopay')
-                @if(isset($this->paymentDetails['actions']))
-                    @foreach($this->paymentDetails['actions'] as $action)
-                        @if($action['name'] === 'generate-qr-code')
-                            <p class="text-gray-700 dark:text-gray-300">Scan QR Code berikut:</p>
-                            <img src="{{ $action['url'] }}" alt="QR Code" class="mt-2 rounded-lg">
-                        @endif
-                    @endforeach
-                @endif
-                <p class="text-gray-700 dark:text-gray-300"><strong>Jumlah:</strong> Rp {{ number_format($this->order['total_idr']) }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Buka aplikasi GoPay atau e-wallet lain yang mendukung QRIS, scan kode di atas.</p>
-            @endif
-
-            <div class="mt-4">
-                <a href="{{ route('orders.show', $this->orderId) }}" class="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors">Lihat Detail Pesanan</a>
-            </div>
-        </div>
-    @endif
 </div>
