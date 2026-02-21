@@ -22,6 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin-access' => \App\Http\Middleware\CheckAdminAccess::class,
             'agency-access' => \App\Http\Middleware\CheckAgencyAccess::class,
             'visitor-access' => \App\Http\Middleware\CheckVisitorAccess::class,
+            'unauthorized' => \App\Http\Middleware\HandleUnauthorized::class,
+            'resource-access' => \App\Http\Middleware\HandleResourceAccess::class,
         ]);
     })
     ->withExceptions(function () {

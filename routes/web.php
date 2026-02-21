@@ -46,7 +46,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // Authenticated Visitor Routes
-Route::middleware('auth')->group(function () {
+Route::middleware('resource-access')->group(function () {
     Route::get('/profil', \App\Livewire\Profile\UpdateProfile::class)->name('profile');
     Route::get('/pembayaran/{orderId}', PaymentMethodSelector::class)->name('payment.method');
     Route::get('/pesanan', \App\Livewire\Visitor\OrderList::class)->name('orders.list');

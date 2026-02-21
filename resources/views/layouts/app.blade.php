@@ -122,6 +122,7 @@
   </header>
 
   <main class="mx-auto max-w-6xl px-4 py-6">
+    @include('components.flash-messages')
     {{ $slot }}
   </main>
 
