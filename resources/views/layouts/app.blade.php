@@ -82,7 +82,8 @@
                   <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800">
                     Dashboard Admin
                   </a>
-                @elseif(auth()->user()->hasRole('agency'))
+                @endif
+                @if(auth()->user()->hasRole('agency'))
                   <a href="{{ route('agency.dashboard') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors">
                     Dashboard Agensi
                   </a>

@@ -67,6 +67,7 @@ Route::middleware(['auth', 'admin-access'])->prefix('admin')->name('admin.')->gr
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('dashboard');
+    Route::get('/profile', \App\Livewire\Profile\UpdateProfile::class)->name('profile');
     Route::get('/disputes', function () {
         return view('admin.disputes');
     })->name('disputes');
@@ -119,9 +120,7 @@ Route::middleware(['auth', 'agency-access'])->prefix('agency')->name('agency.')-
     Route::get('/', function () {
         return view('agency.dashboard');
     })->name('dashboard');
-    Route::get('/profile', function () {
-        return view('agency.profile');
-    })->name('profile');
+    Route::get('/profile', \App\Livewire\Profile\UpdateProfile::class)->name('profile');
     Route::get('/contracts', function () {
         return view('agency.contracts');
     })->name('contracts');

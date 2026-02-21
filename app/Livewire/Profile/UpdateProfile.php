@@ -22,6 +22,18 @@ class UpdateProfile extends Component
 
     public function mount()
     {
+        if (request()->routeIs('profile')) {
+            if (Auth::user()->hasRole('admin')) {
+                $this->redirectRoute('admin.profile', navigate: true);
+                return;
+            }
+
+            if (Auth::user()->hasRole('agency')) {
+                $this->redirectRoute('agency.profile', navigate: true);
+                return;
+            }
+        }
+
         $user = Auth::user();
         $this->name = $user->name;
         $this->email = $user->email;
@@ -82,7 +94,16 @@ class UpdateProfile extends Component
 
     public function render()
     {
-        return view('livewire.profile.update-profile')
-            ->layout('layouts.app', ['title' => 'Pengaturan Profil']);
+        $view = view('livewire.profile.update-profile');
+
+        if (request()->routeIs('agency.profile')) {
+            return $view->layout('layouts.agency', ['title' => 'Profil Saya']);
+        }
+
+        if (request()->routeIs('admin.profile')) {
+            return $view->layout('layouts.admin', ['title' => 'Profil Saya']);
+        }
+
+        return $view->layout('layouts.app', ['title' => 'Pengaturan Profil']);
     }
 }
