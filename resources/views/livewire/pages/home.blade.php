@@ -159,10 +159,31 @@
                 <a href="/search" class="px-10 py-4 bg-white text-blue-600 font-extrabold rounded-2xl hover:bg-gray-100 transition-all shadow-2xl shadow-blue-900/40 transform hover:-translate-y-1 active:scale-[0.98]">
                     Jelajahi Semua Jasa
                 </a>
-                <a href="/register" class="px-10 py-4 bg-blue-500 text-white font-extrabold rounded-2xl hover:bg-blue-400 border-2 border-blue-400/30 transition-all transform hover:-translate-y-1 active:scale-[0.98]">
-                    Daftar Sebagai Pekerja
-                </a>
+                @if(auth()->check())
+                    <button 
+                        wire:click="$dispatch('showAlreadyLoggedInAlert')" 
+                        class="px-10 py-4 bg-blue-500 text-white font-extrabold rounded-2xl hover:bg-blue-400 border-2 border-blue-400/30 transition-all transform hover:-translate-y-1 active:scale-[0.98]"
+                    >
+                        Daftar Sebagai Pekerja
+                    </button>
+                @else
+                    <a href="/register" class="px-10 py-4 bg-blue-500 text-white font-extrabold rounded-2xl hover:bg-blue-400 border-2 border-blue-400/30 transition-all transform hover:-translate-y-1 active:scale-[0.98]">
+                        Daftar Sebagai Pekerja
+                    </a>
+                @endif
             </div>
         </div>
     </section>
+
+    <!-- Alert for already logged in users -->
+    <div x-data="{ show: false }" 
+         x-show="show" 
+         x-transition
+         x-init="$listen('showAlreadyLoggedInAlert', () => { show = true })"
+         class="fixed inset-x-0 top-4 z-50 mx-auto max-w-xl px-4">
+        <div class="flex items-start justify-between rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
+            <p class="text-sm font-medium">Anda sudah login. Silakan logout terlebih dahulu jika ingin mendaftar sebagai pekerja baru.</p>
+            <button type="button" class="ml-4 text-xs underline" @click="show = false">Tutup</button>
+        </div>
+    </div>
 </div>

@@ -8,12 +8,6 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <x-form.input label="Nama" wire:model.live="name" />
         <x-form.select label="Kategori" wire:model.live="categoryId" :options="$categories" />
-
-        <x-form.select label="Lokasi" wire:model.live="locationId" :options="['' => '- Pilih -'] + $locations" />
-        <x-form.select label="Skema Default" wire:model.live="defaultScheme"
-          :options="['HARIAN' => 'Harian', 'MINGGUAN' => 'Mingguan', 'BULANAN' => 'Bulanan', 'PER_JAM' => 'Per Jam']" />
-
-        <x-form.input label="Harga Minimal (IDR)" type="number" wire:model.live="minPriceIdr" />
       </div>
 
       <div class="mt-3 grid grid-cols-1 gap-3">
