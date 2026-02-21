@@ -18,6 +18,10 @@ final class OrderDetail extends Component
     public function mount(int $orderId): void
     {
         $this->orderId = $orderId;
+        
+        // Debug logging
+        \Log::info('OrderDetail mounted with orderId: ' . $orderId);
+        
         $this->loadData();
     }
 
@@ -25,6 +29,9 @@ final class OrderDetail extends Component
     {
         $agency = auth()->user()->agency;
         $agencyId = $agency ? $agency->id : 0;
+        
+        // Debug logging
+        \Log::info('Loading data for agency: ' . $agencyId . ', orderId: ' . $this->orderId);
 
         $this->order = DB::table('orders')
             ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
@@ -41,6 +48,8 @@ final class OrderDetail extends Component
             ->where('orders.id', $this->orderId)
             ->where('orders.agency_id', $agencyId)
             ->first();
+
+        \Log::info('Order query result: ' . ($this->order ? 'Found' : 'Not found'));
 
         if (!$this->order) {
             session()->flash('error', 'Order tidak ditemukan atau anda tidak punya akses.');
@@ -60,6 +69,8 @@ final class OrderDetail extends Component
             ->limit(50)
             ->get()
             ->toArray();
+            
+        \Log::info('Events loaded: ' . count($this->events));
     }
 
     public function startJob(OrderService $orders): void

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Agency\OrderDetail as AgencyOrderDetail;
 use Illuminate\Support\Facades\Auth;
 
 use App\Livewire\Visitor\WorkerSearch;
@@ -21,7 +22,6 @@ use App\Livewire\Agency\BankAccounts as AgencyBankAccounts;
 use App\Livewire\Agency\WorkerList;
 use App\Livewire\Agency\WorkerForm;
 use App\Livewire\Agency\OrderList;
-use App\Livewire\Agency\OrderDetail as AgencyOrderDetail;
 
 use App\Livewire\Pages\Home;
 use App\Livewire\Auth\Login;
@@ -73,12 +73,42 @@ Route::middleware(['auth', 'admin-access'])->prefix('admin')->name('admin.')->gr
     Route::get('/refunds', function () {
         return view('admin.refunds');
     })->name('refunds');
+    Route::get('/refund-queue', function () {
+        return view('admin.refunds');
+    })->name('refund-queue');
     Route::get('/payouts', function () {
         return view('admin.payouts');
     })->name('payouts');
+    Route::get('/payout-queue', function () {
+        return view('admin.payouts');
+    })->name('payout-queue');
     Route::get('/bank-accounts', function () {
         return view('admin.bank-accounts');
     })->name('bank-accounts');
+    Route::get('/agencies', function () {
+        return view('admin.agencies');
+    })->name('agencies.index');
+    Route::get('/agencies/create', function () {
+        return view('admin.agencies-create');
+    })->name('agencies.create');
+    Route::get('/users', function () {
+        return view('admin.users');
+    })->name('users.index');
+    Route::get('/users/create', function () {
+        return view('admin.users-create');
+    })->name('users.create');
+    Route::get('/orders', function () {
+        return view('admin.orders');
+    })->name('orders.index');
+    Route::get('/orders/create', function () {
+        return view('admin.orders-create');
+    })->name('orders.create');
+    Route::get('/workers', function () {
+        return view('admin.workers');
+    })->name('workers.index');
+    Route::get('/workers/create', function () {
+        return view('admin.workers-create');
+    })->name('workers.create');
 });
 
 // Agency Routes (Protected by middleware + gate)
@@ -86,6 +116,9 @@ Route::middleware(['auth', 'agency-access'])->prefix('agency')->name('agency.')-
     Route::get('/', function () {
         return view('agency.dashboard');
     })->name('dashboard');
+    Route::get('/profile', function () {
+        return view('agency.profile');
+    })->name('profile');
     Route::get('/contracts', function () {
         return view('agency.contracts');
     })->name('contracts');
@@ -101,6 +134,9 @@ Route::middleware(['auth', 'agency-access'])->prefix('agency')->name('agency.')-
     Route::get('/orders', function () {
         return view('agency.orders');
     })->name('orders.index');
+    Route::get('/orders/create', function () {
+        return view('agency.orders-create');
+    })->name('orders.create');
     Route::get('/orders/{orderId}', AgencyOrderDetail::class)->name('orders.show');
     Route::get('/bank-accounts', function () {
         return view('agency.bank-accounts');
