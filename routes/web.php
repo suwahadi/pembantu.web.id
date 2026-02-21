@@ -97,6 +97,9 @@ Route::middleware(['auth', 'admin-access'])->prefix('admin')->name('admin.')->gr
     Route::get('/users/create', function () {
         return view('admin.users-create');
     })->name('users.create');
+    Route::get('/users/{user}/edit', function ($user) {
+        return view('admin.users-edit', ['user' => $user]);
+    })->name('users.edit');
     Route::get('/orders', function () {
         return view('admin.orders');
     })->name('orders.index');
