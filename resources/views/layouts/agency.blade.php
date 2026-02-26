@@ -8,37 +8,11 @@
 
     <title>{{ $title ?? 'Agency - Pembantu.web.id' }}</title>
 
-    <!-- Apply dark mode immediately to prevent flash -->
     <script>
         (function() {
-            // Wait for DOM to be ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initDarkMode);
-            } else {
-                initDarkMode();
-            }
-
-            function initDarkMode() {
-                const savedTheme = localStorage.getItem('theme');
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                const theme = savedTheme || (prefersDark ? 'dark' : 'light');
-
-                if (theme === 'dark') {
-                    if (document.documentElement) {
-                        document.documentElement.classList.add('dark');
-                    }
-                    if (document.body) {
-                        document.body.classList.add('dark', 'bg-gray-900');
-                    }
-                } else {
-                    if (document.documentElement) {
-                        document.documentElement.classList.remove('dark');
-                    }
-                    if (document.body) {
-                        document.body.classList.remove('dark', 'bg-gray-900');
-                    }
-                }
-            }
+            var s = localStorage.getItem('theme');
+            var d = (!s && window.matchMedia('(prefers-color-scheme: dark)').matches) || s === 'dark';
+            if (d) document.documentElement.classList.add('dark');
         })();
     </script>
 
@@ -49,13 +23,16 @@
 <body x-data="{ 
         sidebarExpanded: true,
         mobileMenuOpen: false,
+        darkMode: document.documentElement.classList.contains('dark'),
         
         init() {
-            // Handle window resize
             window.addEventListener('resize', () => {
                 if (window.innerWidth >= 1280) {
                     this.mobileMenuOpen = false;
                 }
+            });
+            window.addEventListener('theme-changed', (e) => {
+                this.darkMode = e.detail.theme === 'dark';
             });
         },
         
@@ -65,30 +42,38 @@
         
         toggleMobileMenu() {
             this.mobileMenuOpen = !this.mobileMenuOpen;
+        },
+
+        toggleTheme() {
+            this.darkMode = !this.darkMode;
+            var next = this.darkMode ? 'dark' : 'light';
+            localStorage.setItem('theme', next);
+            if (this.darkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
         }
     }">
     <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
         @include('layouts.backdrop')
         @include('layouts.agency-sidebar')
 
-        <!-- Main Content -->
         <div class="transition-all duration-300 ease-in-out"
              :class="{ 
                  'xl:ml-[290px]': sidebarExpanded, 
                  'xl:ml-[90px]': !sidebarExpanded,
                  'ml-0': true 
              }">
-            <!-- app header start -->
             @include('layouts.agency-header')
-            <!-- app header end -->
             <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6 xl:px-8">
                 @if (session('success'))
-                    <div class="mb-4 bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 text-success-700 dark:text-success-300 rounded-lg p-4">
+                    <div class="mb-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg p-4">
                         {{ session('success') }}
                     </div>
                 @endif
                 @if (session('error'))
-                    <div class="mb-4 bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800 text-error-700 dark:text-error-300 rounded-lg p-4">
+                    <div class="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg p-4">
                         {{ session('error') }}
                     </div>
                 @endif
@@ -100,10 +85,18 @@
                 @endif
             </div>
         </div>
-
     </div>
+
+    <div x-show="mobileMenuOpen" 
+         x-transition:enter="transition-opacity ease-linear duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition-opacity ease-linear duration-300"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="mobileMenuOpen = false"
+         class="fixed inset-0 z-40 bg-gray-900 bg-opacity-50 xl:hidden"></div>
 
     @livewireScripts
 </body>
-
 </html>
