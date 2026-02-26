@@ -58,9 +58,16 @@ php artisan migrate --force --no-interaction 2>&1 || true
 
 php artisan config:clear 2>&1
 php artisan view:clear 2>&1
+php artisan route:clear 2>&1
 
 if [ ! -f "public/build/manifest.json" ]; then
     npm run build
 fi
 
-exec php artisan serve --host=0.0.0.0 --port=5000
+while true; do
+    echo "[$(date)] Starting PHP server on port 5000..."
+    php artisan serve --host=0.0.0.0 --port=5000
+    EXIT_CODE=$?
+    echo "[$(date)] Server exited with code $EXIT_CODE, restarting in 2 seconds..."
+    sleep 2
+done
