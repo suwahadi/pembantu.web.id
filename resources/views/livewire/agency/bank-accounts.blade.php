@@ -11,16 +11,6 @@
         </div>
     @endif
 
-    @if ($errors->any())
-        <div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-xl p-4 text-sm">
-            <ul class="list-disc list-inside space-y-1">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
         <div class="mb-6">
             <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Rekening Bank Agency</h3>
@@ -109,7 +99,7 @@
             </div>
 
             <button type="button" wire:click="add" wire:loading.attr="disabled"
-                class="px-5 py-2.5 rounded-lg font-medium text-sm bg-primary-600 text-white hover:bg-primary-700 disabled:bg-gray-400 transition-colors">
+                class="px-5 py-2.5 rounded-lg font-medium text-sm bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm">
                 <span wire:loading.remove wire:target="add">Tambah Rekening</span>
                 <span wire:loading wire:target="add">Memproses...</span>
             </button>
