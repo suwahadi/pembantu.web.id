@@ -133,6 +133,29 @@ class Worker extends Model
         return $activePricing ? $activePricing->price_idr : 0;
     }
 
+    public function getMinPriceUnitAttribute(): string
+    {
+        $pricingTypeMap = [
+            'hourly' => 'jam',
+            'daily' => 'hari',
+            'weekly' => 'minggu',
+            'monthly' => 'bulan',
+            'project' => 'proyek',
+        ];
+
+        $defaultPricing = $this->defaultPricing;
+        if ($defaultPricing) {
+            return $pricingTypeMap[$defaultPricing->pricing_type] ?? 'bulan';
+        }
+
+        $activePricing = $this->activePricings()->first();
+        if ($activePricing) {
+            return $pricingTypeMap[$activePricing->pricing_type] ?? 'bulan';
+        }
+
+        return 'bulan';
+    }
+
     public function getPrimaryLocationAttribute()
     {
         $primaryArea = $this->primaryServiceArea;
