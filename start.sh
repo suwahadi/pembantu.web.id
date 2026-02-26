@@ -7,17 +7,25 @@ if [ -f .env ]; then
     EXISTING_KEY=$(grep '^APP_KEY=' .env | head -1 | cut -d= -f2-)
 fi
 
-if [ -n "$REPLIT_DEV_DOMAIN" ]; then
+if [ -n "$REPL_SLUG" ] && [ -z "$REPLIT_DEV_DOMAIN" ]; then
+    RESOLVED_APP_URL="https://${REPL_SLUG}.replit.app"
+    APP_ENV_VALUE="production"
+    APP_DEBUG_VALUE="false"
+elif [ -n "$REPLIT_DEV_DOMAIN" ]; then
     RESOLVED_APP_URL="https://${REPLIT_DEV_DOMAIN}"
+    APP_ENV_VALUE="local"
+    APP_DEBUG_VALUE="true"
 else
     RESOLVED_APP_URL="http://localhost:5000"
+    APP_ENV_VALUE="local"
+    APP_DEBUG_VALUE="true"
 fi
 
 cat > .env << ENVEOF
 APP_NAME="Pembantu.web.id"
-APP_ENV=local
+APP_ENV=${APP_ENV_VALUE}
 APP_KEY=${EXISTING_KEY}
-APP_DEBUG=true
+APP_DEBUG=${APP_DEBUG_VALUE}
 APP_URL=${RESOLVED_APP_URL}
 ASSET_URL=${RESOLVED_APP_URL}
 APP_TIMEZONE=Asia/Jakarta
