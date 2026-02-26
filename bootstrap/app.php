@@ -8,6 +8,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // from config/app.php providers array
     ])
     ->withMiddleware(function (\Illuminate\Foundation\Configuration\Middleware $middleware) {
+        $middleware->trustProxies(at: '*');
         $middleware->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,
             'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
