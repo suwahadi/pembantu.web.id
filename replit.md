@@ -61,8 +61,10 @@ Key variables (set as Replit env vars/secrets):
 ## Agency Panel Routes
 
 - `/agency/dashboard` — Agency dashboard
-- `/agency/orders` — Agency order management
+- `/agency/orders` — Agency order management (view only, no create button)
+- `/agency/contracts` — Contract queue (review & sign pending contracts)
 - `/agency/workers` — Worker management
+- `/agency/bank-accounts` — Bank account management (add/verify/set primary)
 - `/agency/profile` — Agency profile
 
 ## Domain Architecture

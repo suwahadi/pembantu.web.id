@@ -6,7 +6,7 @@
             <p class="text-sm text-gray-500 dark:text-gray-400">Kelola order yang sedang berjalan</p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cari Kode / Worker / Visitor</label>
                 <input type="text" 
@@ -26,14 +26,6 @@
                 </select>
             </div>
             
-            <div class="flex items-end">
-                <a href="{{ route('agency.orders.create') }}" class="w-full px-4 py-2 bg-success-500 text-white rounded-lg hover:bg-success-600 transition-colors flex items-center justify-center gap-2">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Tambah Order
-                </a>
-            </div>
         </div>
     </div>
 
