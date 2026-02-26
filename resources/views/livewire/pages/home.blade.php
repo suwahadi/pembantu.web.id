@@ -1,46 +1,46 @@
 <div class="w-full">
     <!-- Hero Section -->
-    <section class="relative bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-900 dark:to-indigo-950 text-white py-24 overflow-hidden">
-        <!-- Abstract Decoration -->
-        <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-blue-400/20 dark:bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-64 h-64 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
+    <section class="py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="relative rounded-3xl bg-blue-600 dark:bg-blue-800 text-white py-20 px-6 sm:px-12 overflow-hidden">
+                <div class="absolute top-0 right-0 -translate-y-1/3 translate-x-1/4 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/4 w-56 h-56 bg-white/10 rounded-full blur-3xl"></div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto">
-                <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight">
-                    Temukan Tenaga Kerja <span class="text-blue-200">Profesional</span>
-                </h1>
-                <p class="text-lg md:text-xl text-blue-100/90 mb-10 font-medium">
-                    Platform terpercaya untuk menemukan solusi jasa terbaik dari ribuan pekerja terverifikasi di seluruh Indonesia.
-                </p>
-                
-                <!-- Search Bar -->
-                <div class="flex flex-col md:flex-row gap-3 max-w-2xl mx-auto group">
-                    <div class="flex-1 relative">
-                        <input 
-                            type="text" 
-                            wire:model.live.debounce-300ms="search_query"
-                            wire:keydown.enter="search"
-                            placeholder="Cari jasa (Contoh: Babysitter, Sopir...)" 
-                            class="w-full px-6 py-4 rounded-2xl text-gray-900 bg-white/95 backdrop-blur-sm border-2 border-transparent focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all shadow-xl"
-                        >
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
-                            <x-icon.search class="w-5 h-5" />
+                <div class="relative text-center max-w-3xl mx-auto">
+                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight">
+                        Temukan Tenaga Kerja <span class="text-blue-200 dark:text-blue-300">Profesional</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-blue-100/90 mb-10 font-medium">
+                        Platform terpercaya untuk menemukan solusi jasa terbaik dari ribuan pekerja terverifikasi di seluruh Indonesia.
+                    </p>
+
+                    <div class="flex flex-col md:flex-row gap-3 max-w-2xl mx-auto">
+                        <div class="flex-1 relative">
+                            <input
+                                type="text"
+                                wire:model.live.debounce-300ms="search_query"
+                                wire:keydown.enter="search"
+                                placeholder="Cari jasa (Contoh: Babysitter, Sopir...)"
+                                class="w-full px-6 py-4 rounded-2xl text-gray-900 bg-white border-2 border-transparent focus:outline-none focus:ring-4 focus:ring-white/30 focus:border-white/50 transition-all shadow-lg"
+                            >
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <x-icon.search class="w-5 h-5" />
+                            </div>
                         </div>
+                        <button
+                            wire:click="search"
+                            class="px-10 py-4 bg-white text-blue-700 font-bold rounded-2xl hover:bg-blue-50 transition-all shadow-lg active:scale-[0.98]"
+                        >
+                            Cari Sekarang
+                        </button>
                     </div>
-                    <button 
-                        wire:click="search"
-                        class="px-10 py-4 bg-white dark:bg-blue-500 text-blue-700 dark:text-white font-bold rounded-2xl hover:bg-gray-100 dark:hover:bg-blue-600 transition-all shadow-xl active:scale-[0.98]"
-                    >
-                        Cari Sekarang
-                    </button>
-                </div>
 
-                <div class="mt-8 flex flex-wrap justify-center gap-4 text-sm font-medium text-blue-100/80">
-                    <span>Populer:</span>
-                    <a href="/search?category=art-prt" class="hover:text-white underline decoration-blue-400/50">ART</a>
-                    <a href="/search?category=babysitter" class="hover:text-white underline decoration-blue-400/50">Babysitter</a>
-                    <a href="/search?category=sopir" class="hover:text-white underline decoration-blue-400/50">Sopir</a>
+                    <div class="mt-8 flex flex-wrap justify-center gap-4 text-sm font-medium text-blue-100/80">
+                        <span>Populer:</span>
+                        <a href="/search?category=art-prt" class="hover:text-white underline decoration-white/40">ART</a>
+                        <a href="/search?category=babysitter" class="hover:text-white underline decoration-white/40">Babysitter</a>
+                        <a href="/search?category=sopir" class="hover:text-white underline decoration-white/40">Sopir</a>
+                    </div>
                 </div>
             </div>
         </div>
