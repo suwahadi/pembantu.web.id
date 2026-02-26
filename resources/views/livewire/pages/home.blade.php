@@ -179,7 +179,7 @@
     <div x-data="{ show: false }" 
          x-show="show" 
          x-transition
-         x-init="$listen('showAlreadyLoggedInAlert', () => { show = true })"
+         x-on:show-already-logged-in-alert.camel.window="show = true"
          class="fixed inset-x-0 top-4 z-50 mx-auto max-w-xl px-4">
         <div class="flex items-start justify-between rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
             <p class="text-sm font-medium">Anda sudah login. Silakan logout terlebih dahulu jika ingin mendaftar sebagai pekerja baru.</p>

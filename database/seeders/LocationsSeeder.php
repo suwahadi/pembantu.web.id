@@ -10,11 +10,7 @@ class LocationsSeeder extends Seeder
 {
     public function run(): void
     {
-        // Clear existing data
-        Location::truncate();
-        
-        // Reset auto-increment
-        DB::statement('ALTER TABLE locations AUTO_INCREMENT = 1');
+        DB::statement('TRUNCATE TABLE locations RESTART IDENTITY CASCADE');
         
         $locations = [
             [
@@ -62,6 +58,18 @@ class LocationsSeeder extends Seeder
             [
                 'city' => 'Tangerang',
                 'slug' => 'tangerang',
+                'created_at' => '2026-02-19 15:17:01',
+                'updated_at' => '2026-02-19 15:17:01',
+            ],
+            [
+                'city' => 'Bekasi',
+                'slug' => 'bekasi',
+                'created_at' => '2026-02-19 15:17:01',
+                'updated_at' => '2026-02-19 15:17:01',
+            ],
+            [
+                'city' => 'Tangerang Selatan',
+                'slug' => 'tangerang-selatan',
                 'created_at' => '2026-02-19 15:17:01',
                 'updated_at' => '2026-02-19 15:17:01',
             ],

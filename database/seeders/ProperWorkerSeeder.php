@@ -10,11 +10,7 @@ class ProperWorkerSeeder extends Seeder
 {
     public function run(): void
     {
-        // Clear existing data
-        Worker::truncate();
-        
-        // Reset auto-increment
-        DB::statement('ALTER TABLE workers AUTO_INCREMENT = 1');
+        DB::statement('TRUNCATE TABLE workers RESTART IDENTITY CASCADE');
         
         $workers = [
             [
