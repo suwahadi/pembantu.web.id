@@ -49,8 +49,8 @@ class WorkerCatalogService
             'reviews' => $query->orderBy('total_reviews', 'desc'),
             'experience' => $query->orderBy('experience_years', 'desc'),
             'newest' => $query->orderBy('created_at', 'desc'),
-            'price_asc' => $query->orderByRaw('(SELECT MIN(price_idr) FROM worker_service_pricings WHERE worker_id = workers.id AND is_active = 1) ASC'),
-            'price_desc' => $query->orderByRaw('(SELECT MIN(price_idr) FROM worker_service_pricings WHERE worker_id = workers.id AND is_active = 1) DESC'),
+            'price_asc' => $query->orderByRaw("(SELECT MIN(price_idr) FROM worker_service_pricings WHERE worker_id = workers.id AND is_active = true) ASC"),
+            'price_desc' => $query->orderByRaw("(SELECT MIN(price_idr) FROM worker_service_pricings WHERE worker_id = workers.id AND is_active = true) DESC"),
             default => $query->orderBy('rating', 'desc'),
         };
 
@@ -139,10 +139,10 @@ class WorkerCatalogService
                 'workers.*',
                 'agencies.company_name as agency_name',
                 'service_categories.name as category_name',
-                \Illuminate\Support\Facades\DB::raw('COALESCE(locations.city, "-") as location_name'),
+                \Illuminate\Support\Facades\DB::raw("COALESCE(locations.city, '-') as location_name"),
             ])
             ->where('workers.public_id', $publicId)
-            ->where('workers.is_available', 1)
+            ->where('workers.is_available', true)
             ->where('workers.verification_status', 'verified')
             ->where('agencies.verification_status', 'verified')
             ->first();

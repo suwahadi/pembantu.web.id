@@ -55,9 +55,9 @@ final class WorkerList extends Component
             ->select([
                 'workers.id', 'workers.name', 'workers.is_active', 'workers.photo_path',
                 'service_categories.name as category_name',
-                DB::raw('COALESCE(locations.city, "-") as location_name'),
-                DB::raw('(SELECT MIN(price_idr) FROM worker_service_pricings WHERE worker_id = workers.id AND is_active = 1) as min_price'),
-                DB::raw('(SELECT pricing_type FROM worker_service_pricings WHERE worker_id = workers.id AND is_default = 1 LIMIT 1) as default_scheme'),
+                DB::raw("COALESCE(locations.city, '-') as location_name"),
+                DB::raw("(SELECT MIN(price_idr) FROM worker_service_pricings WHERE worker_id = workers.id AND is_active = true) as min_price"),
+                DB::raw("(SELECT pricing_type FROM worker_service_pricings WHERE worker_id = workers.id AND is_default = true LIMIT 1) as default_scheme"),
             ])
             ->where('workers.agency_id', $agencyId)
             ->orderByDesc('workers.id');
