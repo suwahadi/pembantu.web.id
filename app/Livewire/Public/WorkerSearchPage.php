@@ -35,7 +35,7 @@ final class WorkerSearchPage extends Component
         if ($this->location !== '') {
             // Find location by city name (since slug is generated from city)
             $locationId = DB::table('locations')
-                ->whereRaw('LOWER(REPLACE(city, " ", "-")) = ?', [$this->location])
+                ->whereRaw("LOWER(REPLACE(city, ' ', '-')) = ?", [$this->location])
                 ->value('id');
         }
 
@@ -72,7 +72,7 @@ final class WorkerSearchPage extends Component
         // Get locations that have active workers with proper slugs
         $locations = DB::table('locations')
             ->select('locations.city as name', 
-                    DB::raw('LOWER(REPLACE(locations.city, " ", "-")) as slug'))
+                    DB::raw("LOWER(REPLACE(locations.city, ' ', '-')) as slug"))
             ->join('worker_service_areas', 'worker_service_areas.location_id', '=', 'locations.id')
             ->join('workers', 'workers.id', '=', 'worker_service_areas.worker_id')
             ->where('workers.is_available', true)
