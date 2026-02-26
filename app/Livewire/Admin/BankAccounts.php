@@ -66,7 +66,7 @@ final class BankAccounts extends Component
             ->orderByDesc('created_at');
 
         if ($this->ownerType !== '') {
-            $query->where('owner_type', $this->ownerType);
+            $query->where('owner_type', 'ilike', '%' . $this->ownerType . '%');
         }
 
         if ($this->verifiedStatus !== '') {

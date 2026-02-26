@@ -48,6 +48,23 @@ Key variables (set as Replit env vars/secrets):
 - `APP_NAME`, `APP_ENV`, `APP_URL`, `APP_DEBUG`, `DB_CONNECTION` — set as shared env vars
 - `MIDTRANS_SERVER_KEY`, `MIDTRANS_CLIENT_KEY` — optional payment gateway keys
 
+## Admin Panel Routes
+
+- `/admin/dashboard` — Dashboard with overview stats
+- `/admin/users` — User management
+- `/admin/orders` — Order management with stats, search, status filter
+- `/admin/agencies` — Agency management
+- `/admin/payout-queue` — Payout processing queue
+- `/admin/bank-accounts` — Bank account verification
+- `/admin/profile` — Admin profile
+
+## Agency Panel Routes
+
+- `/agency/dashboard` — Agency dashboard
+- `/agency/orders` — Agency order management
+- `/agency/workers` — Worker management
+- `/agency/profile` — Agency profile
+
 ## Domain Architecture
 
 The app uses a domain-driven design with the following domains:
