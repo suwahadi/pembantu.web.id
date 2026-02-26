@@ -1,11 +1,16 @@
 #!/bin/bash
-set -e
 
-# Generate .env from environment variables
+mkdir -p bootstrap/cache storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs
+
+EXISTING_KEY=""
+if [ -f .env ]; then
+    EXISTING_KEY=$(grep '^APP_KEY=' .env | head -1 | cut -d= -f2-)
+fi
+
 cat > .env << EOF
 APP_NAME="${APP_NAME:-Pembantu.web.id}"
 APP_ENV=${APP_ENV:-local}
-APP_KEY=
+APP_KEY=${EXISTING_KEY:-${APP_KEY:-}}
 APP_DEBUG=${APP_DEBUG:-true}
 APP_URL=${APP_URL:-http://localhost:5000}
 APP_TIMEZONE=${APP_TIMEZONE:-Asia/Jakarta}
@@ -45,22 +50,17 @@ ENABLE_SMS_NOTIFICATIONS=${ENABLE_SMS_NOTIFICATIONS:-false}
 ENABLE_MESSAGING=${ENABLE_MESSAGING:-false}
 EOF
 
-# Generate app key if not set
 if ! grep -q "APP_KEY=base64:" .env; then
     php artisan key:generate --force
 fi
 
-# Run migrations
-php artisan migrate --force --no-interaction
+php artisan migrate --force --no-interaction 2>&1 || true
 
-# Clear and cache config
-php artisan config:clear
-php artisan view:clear
+php artisan config:clear 2>&1
+php artisan view:clear 2>&1
 
-# Build assets if not built
 if [ ! -f "public/build/manifest.json" ]; then
     npm run build
 fi
 
-# Start the Laravel development server on port 5000
-php artisan serve --host=0.0.0.0 --port=5000
+exec php artisan serve --host=0.0.0.0 --port=5000
