@@ -1,0 +1,35 @@
+modules = ["php-8.2", "web", "nodejs-20", "php-8.4"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+APP_NAME = "Pembantu.web.id"
+APP_ENV = "local"
+APP_DEBUG = "true"
+APP_URL = "http://localhost:5000"
+APP_TIMEZONE = "Asia/Jakarta"
+APP_LOCALE = "id"
+LOG_CHANNEL = "stack"
+LOG_LEVEL = "debug"
+DB_CONNECTION = "pgsql"
+BROADCAST_DRIVER = "log"
+CACHE_DRIVER = "file"
+FILESYSTEM_DISK = "local"
+QUEUE_CONNECTION = "sync"
+SESSION_DRIVER = "file"
+MAIL_MAILER = "log"
+MAIL_HOST = "localhost"
+MAIL_PORT = "1025"
+MAIL_FROM_ADDRESS = "hello@pembantu.web.id"
+MAIL_FROM_NAME = "Pembantu.web.id"
+MIDTRANS_IS_PRODUCTION = "false"
+MIDTRANS_API_URL = "https://app.midtrans.com"
+MIDTRANS_API_SANDBOX_URL = "https://app.sandbox.midtrans.com"
+ENABLE_EMAIL_NOTIFICATIONS = "false"
+ENABLE_SMS_NOTIFICATIONS = "false"
+ENABLE_MESSAGING = "false"
