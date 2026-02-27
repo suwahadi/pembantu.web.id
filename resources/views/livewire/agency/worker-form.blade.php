@@ -104,7 +104,7 @@
       </div>
 
       <div class="mt-4 flex justify-between">
-        <a class="underline text-sm text-blue-600 dark:text-blue-400" href="{{ route('agency.workers.index') }}">Kembali</a>
+        <a href="{{ route('agency.workers.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium border border-primary-600 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:border-gray-300 dark:hover:bg-gray-100 transition-colors">Kembali</a>
         <x-button type="submit" wire:loading.attr="disabled">
           <span wire:loading.remove>Simpan</span>
           <span wire:loading>Menyimpan...</span>

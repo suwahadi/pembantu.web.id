@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
+use App\Domain\Shared\Statuses\OrderStatus;
 
 final class OrderList extends Component
 {
@@ -60,16 +61,7 @@ final class OrderList extends Component
 
         $items = $query->paginate(20);
 
-        $statuses = [
-            'pending' => 'Pending',
-            'paid_escrow' => 'Paid Escrow',
-            'in_progress' => 'In Progress',
-            'completed_by_agency' => 'Completed by Agency',
-            'completed' => 'Completed',
-            'disputed' => 'Disputed',
-            'cancelled' => 'Cancelled',
-            'refunded' => 'Refunded',
-        ];
+        $statuses = OrderStatus::labels();
 
         $stats = [
             'total' => DB::table('orders')->whereNull('deleted_at')->count(),

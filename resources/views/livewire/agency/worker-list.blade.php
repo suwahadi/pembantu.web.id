@@ -12,7 +12,7 @@
       <x-form.select label="Kategori" wire:model.live="categoryId" :options="['' => '- Semua -'] + $categories" />
       <x-form.select label="Lokasi" wire:model.live="locationId" :options="['' => '- Semua -'] + $locations" />
       <div class="flex items-end justify-end">
-        <a href="{{ route('agency.workers.create') }}" class="underline text-sm text-blue-600 dark:text-blue-400">+ Tambah Worker</a>
+        <a href="{{ route('agency.workers.create') }}" class="px-4 py-2 rounded-lg text-sm font-medium bg-green-600 text-white border border-green-600 hover:bg-green-700 hover:border-green-700 dark:bg-green-600 dark:text-white dark:border-green-600 dark:hover:bg-green-700 dark:hover:border-green-700 transition-colors">+ Tambah Worker</a>
       </div>
     </div>
 

@@ -39,7 +39,7 @@
                                     {{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button wire:click="select({{ $item->id }})" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
+                                    <button wire:click="select({{ $item->id }})" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-primary-50 text-primary-600 border border-primary-200 hover:bg-primary-100 hover:text-primary-700 dark:bg-primary-600 dark:text-white dark:border-primary-600 dark:hover:bg-primary-700 dark:hover:text-white transition-colors">
                                         Review
                                     </button>
                                 </td>
@@ -99,12 +99,12 @@
 
                 <div class="flex gap-3 pt-2">
                     <button wire:click="sign" wire:loading.attr="disabled"
-                        class="px-5 py-2.5 rounded-lg font-medium text-sm bg-primary-600 text-white hover:bg-primary-700 disabled:bg-gray-400 transition-colors">
+                        class="px-5 py-2.5 rounded-lg font-medium text-sm border border-primary-600 bg-gray-900 text-white hover:bg-gray-800 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-200 dark:bg-white dark:text-gray-900 dark:border-gray-300 dark:hover:bg-gray-100 dark:disabled:bg-gray-300 dark:disabled:text-gray-600 transition-colors">
                         <span wire:loading.remove wire:target="sign">Tandatangani Kontrak</span>
                         <span wire:loading wire:target="sign">Memproses...</span>
                     </button>
                     <button wire:click="$set('selectedId', null)"
-                        class="px-5 py-2.5 rounded-lg font-medium text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        class="px-5 py-2.5 rounded-lg font-medium text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:text-gray-400 transition-colors">
                         Batal
                     </button>
                 </div>

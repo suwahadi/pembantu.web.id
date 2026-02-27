@@ -81,7 +81,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <button wire:click="select({{ $item->id }})"
-                                    class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
+                                    class="px-4 py-2 rounded-lg font-medium text-sm border border-primary-600 bg-gray-900 text-white hover:bg-gray-800 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-200 dark:bg-white dark:text-gray-900 dark:border-gray-300 dark:hover:bg-gray-100 dark:disabled:bg-gray-300 dark:disabled:text-gray-600 transition-colors">
                                     Verifikasi
                                 </button>
                             </td>
@@ -150,12 +150,12 @@
 
                 <div class="flex gap-3 pt-2">
                     <button wire:click="verify" wire:loading.attr="disabled"
-                        class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50">
+                        class="px-5 py-2.5 rounded-lg font-medium text-sm border border-primary-600 bg-gray-900 text-white hover:bg-gray-800 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-200 dark:bg-white dark:text-gray-900 dark:border-gray-300 dark:hover:bg-gray-100 dark:disabled:bg-gray-300 dark:disabled:text-gray-600 transition-colors">
                         <span wire:loading.remove>Simpan Status</span>
                         <span wire:loading>Memproses...</span>
                     </button>
                     <button wire:click="$set('selectedId', null)"
-                        class="px-4 py-2 bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                        class="px-5 py-2.5 rounded-lg font-medium text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:text-gray-400 transition-colors">
                         Batal
                     </button>
                 </div>

@@ -99,7 +99,7 @@
                 <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($items as $o)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-medium text-primary-600 dark:text-primary-400">{{ $o->code }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-medium text-primary-600 dark:text-white">{{ $o->code }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ $o->agency_name ?? '-' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ $o->worker_name ?? '-' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ $o->visitor_name ?? '-' }}</td>

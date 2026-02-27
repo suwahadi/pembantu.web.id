@@ -5,6 +5,7 @@ namespace App\Livewire\Agency;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
+use App\Domain\Shared\Statuses\OrderStatus;
 
 final class OrderList extends Component
 {
@@ -58,14 +59,7 @@ final class OrderList extends Component
 
         $items = $query->paginate(15);
 
-        $statuses = [
-            'paid_escrow' => 'Paid Escrow',
-            'in_progress' => 'In Progress',
-            'completed_by_agency' => 'Completed by Agency',
-            'completed' => 'Completed',
-            'disputed' => 'Disputed',
-            'cancelled' => 'Cancelled',
-        ];
+        $statuses = OrderStatus::labels();
 
         return view('livewire.agency.order-list', compact('items', 'statuses'))
             ->layout('layouts.agency', ['title' => 'Orders']);

@@ -7,7 +7,7 @@
                 <p class="text-gray-500 dark:text-gray-400 mt-1">Informasi lengkap dan timeline pekerjaan</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('agency.orders.index') }}" class="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">
+                <a href="{{ route('agency.orders.index') }}" class="px-4 py-2 rounded-lg flex items-center gap-2 border border-primary-600 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:border-gray-300 dark:hover:bg-gray-100 transition-colors">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>

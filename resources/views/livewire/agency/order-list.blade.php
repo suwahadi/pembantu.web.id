@@ -20,8 +20,8 @@
                 <select wire:model.live="status" 
                     class="w-full h-10 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent">
                     <option value="">- Semua Status -</option>
-                    @foreach($statuses as $status)
-                        <option value="{{ $status }}">{{ $status }}</option>
+                    @foreach($statuses as $val => $label)
+                        <option value="{{ $val }}">{{ $label }}</option>
                     @endforeach
                 </select>
             </div>
@@ -65,7 +65,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="{{ route('agency.orders.show', $o->id) }}" class="text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300">Detail</a>
+                                <a href="{{ route('agency.orders.show', $o->id) }}" class="px-3 py-1.5 rounded-lg text-xs font-medium border border-primary-600 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:border-gray-300 dark:hover:bg-gray-100 transition-colors">Detail</a>
                             </td>
                         </tr>
                     @empty
