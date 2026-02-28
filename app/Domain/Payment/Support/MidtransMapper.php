@@ -9,20 +9,15 @@ class MidtransMapper
      */
     public static function mapStatus(string $midtransStatus): string
     {
-        return match($midtransStatus) {
-            '100' => 'settlement',
-            '201' => 'pending',
-            '202' => 'pending',
-            '407' => 'pending',
-            '408' => 'pending',
-            '203' => 'expire',
-            '204' => 'deny',
-            '401' => 'cancel',
-            '402' => 'cancel',
-            '406' => 'cancel',
-            '419' => 'cancel',
-            '412' => 'chargeback',
-            '413' => 'chargeback',
+        $status = strtolower($midtransStatus);
+
+        return match($status) {
+            '100', 'settlement', 'capture' => 'settlement',
+            '201', '202', '407', '408', 'pending' => 'pending',
+            '203', 'expire' => 'expire',
+            '204', 'deny' => 'deny',
+            '401', '402', '406', '419', 'cancel' => 'cancel',
+            '412', '413', 'chargeback', 'refund' => 'chargeback',
             default => 'initiated',
         };
     }
@@ -32,7 +27,9 @@ class MidtransMapper
      */
     public static function isSettled(string $midtransStatus): bool
     {
-        return in_array($midtransStatus, ['100']);
+        $status = strtolower($midtransStatus);
+
+        return in_array($status, ['100', 'settlement', 'capture'], true);
     }
 
     /**
@@ -40,6 +37,8 @@ class MidtransMapper
      */
     public static function isFailed(string $midtransStatus): bool
     {
-        return in_array($midtransStatus, ['203', '204', '401', '402', '406', '419']);
+        $status = strtolower($midtransStatus);
+
+        return in_array($status, ['203', '204', '401', '402', '406', '419', 'expire', 'cancel', 'deny', 'failure'], true);
     }
 }

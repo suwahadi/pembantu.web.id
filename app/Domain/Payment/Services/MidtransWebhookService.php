@@ -30,7 +30,10 @@ final class MidtransWebhookService
 
         // 2. Extract data penting
         $orderId = $this->extractOrderId($payload['order_id'] ?? null);
-        $transactionStatus = $payload['transaction_status'] ?? null;
+        $transactionStatusRaw = $payload['transaction_status'] ?? null;
+        $transactionStatus = $transactionStatusRaw !== null
+            ? strtolower((string)$transactionStatusRaw)
+            : null;
         $transactionId = $payload['transaction_id'] ?? null;
 
         if (!$orderId) {
@@ -39,13 +42,14 @@ final class MidtransWebhookService
         }
 
         // 3. Cek atau buat payment_attempts record (idempotency)
-        $attempt = $this->recordPaymentAttempt($orderId, $payload);
+        $attempt = $this->recordPaymentAttempt($orderId, $payload, $transactionStatus);
 
         // 4. Jika sudah processed, skip (idempotent)
-        if ($attempt->processed_at) {
-            Log::info('Midtrans webhook: sudah diproses sebelumnya', [
+        if ($attempt->processed_at && $transactionStatus !== null && $attempt->status === $transactionStatus) {
+            Log::info('Midtrans webhook: status sudah diproses sebelumnya', [
                 'order_id' => $orderId,
                 'transaction_id' => $transactionId,
+                'status' => $transactionStatus,
             ]);
             return;
         }
@@ -57,6 +61,7 @@ final class MidtransWebhookService
             // 6. Mark as processed
             $attempt->update([
                 'transaction_id' => $transactionId,
+                'status' => $transactionStatus ?? $attempt->status,
                 'processed_at' => now(),
             ]);
         } catch (\Throwable $e) {
@@ -117,10 +122,11 @@ final class MidtransWebhookService
     /**
      * Record payment attempt (untuk idempotency)
      */
-    private function recordPaymentAttempt(int $orderId, array $payload): PaymentAttempt
+    private function recordPaymentAttempt(int $orderId, array $payload, ?string $transactionStatus = null): PaymentAttempt
     {
         $midtransOrderId = $payload['order_id'] ?? null;
         $grossAmount = (int)($payload['gross_amount'] ?? 0);
+        $transactionId = $payload['transaction_id'] ?? null;
 
         // Cek apakah sudah ada record
         $existing = PaymentAttempt::where('order_id', $orderId)
@@ -128,6 +134,17 @@ final class MidtransWebhookService
             ->first();
 
         if ($existing) {
+            $statusChanged = $transactionStatus !== null && $transactionStatus !== $existing->status;
+
+            // Update payload/status jika status berubah (biarkan idempotent check di handleCallback)
+            $existing->update([
+                'status' => $transactionStatus ?? $existing->status,
+                'transaction_id' => $transactionId ?? $existing->transaction_id,
+                'raw_payload' => $payload,
+                'processed_at' => $statusChanged ? null : $existing->processed_at,
+                'error_message' => null,
+            ]);
+
             return $existing;
         }
 
@@ -136,7 +153,7 @@ final class MidtransWebhookService
             'order_id' => $orderId,
             'midtrans_order_id' => $midtransOrderId,
             'amount_idr' => $grossAmount,
-            'status' => $payload['transaction_status'] ?? 'unknown',
+            'status' => $transactionStatus ?? $payload['transaction_status'] ?? 'unknown',
             'raw_payload' => $payload,
             'callback_received_at' => now(),
         ]);
