@@ -10,7 +10,9 @@ class LocationsSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::statement('TRUNCATE TABLE locations RESTART IDENTITY CASCADE');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::statement('TRUNCATE TABLE locations');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         
         $locations = [
             [

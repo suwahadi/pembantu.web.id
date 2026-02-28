@@ -104,6 +104,9 @@ Route::middleware(['auth', 'admin-access'])->prefix('admin')->name('admin.')->gr
     Route::get('/orders', function () {
         return view('admin.orders');
     })->name('orders.index');
+    Route::get('/orders/{order}', function (\App\Models\Order $order) {
+        return view('admin.orders-detail', ['orderId' => $order->id]);
+    })->name('orders.show');
     Route::get('/orders/create', function () {
         return view('admin.orders-create');
     })->name('orders.create');

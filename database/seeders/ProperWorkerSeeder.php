@@ -10,7 +10,9 @@ class ProperWorkerSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::statement('TRUNCATE TABLE workers RESTART IDENTITY CASCADE');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::statement('TRUNCATE TABLE workers');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         
         $workers = [
             [
