@@ -46,6 +46,15 @@ class PaymentMethodSelector extends Component
 
     private function loadExistingPayment(): void
     {
+        if ($this->order && $this->order->status === 'paid_escrow') {
+            $this->paymentDetails = [
+                'transaction_status' => 'settlement',
+                'settled_at' => now()->toDateTimeString(),
+                'payment_success' => true
+            ];
+            return;
+        }
+
         $existingPayment = Payment::where('order_id', $this->orderId)->first();
         if (
             $existingPayment

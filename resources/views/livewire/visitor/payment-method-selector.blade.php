@@ -26,10 +26,10 @@
 >
     <div class="mb-8">
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {{ $this->paymentDetails ? 'Instruksi Pembayaran' : 'Pilih Metode Pembayaran' }}
+            {{ $this->paymentDetails && !isset($this->paymentDetails['payment_success']) ? 'Instruksi Pembayaran' : ($this->paymentDetails && isset($this->paymentDetails['payment_success']) ? 'Pembayaran Berhasil' : 'Pilih Metode Pembayaran') }}
         </h1>
         <div class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Selesaikan pembayaran untuk melanjutkan proses pesanan.
+            {{ $this->paymentDetails && isset($this->paymentDetails['payment_success']) ? 'Pembayaran Anda telah berhasil diterima.' : 'Selesaikan pembayaran untuk melanjutkan proses pesanan.' }}
         </div>
 
         <div class="mt-4 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
@@ -58,6 +58,51 @@
         <!-- Left: Instruksi Pembayaran -->
         <div>
             @if($this->paymentDetails)
+                @if(isset($this->paymentDetails['payment_success']) && $this->paymentDetails['payment_success'])
+                    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm dark:border-emerald-900/40 dark:bg-emerald-900/20">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="text-sm font-semibold text-gray-900 dark:text-white">Pembayaran Berhasil</div>
+                            <div class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
+                                STATUS: <span class="font-semibold">SETTLEMENT</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 rounded-2xl border border-emerald-200 bg-white p-5 dark:border-emerald-900/40 dark:bg-gray-900">
+                            <div class="text-center space-y-4">
+                                <div class="text-lg font-semibold text-emerald-700 dark:text-emerald-300">
+                                    Pembayaran berhasil diterima!
+                                </div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">
+                                    Pesanan Anda telah dibayar dan sedang diproses.
+                                </div>
+                                
+                                <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">Tanggal Pembayaran</div>
+                                            <div class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">
+                                                {{ optional($this->paymentDetails['settled_at'])->format('d M Y, H:i') ?? now()->format('d M Y, H:i') }}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">Jumlah</div>
+                                            <div class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">Rp {{ number_format($this->order->total_idr) }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-4">
+                                    <a
+                                        href="{{ route('orders.show', $this->orderId) }}"
+                                        class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+                                    >
+                                        Lihat Detail Pesanan
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @else
                 <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm dark:border-emerald-900/40 dark:bg-emerald-900/20">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div class="text-sm font-semibold text-gray-900 dark:text-white">Instruksi Pembayaran</div>
@@ -181,8 +226,9 @@
 
                     @error('payment')
                         <div class="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-300">{{ $message }}</div>
-                    @enderror
-                </div>
+                    @endif
+                    </div>
+                @endif
             @endif
         </div>
 
