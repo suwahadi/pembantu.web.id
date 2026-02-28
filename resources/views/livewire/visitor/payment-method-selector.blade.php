@@ -102,6 +102,7 @@
                             </div>
                         </div>
                     </div>
+                @endif
                 @else
                 <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm dark:border-emerald-900/40 dark:bg-emerald-900/20">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
