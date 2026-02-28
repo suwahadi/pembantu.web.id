@@ -71,6 +71,18 @@ Route::middleware(['auth', 'admin-access'])->prefix('admin')->name('admin.')->gr
     Route::get('/disputes', function () {
         return view('admin.disputes');
     })->name('disputes');
+
+    Route::get('/disputes/{id}', function ($id) {
+        return view('admin.disputes-detail', ['disputeId' => (int) $id]);
+    })->name('disputes.show');
+
+    Route::get('/payment', function () {
+        return view('admin.payment');
+    })->name('payment.index');
+
+    Route::get('/payment/{id}', function ($id) {
+        return view('admin.payment-detail', ['paymentId' => (int) $id]);
+    })->name('payment.show');
     Route::get('/refunds', function () {
         return view('admin.refunds');
     })->name('refunds');
