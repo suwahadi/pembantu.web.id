@@ -166,12 +166,10 @@
                                 @endforeach
                             @endif
 
-                            <div class="mt-4 text-xs text-gray-600 dark:text-gray-400">
-                                Batas pembayaran: <span class="font-semibold">{{ optional($this->order->created_at)->addHours(24)->format('d M Y, H:i') }}</span>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </div>
-                </div>
+                @endif
             @else
                 <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                     <div class="text-sm font-semibold text-gray-900 dark:text-white">Metode Pembayaran</div>
@@ -230,7 +228,6 @@
                     @endif
                 </div>
                 @endif
-            @endif
         </div>
 
         <!-- Right: Ringkasan Pesanan + Panduan -->
