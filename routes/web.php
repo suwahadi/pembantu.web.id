@@ -83,6 +83,11 @@ Route::middleware(['auth', 'admin-access'])->prefix('admin')->name('admin.')->gr
     Route::get('/payment/{id}', function ($id) {
         return view('admin.payment-detail', ['paymentId' => (int) $id]);
     })->name('payment.show');
+
+    Route::get('/escrow', function () {
+        return view('admin.escrow');
+    })->name('escrow.index');
+
     Route::get('/refunds', function () {
         return view('admin.refunds');
     })->name('refunds');
