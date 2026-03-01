@@ -109,17 +109,17 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
                                     $statusColors = [
-                                        'pending_payment' => 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200 dark:bg-amber-500/15 dark:text-amber-200 dark:ring-amber-500/30',
-                                        'paid_escrow' => 'bg-sky-50 text-sky-700 ring-1 ring-inset ring-sky-200 dark:bg-sky-500/15 dark:text-sky-200 dark:ring-sky-500/30',
-                                        'in_progress' => 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200 dark:bg-blue-500/15 dark:text-blue-200 dark:ring-blue-500/30',
-                                        'completed_by_agency' => 'bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-200 dark:ring-indigo-500/30',
-                                        'completed' => 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-500/30',
-                                        'disputed' => 'bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-200 dark:bg-rose-500/15 dark:text-rose-200 dark:ring-rose-500/30',
-                                        'cancelled' => 'bg-slate-50 text-slate-700 ring-1 ring-inset ring-slate-200 dark:bg-slate-500/15 dark:text-slate-200 dark:ring-slate-500/30',
-                                        'refunded' => 'bg-violet-50 text-violet-700 ring-1 ring-inset ring-violet-200 dark:bg-violet-500/15 dark:text-violet-200 dark:ring-violet-500/30',
+                                        'pending_payment' => 'bg-amber-500',
+                                        'paid_escrow' => 'bg-sky-500',
+                                        'in_progress' => 'bg-blue-500',
+                                        'completed_by_agency' => 'bg-indigo-500',
+                                        'completed' => 'bg-green-600',
+                                        'disputed' => 'bg-red-500',
+                                        'canceled' => 'bg-red-600',
+                                        'refunded' => 'bg-red-600',
                                     ];
                                 @endphp
-                                <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full {{ $statusColors[$o->status] ?? 'bg-slate-100 text-slate-700 dark:bg-slate-500/20 dark:text-slate-200' }}">
+                                <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full text-white {{ $statusColors[$o->status] ?? 'bg-gray-600' }}">
                                     {{ ucfirst(str_replace('_', ' ', $o->status)) }}
                                 </span>
                             </td>

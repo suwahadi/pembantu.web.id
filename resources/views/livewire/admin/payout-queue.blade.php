@@ -55,7 +55,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     <button wire:click="selectPayout({{ $payout->id }})"
-                                        class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
+                                        class="text-sm font-medium px-3 py-1 rounded-lg bg-green-600 text-white hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 transition-colors">
                                         Proses
                                     </button>
                                 </td>

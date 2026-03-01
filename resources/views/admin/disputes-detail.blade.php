@@ -9,7 +9,7 @@
                 <p class="text-gray-500 dark:text-gray-400 mt-1">Tinjau keluhan, bukti, dan ambil keputusan penyelesaian</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('admin.disputes') }}" class="px-4 py-2 rounded-lg flex items-center gap-2 border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:border-white/10 dark:hover:bg-white/5 transition">
+                <a href="{{ route('admin.disputes') }}" class="px-4 py-2 rounded-lg flex items-center gap-2 border border-primary-600 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:border-gray-300 dark:hover:bg-gray-100 transition-colors">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>

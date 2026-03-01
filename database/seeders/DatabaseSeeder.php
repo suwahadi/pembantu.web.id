@@ -19,6 +19,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             AgencySeeder::class,
             ProperWorkerSeeder::class,
+            BankAccountSeeder::class,
+            WorkerServicePricingSeeder::class,
+            WorkerServiceAreaSeeder::class,
+            TestingScenarioSeeder::class,
         ]);
     }
 }

@@ -53,13 +53,13 @@
                     @forelse($payments as $p)
                         @php
                             $statusColors = [
-                                'initiated' => 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200',
-                                'pending' => 'bg-amber-100 text-amber-800 dark:bg-amber-500/25 dark:text-amber-200',
-                                'settlement' => 'bg-green-100 text-green-800 dark:bg-green-500/25 dark:text-green-200',
-                                'expire' => 'bg-gray-200 text-gray-700 dark:bg-slate-700 dark:text-slate-200',
-                                'cancel' => 'bg-rose-100 text-rose-800 dark:bg-rose-500/25 dark:text-rose-200',
-                                'deny' => 'bg-red-100 text-red-800 dark:bg-red-500/25 dark:text-red-200',
-                                'chargeback' => 'bg-violet-100 text-violet-800 dark:bg-violet-500/25 dark:text-violet-200',
+                                'initiated' => 'bg-slate-500',
+                                'pending' => 'bg-amber-500',
+                                'settlement' => 'bg-green-500',
+                                'expire' => 'bg-gray-500',
+                                'cancel' => 'bg-rose-500',
+                                'deny' => 'bg-red-600',
+                                'chargeback' => 'bg-violet-600',
                             ];
                         @endphp
                         <tr class="hover:bg-gray-50 dark:hover:bg-slate-800/80">
@@ -70,7 +70,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-50 font-mono">{{ $p->midtrans_order_id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-slate-200">{{ $p->payment_method ?: '-' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $statusColors[$p->status] ?? 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-slate-200' }}">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white {{ $statusColors[$p->status] ?? 'bg-gray-600' }}">
                                     {{ \App\Domain\Shared\Statuses\PaymentStatus::label($p->status) }}
                                 </span>
                             </td>

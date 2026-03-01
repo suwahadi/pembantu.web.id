@@ -28,13 +28,13 @@
                     <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-300">Status</p>
                     @php
                         $statusColors = [
-                            'open' => 'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-200',
-                            'investigating' => 'bg-sky-100 text-sky-800 dark:bg-sky-500/20 dark:text-sky-200',
-                            'resolved' => 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-200',
-                            'rejected' => 'bg-rose-100 text-rose-800 dark:bg-rose-500/20 dark:text-rose-200',
+                            'open' => 'bg-blue-500',
+                            'investigating' => 'bg-gray-500',
+                            'resolved' => 'bg-green-500',
+                            'rejected' => 'bg-red-500',
                         ];
                     @endphp
-                    <span class="mt-2 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {{ $statusColors[$dispute['status']] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-500/20 dark:text-gray-200' }}">
+                    <span class="mt-2 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white {{ $statusColors[$dispute['status']] ?? 'bg-gray-600' }}">
                         {{ $dispute['status_label'] }}
                     </span>
                     @if($dispute['resolved_at'])
@@ -47,11 +47,8 @@
                     <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-slate-50">{{ $dispute['order']['code'] ?? ('#' . $dispute['order_id']) }}</p>
                     <p class="mt-2 text-xs text-gray-500 dark:text-slate-300">Total: Rp {{ number_format($dispute['order']['total_idr'] ?? 0, 0, ',', '.') }}</p>
                     <div class="mt-3">
-                        <a href="{{ route('admin.orders.show', $dispute['order_id']) }}" class="inline-flex items-center gap-1 rounded-lg bg-gray-900 px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors">
+                        <a href="{{ route('admin.orders.show', $dispute['order_id']) }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors w-full">
                             Detail Order
-                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                            </svg>
                         </a>
                     </div>
                 </div>
@@ -63,7 +60,7 @@
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-slate-50">Keluhan</h3>
                         <span class="text-xs text-gray-500 dark:text-slate-300">Oleh: {{ $dispute['opened_by']['name'] ?? '-' }}</span>
                     </div>
-                    <div class="mt-4 rounded-lg bg-gray-50 p-4 text-sm text-gray-700 dark:bg-slate-800/60 dark:text-slate-200">
+                    <div class="mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-50">
                         {{ $dispute['complaint'] }}
                     </div>
                 </div>
@@ -93,18 +90,15 @@
                 </div>
 
                 @if(empty($dispute['evidences']))
-                    <div class="mt-6 text-sm text-gray-500 dark:text-slate-300">Belum ada bukti yang diunggah.</div>
+                    <div class="mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-50">Belum ada bukti yang diunggah.</div>
                 @else
-                    <div class="mt-6 grid gap-4 md:grid-cols-2">
+                    <div class="mt-6 grid gap-4 md:grid-cols-1">
                         @foreach($dispute['evidences'] as $e)
-                            <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-slate-600 dark:bg-slate-800/60">
+                            <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-slate-600 dark:bg-slate-800">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-slate-50">{{ $e['description'] ?: 'Bukti Dispute' }}</p>
                                 <p class="mt-1 text-xs text-gray-500 dark:text-slate-300">Diunggah {{ $e['created_at'] }}</p>
-                                <a href="{{ asset('storage/' . $e['file_path']) }}" target="_blank" class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:underline dark:text-blue-300">
+                                <a href="{{ asset('storage/' . $e['file_path']) }}" target="_blank" class="mt-3 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors">
                                     Lihat File
-                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                    </svg>
                                 </a>
                             </div>
                         @endforeach
@@ -137,16 +131,16 @@
                     </div>
 
                     <div class="mt-6 flex flex-wrap gap-3">
-                        <button type="button" wire:click="confirmAction('full_refund')" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <button type="button" wire:click="confirmAction('full_refund')" class="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
                             Refund Penuh
                         </button>
                         <button type="button" wire:click="confirmAction('full_release')" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                             Release Penuh
                         </button>
-                        <button type="button" wire:click="confirmAction('partial')" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button type="button" wire:click="confirmAction('partial')" class="rounded-lg bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600">
                             Split (Partial)
                         </button>
-                        <button type="button" wire:click="confirmAction('reject')" class="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
+                        <button type="button" wire:click="confirmAction('reject')" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600">
                             Tolak Dispute
                         </button>
                     </div>
@@ -175,7 +169,7 @@
                         @if(!empty($dispute['resolution_note']))
                             <div class="mt-6">
                                 <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-300">Catatan</p>
-                                <div class="mt-2 rounded-lg bg-gray-50 p-4 text-sm text-gray-700 dark:bg-slate-800/60 dark:text-slate-200">
+                                <div class="mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-50">
                                     {{ $dispute['resolution_note'] }}
                                 </div>
                             </div>

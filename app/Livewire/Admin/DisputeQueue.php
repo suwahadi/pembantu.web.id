@@ -12,8 +12,7 @@ class DisputeQueue extends Component
 
     public function render()
     {
-        $disputes = Dispute::whereIn('status', ['open', 'investigating'])
-            ->with(['order', 'order.visitor', 'order.agency', 'evidences'])
+        $disputes = Dispute::with(['order', 'order.visitor', 'order.agency', 'evidences'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 

@@ -36,13 +36,13 @@
                     @forelse($disputes as $dispute)
                         @php
                             $statusColors = [
-                                'open' => 'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-200',
-                                'investigating' => 'bg-sky-100 text-sky-800 dark:bg-sky-500/20 dark:text-sky-200',
-                                'resolved' => 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-200',
-                                'rejected' => 'bg-rose-100 text-rose-800 dark:bg-rose-500/20 dark:text-rose-200',
+                                'open' => 'bg-blue-500',
+                                'investigating' => 'bg-gray-600',
+                                'resolved' => 'bg-green-500',
+                                'rejected' => 'bg-red-500',
                             ];
                         @endphp
-                        <tr class="hover:bg-gray-50 dark:hover:bg-slate-800/50">
+                        <tr class="">
                             <td class="px-6 py-4 font-mono text-gray-900 dark:text-slate-50">#{{ $dispute->id }}</td>
                             <td class="px-6 py-4">
                                 <div class="font-mono text-gray-900 dark:text-slate-50">#{{ $dispute->order_id }}</div>
@@ -52,13 +52,13 @@
                             <td class="px-6 py-4 text-gray-700 dark:text-slate-200">{{ optional(optional($dispute->order)->visitor)->name ?? '-' }}</td>
                             <td class="px-6 py-4 text-gray-700 dark:text-slate-200">{{ optional(optional($dispute->order)->agency)->company_name ?? optional(optional($dispute->order)->agency)->name ?? '-' }}</td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $statusColors[$dispute->status] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-500/20 dark:text-gray-200' }}">
+                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold text-white {{ $statusColors[$dispute->status] ?? 'bg-gray-600' }}">
                                     {{ \App\Domain\Shared\Statuses\DisputeStatus::label($dispute->status) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-gray-600 dark:text-slate-300">{{ $dispute->created_at->format('d M Y H:i') }}</td>
                             <td class="px-6 py-4 text-right">
-                                <a href="{{ route('admin.disputes.show', $dispute->id) }}" class="inline-flex items-center gap-1 rounded-lg bg-gray-900 px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors">
+                                <a href="{{ route('admin.disputes.show', $dispute->id) }}" class="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700 dark:bg-blue-500/20 dark:text-blue-200 dark:hover:bg-blue-600 transition-colors">
                                     Detail
                                     <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

@@ -67,8 +67,7 @@ class PayoutQueue extends Component
 
     public function render()
     {
-        $payouts = Payout::whereIn('status', ['queued', 'processing'])
-            ->with(['order', 'agency', 'bankAccount'])
+        $payouts = Payout::with(['order', 'agency', 'bankAccount'])
             ->orderBy('created_at', 'asc')
             ->paginate(10);
 
