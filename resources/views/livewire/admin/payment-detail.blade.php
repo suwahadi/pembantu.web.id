@@ -27,16 +27,16 @@
                 <p class="text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Status</p>
                 @php
                     $statusColors = [
-                        'initiated' => 'bg-slate-500',
-                        'pending' => 'bg-amber-500',
-                        'settlement' => 'bg-green-500',
-                        'expire' => 'bg-gray-500',
-                        'canceled' => 'bg-red-600',
-                        'deny' => 'bg-red-500',
-                        'chargeback' => 'bg-violet-600',
+                        'initiated' => 'bg-slate-500 text-white',
+                        'pending' => 'bg-white text-gray-900 border border-gray-200 dark:bg-white dark:text-gray-900 dark:border-gray-700',
+                        'settlement' => 'bg-green-500 text-white',
+                        'expire' => 'bg-gray-500 text-white',
+                        'canceled' => 'bg-red-600 text-white',
+                        'deny' => 'bg-red-500 text-white',
+                        'chargeback' => 'bg-violet-600 text-white',
                     ];
                 @endphp
-                <span class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white {{ $statusColors[$payment['status']] ?? 'bg-gray-600' }}">
+                <span class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $statusColors[$payment['status']] ?? 'bg-gray-600 text-white' }}">
                     {{ \App\Domain\Shared\Statuses\PaymentStatus::label($payment['status']) }}
                 </span>
                 <div class="mt-3 text-sm text-gray-700 dark:text-slate-200">

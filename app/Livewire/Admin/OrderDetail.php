@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Order;
 use App\Domain\Shared\Statuses\OrderStatus;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Carbon;
 
 final class OrderDetail extends Component
 {
@@ -47,12 +48,45 @@ final class OrderDetail extends Component
     {
         $order = $this->resolveOrder(withRelations: true);
 
+        $contractMetadata = $order->contract ? $this->normalizeMetadata($order->contract->metadata) : [];
+        $pricingType = (string) ($contractMetadata['pricing_type'] ?? '');
+        $unitCount = (int) ($contractMetadata['unit_count'] ?? 0);
+
+        if ($unitCount <= 0 && $order->start_date && $order->end_date) {
+            $start = Carbon::parse($order->start_date);
+            $end = Carbon::parse($order->end_date);
+            $days = max(1, $start->diffInDays($end) + 1);
+
+            if ($pricingType === 'daily') {
+                $unitCount = $days;
+            } elseif ($pricingType === 'weekly') {
+                $unitCount = (int) ceil($days / 7);
+            } elseif ($pricingType === 'monthly') {
+                $unitCount = max(1, $start->diffInMonths($end) + 1);
+            } elseif ($pricingType === 'hourly') {
+                $unitCount = $days * 8;
+            }
+        }
+
+        $unitLabelMap = [
+            'hourly' => 'jam',
+            'daily' => 'hari',
+            'weekly' => 'minggu',
+            'monthly' => 'bulan',
+            'project' => 'proyek',
+        ];
+
+        $unitLabel = $unitLabelMap[$pricingType] ?? 'hari';
+        $durationDisplay = $unitCount > 0 ? ($unitCount . ' ' . $unitLabel) : '-';
+
         $this->order = [
             'id' => $order->id,
             'code' => $order->code,
             'status' => $order->status,
             'status_label' => OrderStatus::label($order->status),
-            'duration' => $order->duration ?? 0,
+            'pricing_type' => $pricingType,
+            'unit_count' => $unitCount,
+            'duration_display' => $durationDisplay,
             'start_date' => optional($order->start_date)->format('Y-m-d'),
             'end_date' => optional($order->end_date)->format('Y-m-d'),
             'start_date_human' => optional($order->start_date)->translatedFormat('d F Y'),
@@ -90,7 +124,7 @@ final class OrderDetail extends Component
             'contract' => $order->contract ? [
                 'start_date' => optional($order->contract->start_date)->format('d M Y'),
                 'end_date' => optional($order->contract->end_date)->format('d M Y'),
-                'metadata' => $this->normalizeMetadata($order->contract->metadata),
+                'metadata' => $contractMetadata,
             ] : null,
             'events' => $order->events->map(function ($event) {
                 return [

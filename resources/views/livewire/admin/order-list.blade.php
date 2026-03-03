@@ -109,17 +109,17 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
                                     $statusColors = [
-                                        'pending_payment' => 'bg-amber-500',
-                                        'paid_escrow' => 'bg-sky-500',
-                                        'in_progress' => 'bg-blue-500',
-                                        'completed_by_agency' => 'bg-indigo-500',
-                                        'completed' => 'bg-green-600',
-                                        'disputed' => 'bg-red-500',
-                                        'canceled' => 'bg-red-600',
-                                        'refunded' => 'bg-red-600',
+                                        'pending_payment' => 'bg-white text-gray-900 border border-gray-200 dark:bg-white dark:text-gray-900 dark:border-gray-700',
+                                        'paid_escrow' => 'bg-blue-500 text-white',
+                                        'in_progress' => 'bg-blue-500 text-white',
+                                        'completed_by_agency' => 'bg-indigo-500 text-white',
+                                        'completed' => 'bg-green-600 text-white',
+                                        'disputed' => 'text-white',
+                                        'canceled' => 'bg-red-600 text-white',
+                                        'refunded' => 'bg-red-600 text-white',
                                     ];
                                 @endphp
-                                <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full text-white {{ $statusColors[$o->status] ?? 'bg-gray-600' }}">
+                                <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full {{ $statusColors[$o->status] ?? 'bg-gray-600 text-white' }}" @if($o->status === 'disputed') style="background-color: #D4AF37" @endif>
                                     {{ ucfirst(str_replace('_', ' ', $o->status)) }}
                                 </span>
                             </td>

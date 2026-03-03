@@ -3,10 +3,12 @@
 namespace App\Domain\Order\Services;
 
 use App\Models\{Order, User};
+use App\Models\WorkerServicePricing;
 use App\Domain\Shared\Statuses\OrderStatus;
 use App\Domain\Event\Services\OrderEventService;
 use App\Domain\Audit\Services\AuditLogService;
 use App\Notifications\OrderStatusChanged;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
@@ -19,6 +21,75 @@ class OrderService
     public function createFromContract(int $contractId, int $visitorUserId, int $agencyId, int $workerId, int $categoryId, int $totalIdr): Order
     {
         return DB::transaction(function () use ($contractId, $visitorUserId, $agencyId, $workerId, $categoryId, $totalIdr) {
+            $contract = DB::table('contracts')->where('id', $contractId)->lockForUpdate()->first();
+            if (!$contract) {
+                throw new \RuntimeException('Kontrak tidak ditemukan.');
+            }
+
+            $contractStart = $contract->start_date ? Carbon::parse($contract->start_date)->toDateString() : now()->toDateString();
+            $contractEnd = $contract->end_date ? Carbon::parse($contract->end_date)->toDateString() : null;
+
+            $metadata = [];
+            if (!empty($contract->metadata)) {
+                $decoded = is_string($contract->metadata) ? json_decode($contract->metadata, true) : $contract->metadata;
+                $metadata = is_array($decoded) ? $decoded : [];
+            }
+
+            $scheme = strtoupper((string) ($metadata['scheme'] ?? 'BULANAN'));
+            $schemeToPricingType = [
+                'PER_JAM' => 'hourly',
+                'HARIAN' => 'daily',
+                'MINGGUAN' => 'weekly',
+                'BULANAN' => 'monthly',
+            ];
+            $pricingType = $schemeToPricingType[$scheme] ?? 'monthly';
+
+            $pricingQuery = WorkerServicePricing::query()
+                ->where('worker_id', $workerId)
+                ->where('is_active', true)
+                ->where('pricing_type', $pricingType)
+                ->orderByDesc('is_default')
+                ->orderBy('sort_order');
+
+            $pricing = $pricingQuery->first();
+            if (!$pricing) {
+                $pricing = WorkerServicePricing::query()
+                    ->where('worker_id', $workerId)
+                    ->where('is_active', true)
+                    ->orderByDesc('is_default')
+                    ->orderBy('sort_order')
+                    ->first();
+            }
+
+            $unitCount = 1;
+            if ($contractEnd) {
+                $start = Carbon::parse($contractStart);
+                $end = Carbon::parse($contractEnd);
+                $days = max(1, $start->diffInDays($end) + 1);
+
+                if ($pricingType === 'daily') {
+                    $unitCount = $days;
+                } elseif ($pricingType === 'weekly') {
+                    $unitCount = (int) ceil($days / 7);
+                } elseif ($pricingType === 'monthly') {
+                    $unitCount = max(1, $start->diffInMonths($end) + 1);
+                } elseif ($pricingType === 'hourly') {
+                    $unitCount = $days * 8;
+                } else {
+                    $unitCount = 1;
+                }
+            }
+
+            $computedTotal = 0;
+            if ($pricing) {
+                $computedTotal = max(
+                    (int) ($unitCount * (int) $pricing->price_idr),
+                    (int) ($pricing->min_order_amount ?? 0)
+                );
+            }
+
+            $finalTotal = $computedTotal > 0 ? $computedTotal : $totalIdr;
+
             $order = Order::create([
                 'visitor_user_id' => $visitorUserId,
                 'agency_id' => $agencyId,
@@ -26,16 +97,28 @@ class OrderService
                 'category_id' => $categoryId,
                 'contract_id' => $contractId,
                 'status' => OrderStatus::PENDING_PAYMENT,
-                'start_date' => now()->toDateString(),
-                'subtotal_idr' => (int) ($totalIdr * 0.95), // 95% untuk service
-                'platform_fee_idr' => (int) ($totalIdr * 0.05), // 5% platform fee
-                'total_idr' => $totalIdr,
+                'start_date' => $contractStart,
+                'end_date' => $contractEnd,
+                'subtotal_idr' => (int) ($finalTotal * 0.95),
+                'platform_fee_idr' => (int) ($finalTotal * 0.05),
+                'total_idr' => $finalTotal,
             ]);
 
             // Link back contract to order
+            $nextMetadata = array_merge($metadata, [
+                'pricing_type' => $pricingType,
+                'unit_count' => $unitCount,
+                'price_per_unit_idr' => (int) ($pricing->price_idr ?? 0),
+                'pricing_id' => (int) ($pricing->id ?? 0),
+            ]);
+
             DB::table('contracts')->where('id', $contractId)->update([
                 'order_id' => $order->id,
+                'scope_of_work' => $pricingType,
+                'total_price_idr' => $finalTotal,
+                'platform_fee_idr' => (int) ($finalTotal * 0.05),
                 'status' => 'signed_by_visitor',
+                'metadata' => json_encode($nextMetadata),
             ]);
 
             $this->eventService->record(

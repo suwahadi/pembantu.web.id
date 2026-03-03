@@ -53,13 +53,13 @@
                     @forelse($payments as $p)
                         @php
                             $statusColors = [
-                                'initiated' => 'bg-slate-500',
-                                'pending' => 'bg-amber-500',
-                                'settlement' => 'bg-green-500',
-                                'expire' => 'bg-gray-500',
-                                'cancel' => 'bg-rose-500',
-                                'deny' => 'bg-red-600',
-                                'chargeback' => 'bg-violet-600',
+                                'initiated' => 'bg-slate-500 text-white',
+                                'pending' => 'bg-white text-gray-900 border border-gray-200 dark:bg-white dark:text-gray-900 dark:border-gray-700',
+                                'settlement' => 'bg-green-500 text-white',
+                                'expire' => 'bg-gray-500 text-white',
+                                'cancel' => 'bg-rose-500 text-white',
+                                'deny' => 'bg-red-600 text-white',
+                                'chargeback' => 'bg-violet-600 text-white',
                             ];
                         @endphp
                         <tr class="hover:bg-gray-50 dark:hover:bg-slate-800/80">
@@ -70,7 +70,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-50 font-mono">{{ $p->midtrans_order_id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-slate-200">{{ $p->payment_method ?: '-' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white {{ $statusColors[$p->status] ?? 'bg-gray-600' }}">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $statusColors[$p->status] ?? 'bg-gray-600 text-white' }}">
                                     {{ \App\Domain\Shared\Statuses\PaymentStatus::label($p->status) }}
                                 </span>
                             </td>

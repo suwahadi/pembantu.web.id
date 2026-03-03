@@ -1,10 +1,32 @@
 <div class="space-y-4">
     <!-- Header -->
     <x-card class="dark:bg-gray-900/60 dark:border-gray-700">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
                 <div class="font-semibold text-lg dark:text-white">Queue Refund</div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Process {{ $refunds->total() }} pending refunds</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Menampilkan {{ $refunds->total() }} refund yang sesuai filter.</p>
+            </div>
+            <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                <div>
+                    <select
+                        id="refund-status-filter"
+                        wire:model.live="statusFilter"
+                        class="w-full rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-300 focus:border-gray-400 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+                    >
+                        <option value="all">Semua Status</option>
+                        <option value="queued">Queued</option>
+                        <option value="processing">Processing</option>
+                    </select>
+                </div>
+                <div class="relative">
+                    <input
+                        id="refund-search"
+                        type="text"
+                        wire:model.live.debounce.300ms="search"
+                        placeholder="Cari Data"
+                        class="w-full rounded-full border border-gray-200 bg-white text-sm text-gray-700 transition hover:border-gray-300 focus:border-gray-400 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 sm:w-72"
+                    />
+                </div>
             </div>
         </div>
     </x-card>
@@ -42,7 +64,7 @@
                                 <td class="py-3 px-4 font-mono text-gray-900 dark:text-gray-300">
                                     #{{ $refund->order_id }}
                                 </td>
-                                <td class="py-3 px-4 text-gray-900 dark:text-gray-300">{{ $refund->order->visitor->name }}</td>
+                                <td class="py-3 px-4 text-gray-900 dark:text-gray-300">{{ $refund->order?->visitor?->name ?? '-' }}</td>
                                 <td class="py-3 px-4 text-right font-medium text-gray-900 dark:text-gray-300">
                                     Rp {{ number_format($refund->amount_idr, 0, ',', '.') }}
                                 </td>

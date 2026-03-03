@@ -36,18 +36,18 @@
                         <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-300">Status</p>
                         @php
                             $badgeColors = [
-                                'pending_payment' => 'bg-amber-500',
-                                'paid_escrow' => 'bg-sky-500',
-                                'in_progress' => 'bg-blue-500',
-                                'completed_by_agency' => 'bg-indigo-500',
-                                'completed' => 'bg-green-600',
-                                'disputed' => 'bg-red-500',
-                                'canceled' => 'bg-red-600',
-                                'cancelled' => 'bg-red-600',
-                                'refunded' => 'bg-red-600',
+                                'pending_payment' => 'bg-white text-gray-900 border border-gray-200 dark:bg-white dark:text-gray-900 dark:border-gray-700',
+                                'paid_escrow' => 'bg-sky-500 text-white',
+                                'in_progress' => 'bg-blue-500 text-white',
+                                'completed_by_agency' => 'bg-indigo-500 text-white',
+                                'completed' => 'bg-green-600 text-white',
+                                'disputed' => 'text-white',
+                                'canceled' => 'bg-red-600 text-white',
+                                'cancelled' => 'bg-red-600 text-white',
+                                'refunded' => 'bg-red-600 text-white',
                             ];
                         @endphp
-                        <span class="mt-2 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm {{ $badgeColors[$order['status']] ?? 'bg-gray-600' }}">
+                        <span class="mt-2 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm {{ $badgeColors[$order['status']] ?? 'bg-gray-600 text-white' }}" @if($order['status'] === 'disputed') style="background-color: #D4AF37" @endif>
                             {{ $order['status_label'] }}
                         </span>
                     </div>
@@ -84,7 +84,7 @@
                     </div>
                     <div>
                         <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-300">Durasi</p>
-                        <p class="mt-1 font-semibold text-gray-900 dark:text-slate-50">{{ $order['duration'] }} hari</p>
+                        <p class="mt-1 font-semibold text-gray-900 dark:text-slate-50">{{ $order['duration_display'] ?? '-' }}</p>
                     </div>
                     <div>
                         <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-300">Tanggal Mulai</p>

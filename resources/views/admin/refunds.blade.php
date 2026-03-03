@@ -46,21 +46,8 @@
     </div>
 
     <x-card>
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Antrian Refund</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Fokus pada status "Queued" dan "Processing".</p>
-            </div>
-            <div class="flex flex-wrap gap-2">
-                <button class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
-                    Filter Status
-                </button>
-                <button class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" /></svg>
-                    Cari Refund
-                </button>
-            </div>
+        <div>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Antrian Refund</h2>
         </div>
         <div class="mt-6">
             <livewire:admin.refund-queue />

@@ -100,8 +100,22 @@
                                     <span class="text-xs text-gray-500 dark:text-slate-400">-</span>
                                 @else
                                     <div class="flex flex-wrap gap-1">
+                                        @php
+                                            $roleColors = [
+                                                'admin' => 'bg-blue-500 text-white',
+                                                'agency' => 'text-white',
+                                                'visitor' => 'text-white',
+                                                'worker' => 'bg-purple-100 text-purple-800 dark:bg-purple-500/25 dark:text-purple-200',
+                                            ];
+                                        @endphp
                                         @foreach($user->roles as $role)
-                                            <span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200">{{ $role->label ?? ucfirst($role->name) }}</span>
+                                            @php $roleColor = $roleColors[$role->name] ?? 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-slate-200'; @endphp
+                                            <span class="px-2 py-0.5 rounded-full text-xs {{ $roleColor }}" 
+                                                @if($role->name === 'agency') style="background-color: #D4AF37; color: #555" 
+                                                @elseif($role->name === 'visitor') style="background-color: #464545; color: #fff" 
+                                                @endif>
+                                                {{ $role->label ?? ucfirst($role->name) }}
+                                            </span>
                                         @endforeach
                                     </div>
                                 @endif

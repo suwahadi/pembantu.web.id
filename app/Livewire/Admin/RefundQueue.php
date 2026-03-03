@@ -5,7 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
+use App\Domain\Shared\Statuses\RefundStatus;
 use App\Domain\Refund\Services\RefundService;
 use App\Models\Refund;
 
@@ -16,7 +16,18 @@ class RefundQueue extends Component
     public ?int $selectedRefundId = null;
     public string $transferDate = '';
     public ?string $proofFile = null;
-    public string $status = 'queued';
+    public string $statusFilter = 'all';
+    public string $search = '';
+
+    public function updatingStatusFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
 
     public function selectRefund(int $refundId): void
     {
@@ -67,14 +78,37 @@ class RefundQueue extends Component
 
     public function render()
     {
-        $refunds = Refund::whereIn('status', ['queued', 'processing'])
+        $refundsQuery = Refund::query()
+            ->whereIn('status', [RefundStatus::QUEUED, RefundStatus::PROCESSING])
             ->with(['order', 'order.visitor', 'bankAccount'])
-            ->orderBy('created_at', 'asc')
-            ->paginate(10);
+            ->orderBy('created_at', 'asc');
+
+        if ($this->statusFilter !== 'all') {
+            $refundsQuery->where('status', $this->statusFilter);
+        }
+
+        if ($this->search !== '') {
+            $keyword = trim($this->search);
+
+            $refundsQuery->where(function ($query) use ($keyword) {
+                $query->where('id', 'like', '%' . $keyword . '%')
+                    ->orWhere('order_id', 'like', '%' . $keyword . '%')
+                    ->orWhere('reason', 'like', '%' . $keyword . '%')
+                    ->orWhere('notes', 'like', '%' . $keyword . '%')
+                    ->orWhereHas('order', function ($orderQuery) use ($keyword) {
+                        $orderQuery->where('code', 'like', '%' . $keyword . '%')
+                            ->orWhereHas('visitor', function ($visitorQuery) use ($keyword) {
+                                $visitorQuery->where('name', 'like', '%' . $keyword . '%')
+                                    ->orWhere('email', 'like', '%' . $keyword . '%');
+                            });
+                    });
+            });
+        }
+
+        $refunds = $refundsQuery->paginate(10);
 
         return view('livewire.admin.refund-queue', [
             'refunds' => $refunds,
         ])->layout('layouts.admin', ['title' => 'Queue Refund']);
     }
 }
-
