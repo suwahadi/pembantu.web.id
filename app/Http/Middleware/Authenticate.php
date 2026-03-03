@@ -10,9 +10,12 @@ class Authenticate
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Check if user is authenticated
-        if (! auth()->check()) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if (!auth()->check()) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
+            return redirect()->guest(route('login'));
         }
 
         return $next($request);

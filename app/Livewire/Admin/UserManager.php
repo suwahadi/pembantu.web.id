@@ -20,6 +20,11 @@ final class UserManager extends Component
     public string $status = '';
     public string $role = '';
 
+    public ?int $fixedRoleId = null;
+    public ?string $fixedRoleName = null;
+    public bool $lockRoleFilter = false;
+    public ?string $redirectRoute = null;
+
     public bool $confirmingDelete = false;
     public ?int $deleteUserId = null;
     public ?array $alert = null;
@@ -31,6 +36,31 @@ final class UserManager extends Component
     ];
 
     protected $listeners = ['userSaved' => '$refresh'];
+
+    public function mount(?int $fixedRoleId = null, ?string $fixedRoleName = null, bool $lockRoleFilter = false, ?string $redirectRoute = null)
+    {
+        $this->fixedRoleId = $fixedRoleId;
+        $this->fixedRoleName = $fixedRoleName;
+        $this->lockRoleFilter = $lockRoleFilter;
+        $this->redirectRoute = $redirectRoute;
+
+        if (!$this->fixedRoleId && $this->fixedRoleName) {
+            $role = Role::query()->where('name', $this->fixedRoleName)->first();
+            $this->fixedRoleId = $role?->id;
+        }
+
+        if ($this->fixedRoleId) {
+            $this->role = (string) $this->fixedRoleId;
+        }
+
+        if (session()->has('success')) {
+            $this->alert = [
+                'type' => 'success',
+                'message' => session('success'),
+                'timestamp' => now()->timestamp,
+            ];
+        }
+    }
 
     public function updatingSearch(): void
     {
@@ -122,17 +152,6 @@ final class UserManager extends Component
         ];
     }
 
-    public function mount()
-    {
-        if (session()->has('success')) {
-            $this->alert = [
-                'type' => 'success',
-                'message' => session('success'),
-                'timestamp' => now()->timestamp,
-            ];
-        }
-    }
-
     public function render()
     {
         $query = User::query()
@@ -152,7 +171,11 @@ final class UserManager extends Component
             $query->where('status', $this->status);
         }
 
-        if ($this->role !== '') {
+        if ($this->fixedRoleId) {
+            $query->whereHas('roles', function ($builder) {
+                $builder->where('roles.id', $this->fixedRoleId);
+            });
+        } elseif ($this->role !== '') {
             $query->whereHas('roles', function ($builder) {
                 $builder->where('roles.id', (int) $this->role);
             });

@@ -50,15 +50,17 @@
                     @endforeach
                 </select>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Role</label>
-                <select wire:model.live="role" class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-white dark:bg-slate-800 dark:border-slate-600 text-gray-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent">
-                    <option value="">Semua Role</option>
-                    @foreach($roles as $roleOption)
-                        <option value="{{ $roleOption->id }}">{{ $roleOption->label ?? $roleOption->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+            @if(!($lockRoleFilter ?? false))
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Role</label>
+                    <select wire:model.live="role" class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-white dark:bg-slate-800 dark:border-slate-600 text-gray-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+                        <option value="">Semua Role</option>
+                        @foreach($roles as $roleOption)
+                            <option value="{{ $roleOption->id }}">{{ $roleOption->label ?? $roleOption->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -112,7 +114,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="px-3 py-1 text-xs border border-gray-200 dark:border-slate-700 rounded-lg text-gray-700 dark:text-slate-100 hover:bg-gray-50 dark:hover:bg-slate-800/80">Edit</a>
+                                    <a href="{{ route('admin.users.edit', ['user' => $user->id, 'role' => $fixedRoleId, 'redirect' => $redirectRoute]) }}" class="px-3 py-1 text-xs border border-gray-200 dark:border-slate-700 rounded-lg text-gray-700 dark:text-slate-100 hover:bg-gray-50 dark:hover:bg-slate-800/80">Edit</a>
                                     <button type="button" wire:click="confirmDelete({{ $user->id }})" class="px-3 py-1 text-xs border border-red-200 text-red-600 dark:border-red-500/70 dark:text-red-300 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30">Delete</button>
                                 </div>
                             </td>

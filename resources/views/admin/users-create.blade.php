@@ -20,6 +20,6 @@
         </div>
     </div>
 
-    <livewire:admin.user-form />
+    <livewire:admin.user-form :fixed-role-id="request()->integer('role') ?: null" :fixed-role-name="request()->get('role_name')" :lock-role="request()->has('role') || request()->has('role_name')" :redirect-route="request()->get('redirect')" />
 </div>
 @endsection

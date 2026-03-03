@@ -12,6 +12,11 @@ final class UserForm extends Component
     public ?int $user = null;
     public ?int $userId = null;
 
+    public ?int $fixedRoleId = null;
+    public ?string $fixedRoleName = null;
+    public bool $lockRole = false;
+    public ?string $redirectRoute = null;
+
     public string $name = '';
     public string $email = '';
     public ?string $phone = null;
@@ -25,10 +30,15 @@ final class UserForm extends Component
 
     protected $listeners = ['roleUpdated' => '$refresh'];
 
-    public function mount(?int $user = null): void
+    public function mount(?int $user = null, ?int $fixedRoleId = null, ?string $fixedRoleName = null, bool $lockRole = false, ?string $redirectRoute = null): void
     {
         $this->user = $user;
         $this->userId = $user;
+
+        $this->fixedRoleId = $fixedRoleId;
+        $this->fixedRoleName = $fixedRoleName;
+        $this->lockRole = $lockRole;
+        $this->redirectRoute = $redirectRoute;
         $this->roleOptions = Role::orderBy('label')->get()->map(function (Role $role) {
             return [
                 'id' => $role->id,
@@ -45,6 +55,15 @@ final class UserForm extends Component
                 $this->status = $model->status ?? 'active';
                 $this->roles = $model->roles->pluck('id')->map(fn ($id) => (int) $id)->toArray();
             }
+        }
+
+        if (!$this->fixedRoleId && $this->fixedRoleName) {
+            $role = Role::query()->where('name', $this->fixedRoleName)->first();
+            $this->fixedRoleId = $role?->id;
+        }
+
+        if ($this->fixedRoleId) {
+            $this->roles = [(int) $this->fixedRoleId];
         }
     }
 
@@ -72,6 +91,10 @@ final class UserForm extends Component
 
     public function save(): void
     {
+        if ($this->fixedRoleId) {
+            $this->roles = [(int) $this->fixedRoleId];
+        }
+
         $data = $this->validate();
         $payload = [
             'name' => $this->name,
@@ -95,7 +118,7 @@ final class UserForm extends Component
         $user->roles()->sync($this->roles);
 
         session()->flash('success', $this->userId ? 'User berhasil diperbarui.' : 'User berhasil dibuat.');
-        $this->redirectRoute('admin.users.index');
+        $this->redirectRoute($this->redirectRoute ?: 'admin.users.index');
     }
 
     public function render()

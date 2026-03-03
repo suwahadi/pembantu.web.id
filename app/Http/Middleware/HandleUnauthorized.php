@@ -17,13 +17,14 @@ class HandleUnauthorized
      */
     public function handle(Request $request, Closure $next)
     {
-        // If user is not authenticated, redirect to login
         if (!Auth::check()) {
-            return redirect()->route('login')->with('info', 'Silakan login terlebih dahulu.');
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
+            return redirect()->guest(route('login'));
         }
 
-        // If user is authenticated but trying to access someone else's resource
-        // This will be handled by specific route middleware or controller logic
         return $next($request);
     }
 }
