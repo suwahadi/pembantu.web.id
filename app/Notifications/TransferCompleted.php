@@ -13,7 +13,7 @@ final class TransferCompleted extends Notification
     public function __construct(
         public string $type,
         public int $transferId,
-        public int $orderId,
+        public ?int $orderId,
         public string $message,
         public int $amountIdr
     ) {}

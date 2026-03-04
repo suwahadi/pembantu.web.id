@@ -19,7 +19,9 @@ use App\Livewire\Admin\BankAccounts as AdminBankAccounts;
 
 use App\Livewire\Agency\ContractQueue;
 use App\Livewire\Agency\BankAccounts as AgencyBankAccounts;
-use App\Livewire\Agency\WorkerList;
+use App\Livewire\Admin\WalletLedgerList as AdminWalletLedgerList;
+use App\Livewire\Agency\WalletLedgerList as AgencyWalletLedgerList;
+use App\Livewire\Visitor\WalletLedgerList as VisitorWalletLedgerList;
 use App\Livewire\Agency\WorkerForm;
 use App\Livewire\Agency\OrderList;
 
@@ -52,6 +54,7 @@ Route::middleware('resource-access')->group(function () {
     Route::get('/pesanan', \App\Livewire\Visitor\OrderList::class)->name('orders.list');
     Route::get('/pesanan/{orderId}', OrderDetail::class)->name('orders.show');
     Route::get('/pesanan/{orderId}/dispute', DisputeForm::class)->name('orders.dispute');
+    Route::get('/wallet-ledger', VisitorWalletLedgerList::class)->name('wallet-ledger');
     Route::get('/rekening-bank', VisitorBankAccounts::class)->name('visitor.bank-accounts');
     
     Route::post('/logout', function () {
@@ -133,6 +136,7 @@ Route::middleware(['auth', 'admin-access'])->prefix('admin')->name('admin.')->gr
     Route::get('/workers/create', function () {
         return view('admin.workers-create');
     })->name('workers.create');
+    Route::get('/wallet-ledger', AdminWalletLedgerList::class)->name('wallet-ledger');
 });
 
 // Agency Routes (Protected by middleware + gate)
@@ -160,6 +164,7 @@ Route::middleware(['auth', 'agency-access'])->prefix('agency')->name('agency.')-
         return view('agency.orders-create');
     })->name('orders.create');
     Route::get('/orders/{orderId}', AgencyOrderDetail::class)->name('orders.show');
+    Route::get('/wallet-ledger', AgencyWalletLedgerList::class)->name('wallet-ledger');
     Route::get('/bank-accounts', function () {
         return view('agency.bank-accounts');
     })->name('bank-accounts');

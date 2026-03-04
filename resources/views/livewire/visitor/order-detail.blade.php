@@ -1,8 +1,16 @@
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
   @if(session('success'))
-    <div class="mb-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-xl p-4 text-sm">
+    <div id="order-success-alert" class="mb-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-xl p-4 text-sm">
       {{ session('success') }}
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const successAlert = document.getElementById('order-success-alert');
+        if (successAlert) {
+          successAlert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    </script>
   @endif
 
   @if(!$order)
@@ -112,6 +120,26 @@
         </div>
       @else
         <x-order.timeline :events="$events" />
+      @endif
+    </div>
+
+    <!-- Dispute Form Card -->
+    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+      <div class="mb-4">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Pengajuan Dispute</h2>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Ajukan dispute jika terjadi kendala layanan pada pesanan ini.</p>
+      </div>
+
+      @if(in_array($order->status, ['in_progress', 'paid_escrow', 'completed'], true))
+        <livewire:visitor.dispute-form :order-id="$order->id" :embedded="true" :key="'order-dispute-'.$order->id" />
+      @elseif($order->status === 'disputed')
+        <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
+          Dispute untuk pesanan ini sudah dibuka dan sedang ditinjau tim kami.
+        </div>
+      @else
+        <div class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-300">
+          Dispute hanya bisa diajukan ketika pesanan berstatus <strong>Paid Escrow</strong>, <strong>In Progress</strong>, atau <strong>Completed</strong>.
+        </div>
       @endif
     </div>
   @endif

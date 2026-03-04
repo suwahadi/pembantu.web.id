@@ -117,10 +117,22 @@
                                         'disputed' => 'text-white',
                                         'canceled' => 'bg-red-600 text-white',
                                         'refunded' => 'bg-red-600 text-white',
+                                        'refund_pending' => 'bg-amber-500 text-white',
+                                    ];
+                                    $statusLabels = [
+                                        'pending_payment' => 'Menunggu Pembayaran',
+                                        'paid_escrow' => 'Escrow Dibayar',
+                                        'in_progress' => 'Sedang Berlangsung',
+                                        'completed_by_agency' => 'Selesai (Agensi)',
+                                        'completed' => 'Selesai',
+                                        'disputed' => 'Dispute',
+                                        'canceled' => 'Dibatalkan',
+                                        'refunded' => 'Refund',
+                                        'refund_pending' => 'Refund Pending',
                                     ];
                                 @endphp
                                 <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full {{ $statusColors[$o->status] ?? 'bg-gray-600 text-white' }}" @if($o->status === 'disputed') style="background-color: #D4AF37" @endif>
-                                    {{ ucfirst(str_replace('_', ' ', $o->status)) }}
+                                    {{ $statusLabels[$o->status] ?? ucfirst(str_replace('_', ' ', $o->status)) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ \Carbon\Carbon::parse($o->created_at)->format('d M Y') }}</td>

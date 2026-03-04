@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany, HasOne, BelongsToMany};
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany, HasOne, BelongsToMany, MorphMany};
 
 class User extends Authenticatable
 {
@@ -57,7 +57,7 @@ class User extends Authenticatable
         return $this->hasOne(Agency::class);
     }
 
-    public function bankAccounts(): HasMany
+    public function bankAccounts(): MorphMany
     {
         return $this->morphMany(BankAccount::class, 'owner');
     }

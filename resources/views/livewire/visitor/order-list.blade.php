@@ -41,10 +41,21 @@
                                         <div class="text-xs text-gray-500">{{ $order->worker->category->name ?? '' }}</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                            {{ $order->status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 
-                                               ($order->status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400') }}">
-                                            {{ ucfirst($order->status) }}
+                                        @php
+                                            $statusColors = [
+                                                'pending_payment' => 'bg-white text-gray-900 border border-gray-200 dark:bg-white dark:text-gray-900 dark:border-gray-700',
+                                                'paid_escrow' => 'bg-blue-500 text-white',
+                                                'in_progress' => 'bg-blue-500 text-white',
+                                                'completed_by_agency' => 'bg-indigo-500 text-white',
+                                                'completed' => 'bg-green-600 text-white',
+                                                'disputed' => 'text-white',
+                                                'canceled' => 'bg-red-600 text-white',
+                                                'cancelled' => 'bg-red-600 text-white',
+                                                'refunded' => 'bg-red-600 text-white',
+                                            ];
+                                        @endphp
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$order->status] ?? 'bg-gray-600 text-white' }}" @if($order->status === 'disputed') style="background-color: #D4AF37" @endif>
+                                            {{ ucfirst(str_replace('_', ' ', $order->status)) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">

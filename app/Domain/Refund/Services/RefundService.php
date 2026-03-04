@@ -83,18 +83,24 @@ class RefundService
             $order = $refund->order;
             $entryKey = \App\Domain\Shared\Support\Idempotency::refundPaidKey($refund->id);
 
+            // For wallet withdrawal (no order), use payee_id directly
+            $customerId = $order?->visitor_user_id ?? $refund->payee_id;
+            $note = $order 
+                ? "Pembayaran refund untuk order {$order->code}"
+                : "Pembayaran refund wallet withdrawal #{$refund->id}";
+
             $this->ledgerService->record(
                 entryKey: $entryKey,
-                debitAccount: 'customer_' . $order->visitor_user_id . '_refundable',
+                debitAccount: 'customer_' . $customerId . '_refundable',
                 creditAccount: 'cash_bank',
                 amountIdr: $refund->amount_idr,
                 refType: 'refund',
                 refId: $refund->id,
-                note: "Pembayaran refund untuk order {$order->code}",
+                note: $note,
             );
 
-            // Update order status jika semua refund paid
-            if (!$order->refund()->first()) {
+            // Update order status jika semua refund paid (only if order exists)
+            if ($order && !$order->refund()->first()) {
                 // No more refunds
                 $order->update(['status' => OrderStatus::REFUNDED]);
             }
@@ -102,8 +108,8 @@ class RefundService
             AuditLogService::record('refund_paid', 'REFUND', $refund->id);
 
             // Send notification after successful commit
-            DB::afterCommit(function () use ($refund, $order) {
-                $visitor = User::find($order->visitor_user_id);
+            DB::afterCommit(function () use ($refund, $order, $customerId) {
+                $visitor = User::find($customerId);
                 if ($visitor) {
                     $visitor->notify(new TransferCompleted(
                         type: 'refund',

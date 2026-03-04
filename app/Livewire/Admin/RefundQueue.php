@@ -15,7 +15,7 @@ class RefundQueue extends Component
 
     public ?int $selectedRefundId = null;
     public string $transferDate = '';
-    public ?string $proofFile = null;
+    public $proofFile = null;
     public string $statusFilter = 'all';
     public string $search = '';
 
@@ -63,6 +63,7 @@ class RefundQueue extends Component
             );
 
             session()->flash('success', 'Refund berhasil diproses.');
+            $this->dispatch('refund-processed');
             $this->resetForm();
         } catch (\Throwable $e) {
             session()->flash('error', $e->getMessage());
@@ -79,9 +80,8 @@ class RefundQueue extends Component
     public function render()
     {
         $refundsQuery = Refund::query()
-            ->whereIn('status', [RefundStatus::QUEUED, RefundStatus::PROCESSING])
             ->with(['order', 'order.visitor', 'bankAccount'])
-            ->orderBy('created_at', 'asc');
+            ->orderBy('created_at', 'desc');
 
         if ($this->statusFilter !== 'all') {
             $refundsQuery->where('status', $this->statusFilter);
@@ -95,6 +95,11 @@ class RefundQueue extends Component
                     ->orWhere('order_id', 'like', '%' . $keyword . '%')
                     ->orWhere('reason', 'like', '%' . $keyword . '%')
                     ->orWhere('notes', 'like', '%' . $keyword . '%')
+                    ->orWhereHas('bankAccount', function ($bankQuery) use ($keyword) {
+                        $bankQuery->where('account_name', 'like', '%' . $keyword . '%')
+                            ->orWhere('account_no', 'like', '%' . $keyword . '%')
+                            ->orWhere('bank_name', 'like', '%' . $keyword . '%');
+                    })
                     ->orWhereHas('order', function ($orderQuery) use ($keyword) {
                         $orderQuery->where('code', 'like', '%' . $keyword . '%')
                             ->orWhereHas('visitor', function ($visitorQuery) use ($keyword) {
@@ -109,6 +114,6 @@ class RefundQueue extends Component
 
         return view('livewire.admin.refund-queue', [
             'refunds' => $refunds,
-        ])->layout('layouts.admin', ['title' => 'Queue Refund']);
+        ])->layout('layouts.admin', ['title' => 'Refund Management']);
     }
 }

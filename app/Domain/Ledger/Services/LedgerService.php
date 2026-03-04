@@ -38,7 +38,7 @@ class LedgerService
                 'debit_account' => $debitAccount,
                 'credit_account' => $creditAccount,
                 'amount_idr' => $amountIdr,
-                'note' => $note,
+                'description' => $note,
                 'created_at' => now(),
             ]);
         } catch (QueryException $e) {

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany, HasOne};
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany, HasOne, MorphMany};
 
 class Agency extends Model
 {
@@ -43,7 +43,7 @@ class Agency extends Model
         return $this->hasMany(Order::class);
     }
 
-    public function bankAccounts(): HasMany
+    public function bankAccounts(): MorphMany
     {
         return $this->morphMany(BankAccount::class, 'owner');
     }

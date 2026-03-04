@@ -107,6 +107,7 @@
             </div>
 
             <div class="space-y-8">
+                @if(in_array($dispute['status'], ['open', 'investigating']))
                 <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 md:p-8">
                     <div class="mb-6">
                         <h2 class="text-lg font-semibold text-gray-900 dark:text-slate-50">Keputusan Admin</h2>
@@ -145,6 +146,19 @@
                         </button>
                     </div>
                 </div>
+                @else
+                <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 md:p-8">
+                    <div class="text-center">
+                        <svg class="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="mt-4 text-lg font-semibold text-gray-900 dark:text-white">Dispute Sudah Selesai</h3>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-slate-400">
+                            Keputusan telah dibuat pada {{ $dispute['resolved_at'] ?? '-' }}
+                        </p>
+                    </div>
+                </div>
+                @endif
 
                 @if(!empty($dispute['resolution_note']) || !empty($dispute['decision']))
                     <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 md:p-8">

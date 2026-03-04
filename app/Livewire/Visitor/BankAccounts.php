@@ -26,9 +26,12 @@ final class BankAccounts extends Component
 
     public function mount(): void
     {
-        $this->primaryId = (int) (DB::table('users')
-            ->where('id', auth()->id())
-            ->value('primary_bank_account_id') ?? 0) ?: null;
+        $user = auth()->user();
+        
+        if ($user) {
+            $primaryBankId = $user->primary_bank_account_id;
+            $this->primaryId = $primaryBankId ? (int) $primaryBankId : null;
+        }
     }
 
     public function add(BankAccountService $banks): void

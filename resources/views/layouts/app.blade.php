@@ -94,6 +94,12 @@
                 <a href="{{ route('orders.list') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors">
                   Pesanan Saya
                 </a>
+                <a href="{{ route('wallet-ledger') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors">
+                  Wallet Ledger
+                </a>
+                <a href="{{ route('visitor.bank-accounts') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors">
+                  Rekening Saya
+                </a>
                 <div class="my-1 border-t border-gray-100 dark:border-gray-800"></div>
                 <form method="POST" action="{{ route('logout') }}">
                   @csrf
